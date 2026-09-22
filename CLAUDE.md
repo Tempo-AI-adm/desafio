@@ -22,6 +22,7 @@ Você é o executor técnico. O dono decide produto e testa; você escreve o có
 - **NÃO instalar bibliotecas novas sem perguntar antes.**
 - **NÃO adicionar features fora do "Escopo v1" do PRD.** Se parecer útil, sugira e espere o OK.
 - Sem gradiente, canto arredondado ou sombra difusa (ver `STYLE.md`).
+- **Nunca exibir na UI o valor cru de um campo do banco (estado, permiteBackfill, tipo, etc.).** Toda tradução valor-interno → texto-humano passa por `lib/copy.ts`. Se um valor novo não tiver tradução lá, adicione antes de usar.
 
 ## Como construir
 - **Em fatias verticais:** cada fatia funciona ponta a ponta e dá pra testar. Não construir "o banco todo" antes de ter tela.
