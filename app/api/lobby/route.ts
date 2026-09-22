@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { buscarDesafioPorCodigo } from "@/lib/desafios";
 import { buscarParticipantePorToken, listarParticipantesPorDesafio } from "@/lib/participantes";
 import { listarInegociaveisPorParticipante } from "@/lib/inegociaveis";
+import { contarRealizacoesPorInegociavel } from "@/lib/realizacoes";
 
 // Leitura do estado atual do desafio pra quem já tem identidade:
 // participantes (quem entrou, quem tá pronto), meus inegociáveis, se
@@ -38,12 +39,16 @@ export async function GET(request: Request) {
     })),
   );
 
-  const meusInegociaveis = (await listarInegociaveisPorParticipante(eu.id)).map((i) => ({
-    id: i.id,
-    titulo: i.titulo,
-    assunto: i.assunto,
-    alvo: i.alvo,
-  }));
+  const meusInegociaveisBrutos = await listarInegociaveisPorParticipante(eu.id);
+  const meusInegociaveis = await Promise.all(
+    meusInegociaveisBrutos.map(async (i) => ({
+      id: i.id,
+      titulo: i.titulo,
+      assunto: i.assunto,
+      alvo: i.alvo,
+      progresso: await contarRealizacoesPorInegociavel(i.id),
+    })),
+  );
 
   return NextResponse.json({
     lobby: {

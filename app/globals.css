@@ -33,3 +33,18 @@ body {
   background-color: var(--color-cream);
   color: var(--color-ink);
 }
+
+/* Toast de comemoração ao registrar realização: fica visível uns
+   segundos e some sozinho, sem precisar de setTimeout/estado — troca
+   de `key` no React reinicia a animação a cada nova realização. */
+@keyframes comemoracao-sumir {
+  0%,
+  78% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}

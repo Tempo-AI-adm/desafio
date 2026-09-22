@@ -19,3 +19,12 @@ export function labelBackfill(permiteBackfill: boolean): string {
 export function labelPronto(pronto: boolean): string {
   return pronto ? "Pronto" : "Esperando";
 }
+
+/** Selo de comemoração ao registrar uma realização, em camadas pela
+ * contagem do dia (STYLE.md "Strings-base"). Não é streak entre dias —
+ * a contagem é só de hoje (ver PRD.md "Contagem do dia"). */
+export function labelComemoracaoPorContagemDoDia(contagemHoje: number): string {
+  if (contagemHoje <= 1) return "SHOW.";
+  if (contagemHoje === 2) return "TÁ ON FIRE.";
+  return "AURA MÁXIMA.";
+}

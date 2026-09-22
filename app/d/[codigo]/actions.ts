@@ -2,7 +2,12 @@
 
 import { buscarDesafioPorCodigo, definirCriadorSeVazio, largarDesafio } from "@/lib/desafios";
 import { buscarParticipantePorToken, criarParticipante, marcarPronto } from "@/lib/participantes";
-import { contarInegociaveisPorParticipante, criarInegociavel } from "@/lib/inegociaveis";
+import {
+  buscarInegociavelPorId,
+  contarInegociaveisPorParticipante,
+  criarInegociavel,
+} from "@/lib/inegociaveis";
+import { contarRealizacoesNoDia, criarRealizacao, hojeISO } from "@/lib/realizacoes";
 import { EMOJIS_IDENTIDADE } from "@/lib/identidade-constants";
 import { ASSUNTOS } from "@/lib/assuntos-constants";
 
@@ -183,4 +188,114 @@ export async function largarAction(
   await largarDesafio(desafio.id);
 
   return { ok: true };
+}
+
+export type RegistrarInegociavelState = {
+  error?: string;
+  ok?: boolean;
+  contagemHoje?: number;
+  carimbo?: number;
+};
+
+// Caminho de 1 toque: marca +1 num inegociável que a pessoa já
+// definiu. Assunto e texto da realização vêm do próprio inegociável —
+// não pede formulário nenhum. Estourar o alvo continua funcionando
+// (não trava em 100%, é só mais um +1 — ver PRD "Check / registrar").
+export async function registrarInegociavelAction(
+  _prevState: RegistrarInegociavelState,
+  formData: FormData,
+): Promise<RegistrarInegociavelState> {
+  const codigo = String(formData.get("codigo") ?? "");
+  const token = String(formData.get("token") ?? "");
+  const inegociavelId = String(formData.get("inegociavelId") ?? "");
+
+  const desafio = await buscarDesafioPorCodigo(codigo);
+  if (!desafio) {
+    return { error: "Esse desafio não existe mais." };
+  }
+
+  const participante = await buscarParticipantePorToken(desafio.id, token);
+  if (!participante) {
+    return { error: "Sua identidade não foi reconhecida. Recarrega a página." };
+  }
+
+  if (desafio.estado !== "ativo") {
+    return { error: "O desafio não está rolando agora." };
+  }
+
+  const inegociavel = await buscarInegociavelPorId(inegociavelId);
+  if (!inegociavel || inegociavel.participanteId !== participante.id) {
+    return { error: "Esse inegociável não é seu." };
+  }
+
+  const dia = hojeISO();
+  await criarRealizacao({
+    participanteId: participante.id,
+    tipo: "inegociavel",
+    inegociavelId: inegociavel.id,
+    assunto: inegociavel.assunto,
+    texto: inegociavel.titulo,
+    dia,
+  });
+
+  const contagemHoje = await contarRealizacoesNoDia(participante.id, dia);
+
+  return { ok: true, contagemHoje, carimbo: Date.now() };
+}
+
+export type RegistrarExtraState = {
+  error?: string;
+  ok?: boolean;
+  contagemHoje?: number;
+  carimbo?: number;
+};
+
+// Caminho com fricção: vitória fora da lista de inegociáveis. Único
+// caminho que pede formulário — assunto (chip) + texto curto.
+export async function registrarExtraAction(
+  _prevState: RegistrarExtraState,
+  formData: FormData,
+): Promise<RegistrarExtraState> {
+  const codigo = String(formData.get("codigo") ?? "");
+  const token = String(formData.get("token") ?? "");
+  const assunto = String(formData.get("assunto") ?? "");
+  const texto = String(formData.get("texto") ?? "").trim();
+
+  const desafio = await buscarDesafioPorCodigo(codigo);
+  if (!desafio) {
+    return { error: "Esse desafio não existe mais." };
+  }
+
+  const participante = await buscarParticipantePorToken(desafio.id, token);
+  if (!participante) {
+    return { error: "Sua identidade não foi reconhecida. Recarrega a página." };
+  }
+
+  if (desafio.estado !== "ativo") {
+    return { error: "O desafio não está rolando agora." };
+  }
+
+  if (!VALORES_ASSUNTO.includes(assunto)) {
+    return { error: "Escolhe um assunto da lista." };
+  }
+  if (!texto) {
+    return { error: "Conta rapidinho o que você fez." };
+  }
+  if (texto.length > 140) {
+    return { error: "Texto muito grande — até 140 letras." };
+  }
+
+  const dia = hojeISO();
+  await criarRealizacao({
+    participanteId: participante.id,
+    tipo: "extra",
+    inegociavelId: null,
+    assunto,
+    texto,
+    dia,
+  });
+
+  const contagemHoje = await contarRealizacoesNoDia(participante.id, dia);
+
+  return { ok: true, contagemHoje, carimbo: Date.now() };
 }
