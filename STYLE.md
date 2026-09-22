@@ -35,7 +35,7 @@ Cada unidade do alvo = um quadradinho/bolinha pixel. Preenchido (âmbar) = feito
 Retângulo com borda dura preta + sombra sólida. No clique **afunda** (tira a sombra, desloca 2px) — feedback de fliperama.
 
 ## Mascote
-Monstrinho quadriculado, deadpan, 1–2 cores, mesma linguagem (borda dura + sombra sólida). Pequeno: header, lobby ("esperando os outros"), ao registrar realização (comemorando) e no encerramento (comemorando/derrotado). **É símbolo, não personagem.** 2–3 expressões.
+Monstrinho quadriculado, deadpan, 1–2 cores, mesma linguagem (borda dura + sombra sólida). Pequeno: header, lobby ("esperando os outros"), ao registrar realização (comemorando), como botão de reação no feed (ver "Reações" no PRD), e no encerramento (comemorando/derrotado). **É símbolo, não personagem.** 2–3 expressões.
 
 ## Tom de copy
 Energia BR: interjeição curta + ânimo. Fala do **realizado**, nunca compara nem envergonha, nunca "atrasado". Planejado e extra recebem a mesma comemoração. Sem emoji-spam. Maiúscula só em clímax (largar, estourar, encerrar).
