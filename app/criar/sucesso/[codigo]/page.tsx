@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Janela } from "@/components/Janela";
 import { CopiarLinkBotao } from "@/components/CopiarLinkBotao";
 import { buscarDesafioPorCodigo } from "@/lib/desafios";
+import { ESTADO_LABEL, labelBackfill } from "@/lib/copy";
 
 export default async function DesafioCriadoPage({
   params,
@@ -28,12 +29,10 @@ export default async function DesafioCriadoPage({
           <dl className="grid grid-cols-2 gap-y-2 font-mono text-sm">
             <dt className="text-ink/60">Duração</dt>
             <dd className="text-right font-bold">{desafio.duracaoDias} dias</dd>
-            <dt className="text-ink/60">Backfill</dt>
-            <dd className="text-right font-bold">
-              {desafio.permiteBackfill ? "Sim" : "Não"}
-            </dd>
-            <dt className="text-ink/60">Estado</dt>
-            <dd className="text-right font-bold uppercase">{desafio.estado}</dd>
+            <dt className="text-ink/60">Dias anteriores</dt>
+            <dd className="text-right font-bold">{labelBackfill(desafio.permiteBackfill)}</dd>
+            <dt className="text-ink/60">Situação</dt>
+            <dd className="text-right font-bold">{ESTADO_LABEL[desafio.estado]}</dd>
           </dl>
 
           <div className="flex flex-col gap-2">

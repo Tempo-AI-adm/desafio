@@ -101,7 +101,7 @@ export default function CriarDesafioPage() {
 
           <div className="flex flex-col gap-2">
             <span className="font-mono text-xs font-bold uppercase tracking-widest">
-              Vale registrar em dias anteriores?
+              Pode completar dias que passaram?
             </span>
             <div className="flex gap-2">
               <button
@@ -119,6 +119,10 @@ export default function CriarDesafioPage() {
                 Não
               </button>
             </div>
+            <p className="font-mono text-xs text-ink/60">
+              Sim = dá pra marcar um dia anterior se esquecer no momento. Não =
+              só vale marcar o dia de hoje.
+            </p>
           </div>
 
           {state.error ? (

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Janela } from "@/components/Janela";
 import { buscarDesafioPorCodigo } from "@/lib/desafios";
+import { ESTADO_LABEL, labelBackfill } from "@/lib/copy";
 
 export default async function DesafioPage({ params }: PageProps<"/d/[codigo]">) {
   const { codigo } = await params;
@@ -20,12 +21,10 @@ export default async function DesafioPage({ params }: PageProps<"/d/[codigo]">) 
             <dd className="text-right font-bold">{desafio.codigo}</dd>
             <dt className="text-ink/60">Duração</dt>
             <dd className="text-right font-bold">{desafio.duracaoDias} dias</dd>
-            <dt className="text-ink/60">Backfill</dt>
-            <dd className="text-right font-bold">
-              {desafio.permiteBackfill ? "Sim" : "Não"}
-            </dd>
-            <dt className="text-ink/60">Estado</dt>
-            <dd className="text-right font-bold uppercase">{desafio.estado}</dd>
+            <dt className="text-ink/60">Dias anteriores</dt>
+            <dd className="text-right font-bold">{labelBackfill(desafio.permiteBackfill)}</dd>
+            <dt className="text-ink/60">Situação</dt>
+            <dd className="text-right font-bold">{ESTADO_LABEL[desafio.estado]}</dd>
           </dl>
 
           <p className="border-2 border-ink bg-empty/40 px-3 py-2 font-mono text-xs">
