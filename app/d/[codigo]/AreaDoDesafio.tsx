@@ -226,7 +226,7 @@ export function AreaDoDesafio({
                   htmlFor="titulo"
                   className="font-mono text-xs font-bold uppercase tracking-widest"
                 >
-                  Título
+                  Título do inegociável {dados.meusInegociaveis.length + 1}
                 </label>
                 <input
                   id="titulo"
