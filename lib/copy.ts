@@ -15,3 +15,7 @@ export function labelBackfill(permiteBackfill: boolean): string {
     ? "Dá pra completar dias atrasados"
     : "Só vale o dia de hoje";
 }
+
+export function labelPronto(pronto: boolean): string {
+  return pronto ? "Pronto" : "Esperando";
+}

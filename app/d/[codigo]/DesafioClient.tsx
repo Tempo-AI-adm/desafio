@@ -3,7 +3,6 @@
 import { useActionState, useEffect, useState } from "react";
 import { Janela } from "@/components/Janela";
 import { EMOJIS_IDENTIDADE } from "@/lib/identidade-constants";
-import { ESTADO_LABEL, labelBackfill } from "@/lib/copy";
 import {
   chaveCriadorLocalStorage,
   chaveTokenLocalStorage,
@@ -12,19 +11,11 @@ import {
   reivindicarIdentidadeAction,
   type ReivindicarIdentidadeState,
 } from "./actions";
+import { AreaDoDesafio } from "./AreaDoDesafio";
 
 type DesafioResumo = {
   codigo: string;
   nome: string;
-  duracaoDias: number;
-  permiteBackfill: boolean;
-  estado: "lobby" | "ativo" | "encerrado";
-};
-
-type ParticipanteLogado = {
-  id: string;
-  nome: string;
-  emoji: string;
 };
 
 type Fase = "carregando" | "identidade" | "reconhecido";
@@ -39,9 +30,11 @@ function emojiBotaoClasses(ativo: boolean) {
 
 export function DesafioClient({ desafio }: { desafio: DesafioResumo }) {
   const [fase, setFase] = useState<Fase>("carregando");
-  // Participante encontrado ao checar o token salvo (fluxo de retorno).
-  const [participanteCarregado, setParticipanteCarregado] =
-    useState<ParticipanteLogado | null>(null);
+  // Token do participante reconhecido ao checar o localStorage (fluxo
+  // de retorno) — precisamos dele pra mandar nas ações do lobby
+  // (adicionar inegociável, PRONTO, LARGAR). Os dados do participante
+  // em si a AreaDoDesafio busca sozinha via /api/lobby.
+  const [tokenCarregado, setTokenCarregado] = useState<string | null>(null);
   const [souCriador, setSouCriador] = useState(false);
   const [emojiSelecionado, setEmojiSelecionado] = useState("");
 
@@ -50,18 +43,9 @@ export function DesafioClient({ desafio }: { desafio: DesafioResumo }) {
     ESTADO_INICIAL,
   );
 
-  // Participante "ativo" pra tela: ou veio da checagem de token, ou
-  // acabou de ser criado agora pela action — sem duplicar em outro
-  // useState (evita setState derivado dentro de efeito).
   const participanteRecemCriado = state.participante;
-  const participante: ParticipanteLogado | null = participanteRecemCriado
-    ? {
-        id: participanteRecemCriado.id,
-        nome: participanteRecemCriado.nome,
-        emoji: participanteRecemCriado.emoji,
-      }
-    : participanteCarregado;
   const reconhecido = fase === "reconhecido" || Boolean(participanteRecemCriado);
+  const tokenAtivo = participanteRecemCriado?.token ?? tokenCarregado;
 
   // Ao montar: procura o token salvo neste navegador pra esse desafio e
   // confirma com o servidor. Sem token, ou token que o servidor não
@@ -94,7 +78,7 @@ export function DesafioClient({ desafio }: { desafio: DesafioResumo }) {
           const data = await res.json();
           if (data.participante) {
             if (!cancelado) {
-              setParticipanteCarregado(data.participante);
+              setTokenCarregado(token);
               setFase("reconhecido");
             }
             return;
@@ -209,33 +193,17 @@ export function DesafioClient({ desafio }: { desafio: DesafioResumo }) {
     );
   }
 
-  // reconhecido === true (token confirmado ou identidade recém-criada)
-  return (
-    <main className="mx-auto flex min-h-dvh max-w-sm flex-col justify-center gap-5 px-4 py-8">
-      <Janela titulo={desafio.nome}>
-        <div className="flex flex-col gap-4">
-          {participante ? (
-            <p className="border-2 border-ink bg-cream px-3 py-2 font-mono text-sm">
-              Você entrou como {participante.emoji} <strong>{participante.nome}</strong>.
-              {souCriador ? " Você criou esse desafio." : ""}
-            </p>
-          ) : null}
+  // reconhecido === true (token confirmado ou identidade recém-criada).
+  // tokenAtivo sempre existe aqui na prática — o `null` só cobre o
+  // instante entre "reconhecido virou true" e o efeito de localStorage
+  // rodar, então mantemos o "Carregando..." nesse raro meio-tempo.
+  if (!tokenAtivo) {
+    return (
+      <main className="mx-auto flex min-h-dvh max-w-sm flex-col items-center justify-center px-4 py-8">
+        <p className="font-mono text-sm text-ink/60">Carregando...</p>
+      </main>
+    );
+  }
 
-          <dl className="grid grid-cols-2 gap-y-2 font-mono text-sm">
-            <dt className="text-ink/60">Duração</dt>
-            <dd className="text-right font-bold">{desafio.duracaoDias} dias</dd>
-            <dt className="text-ink/60">Dias anteriores</dt>
-            <dd className="text-right font-bold">{labelBackfill(desafio.permiteBackfill)}</dd>
-            <dt className="text-ink/60">Situação</dt>
-            <dd className="text-right font-bold">{ESTADO_LABEL[desafio.estado]}</dd>
-          </dl>
-
-          <p className="border-2 border-ink bg-empty/40 px-3 py-2 font-mono text-xs">
-            Isso aqui é só uma prévia. Lobby (definir seu norte, PRONTO,
-            LARGAR) chega na próxima etapa.
-          </p>
-        </div>
-      </Janela>
-    </main>
-  );
+  return <AreaDoDesafio codigo={desafio.codigo} token={tokenAtivo} nomeDesafio={desafio.nome} />;
 }

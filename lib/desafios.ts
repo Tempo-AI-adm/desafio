@@ -14,6 +14,7 @@ export type Desafio = {
   permiteBackfill: boolean;
   estado: EstadoDesafio;
   criadorParticipanteId: string | null;
+  dataInicio: string | null;
   criadoEm: string;
 };
 
@@ -57,6 +58,7 @@ export function criarDesafio(dados: {
     permiteBackfill: dados.permiteBackfill,
     estado: "lobby",
     criadorParticipanteId: null,
+    dataInicio: null,
     criadoEm: new Date().toISOString(),
   };
   desafios.push(desafio);
@@ -79,4 +81,15 @@ export function definirCriadorSeVazio(desafioId: string, participanteId: string)
   if (desafio && desafio.criadorParticipanteId === null) {
     desafio.criadorParticipanteId = participanteId;
   }
+}
+
+/** LARGAR: lobby -> ativo, registra data de início. Idempotente — se
+ * já não estiver em lobby (ex: dois cliques em corrida), não faz nada. */
+export function largarDesafio(desafioId: string): Desafio | undefined {
+  const desafio = desafios.find((d) => d.id === desafioId);
+  if (desafio && desafio.estado === "lobby") {
+    desafio.estado = "ativo";
+    desafio.dataInicio = new Date().toISOString();
+  }
+  return desafio;
 }

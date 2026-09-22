@@ -1,8 +1,12 @@
 "use server";
 
-import { buscarDesafioPorCodigo, definirCriadorSeVazio } from "@/lib/desafios";
-import { criarParticipante } from "@/lib/participantes";
+import { buscarDesafioPorCodigo, definirCriadorSeVazio, largarDesafio } from "@/lib/desafios";
+import { buscarParticipantePorToken, criarParticipante, marcarPronto } from "@/lib/participantes";
+import { contarInegociaveisPorParticipante, criarInegociavel } from "@/lib/inegociaveis";
 import { EMOJIS_IDENTIDADE } from "@/lib/identidade-constants";
+import { ASSUNTOS } from "@/lib/assuntos-constants";
+
+const VALORES_ASSUNTO: readonly string[] = ASSUNTOS.map((a) => a.valor);
 
 export type ReivindicarIdentidadeState = {
   error?: string;
@@ -52,4 +56,131 @@ export async function reivindicarIdentidadeAction(
       token: participante.token,
     },
   };
+}
+
+export type AdicionarInegociavelState = {
+  error?: string;
+  ok?: boolean;
+};
+
+export async function adicionarInegociavelAction(
+  _prevState: AdicionarInegociavelState,
+  formData: FormData,
+): Promise<AdicionarInegociavelState> {
+  const codigo = String(formData.get("codigo") ?? "");
+  const token = String(formData.get("token") ?? "");
+  const titulo = String(formData.get("titulo") ?? "").trim();
+  const assunto = String(formData.get("assunto") ?? "");
+  const alvoRaw = String(formData.get("alvo") ?? "").trim();
+
+  const desafio = buscarDesafioPorCodigo(codigo);
+  if (!desafio) {
+    return { error: "Esse desafio não existe mais." };
+  }
+
+  const participante = buscarParticipantePorToken(desafio.id, token);
+  if (!participante) {
+    return { error: "Sua identidade não foi reconhecida. Recarrega a página." };
+  }
+
+  if (desafio.estado !== "lobby") {
+    return { error: "O norte já travou — o desafio começou." };
+  }
+
+  if (!titulo) {
+    return { error: "Dá um título pro inegociável." };
+  }
+  if (titulo.length > 60) {
+    return { error: "Título muito grande — até 60 letras." };
+  }
+  if (!VALORES_ASSUNTO.includes(assunto)) {
+    return { error: "Escolhe um assunto da lista." };
+  }
+
+  let alvo: number | null = null;
+  if (alvoRaw) {
+    const numero = Number(alvoRaw);
+    if (!Number.isInteger(numero) || numero < 1 || numero > 365) {
+      return { error: "Alvo precisa ser um número válido (1 a 365) ou ficar em branco." };
+    }
+    alvo = numero;
+  }
+
+  criarInegociavel({ participanteId: participante.id, titulo, assunto, alvo });
+
+  return { ok: true };
+}
+
+export type AlternarProntoState = {
+  error?: string;
+  ok?: boolean;
+};
+
+export async function alternarProntoAction(
+  _prevState: AlternarProntoState,
+  formData: FormData,
+): Promise<AlternarProntoState> {
+  const codigo = String(formData.get("codigo") ?? "");
+  const token = String(formData.get("token") ?? "");
+
+  const desafio = buscarDesafioPorCodigo(codigo);
+  if (!desafio) {
+    return { error: "Esse desafio não existe mais." };
+  }
+
+  const participante = buscarParticipantePorToken(desafio.id, token);
+  if (!participante) {
+    return { error: "Sua identidade não foi reconhecida. Recarrega a página." };
+  }
+
+  if (desafio.estado !== "lobby") {
+    return { error: "O desafio já começou." };
+  }
+
+  const querFicarPronto = !participante.pronto;
+  if (querFicarPronto && contarInegociaveisPorParticipante(participante.id) === 0) {
+    return { error: "Adiciona pelo menos 1 inegociável antes de marcar PRONTO." };
+  }
+
+  marcarPronto(participante.id, querFicarPronto);
+
+  return { ok: true };
+}
+
+export type LargarState = {
+  error?: string;
+  ok?: boolean;
+};
+
+export async function largarAction(
+  _prevState: LargarState,
+  formData: FormData,
+): Promise<LargarState> {
+  const codigo = String(formData.get("codigo") ?? "");
+  const token = String(formData.get("token") ?? "");
+
+  const desafio = buscarDesafioPorCodigo(codigo);
+  if (!desafio) {
+    return { error: "Esse desafio não existe mais." };
+  }
+
+  const participante = buscarParticipantePorToken(desafio.id, token);
+  if (!participante) {
+    return { error: "Sua identidade não foi reconhecida. Recarrega a página." };
+  }
+
+  // Autoridade vem do servidor (desafio.criadorParticipanteId), nunca
+  // de uma flag que o cliente mandou — só quem o servidor registrou
+  // como criador pode largar.
+  if (desafio.criadorParticipanteId !== participante.id) {
+    return { error: "Só quem criou o desafio pode largar." };
+  }
+
+  if (desafio.estado !== "lobby") {
+    return { error: "O desafio já começou." };
+  }
+
+  largarDesafio(desafio.id);
+
+  return { ok: true };
 }
