@@ -13,6 +13,7 @@ export type Desafio = {
   duracaoDias: number;
   permiteBackfill: boolean;
   estado: EstadoDesafio;
+  criadorParticipanteId: string | null;
   criadoEm: string;
 };
 
@@ -44,6 +45,7 @@ export function criarDesafio(dados: {
     duracaoDias: dados.duracaoDias,
     permiteBackfill: dados.permiteBackfill,
     estado: "lobby",
+    criadorParticipanteId: null,
     criadoEm: new Date().toISOString(),
   };
   desafios.push(desafio);
@@ -53,4 +55,17 @@ export function criarDesafio(dados: {
 export function buscarDesafioPorCodigo(codigo: string): Desafio | undefined {
   const alvo = codigo.trim().toUpperCase();
   return desafios.find((d) => d.codigo === alvo);
+}
+
+export function buscarDesafioPorId(id: string): Desafio | undefined {
+  return desafios.find((d) => d.id === id);
+}
+
+/** Marca o criador só se ainda não tiver um — o primeiro a reivindicar
+ * com a "flag de criador" (ver components/MarcarCriadorDoDesafio) vence. */
+export function definirCriadorSeVazio(desafioId: string, participanteId: string): void {
+  const desafio = desafios.find((d) => d.id === desafioId);
+  if (desafio && desafio.criadorParticipanteId === null) {
+    desafio.criadorParticipanteId = participanteId;
+  }
 }
