@@ -46,8 +46,13 @@ Durante o desafio, a pessoa registra uma realização sempre que fez algo que va
 
 Toda realização tem: **assunto** (chip) + **texto curto** + dia + autor. Aparece no feed de todos; o app comemora (mascote + copy).
 
+**Contagem do dia:** o dash/feed conta quantas realizações a pessoa já fez **nesse dia** — é só exibição sobre o dado que já existe (dia + autor na realização), não cria tabela nova. Essa contagem decide qual selo/copy de comemoração aparece ao registrar (ver `STYLE.md`). É "escalar dentro do dia": a conta zera a cada dia novo e **não é streak entre dias** (streak continua fora de escopo, ver "Fora de escopo").
+
 ## Assuntos (chips) — lista fixa, não configurável
 💪 treino · 📚 estudo · 💼 trabalho · 🍳 comida · ✅ tarefa · ✨ outro. Usado em inegociáveis e realizações; dá cor/organização.
+
+## Reações
+Qualquer realização no feed pode receber uma reação de **um toque** de quem também está no desafio (inclusive de si mesmo). A reação é sempre a mesma — **reagir com o monstro** (o mascote) — **sem paleta de emoji pra escolher**. Mostra a contagem de reações ao lado do item no feed. Um toque = um participante por realização (não acumula clique); sem comentário associado (comentário continua fora de escopo, ver "Fora de escopo").
 
 ## O que o dash mostra
 **Cartão por pessoa (topo):**
@@ -58,7 +63,7 @@ Toda realização tem: **assunto** (chip) + **texto curto** + dia + autor. Apare
 
 **Feed (abaixo dos cartões):**
 - corrente de realizações de todos, **mais recente no topo**
-- cada item: autor + emoji do assunto + texto + horário
+- cada item: autor + emoji do assunto + texto + horário + reação (mascote) com contagem
 - **sem foto**
 - filtro no topo: **Hoje / Tudo** (default = Hoje)
 
@@ -75,22 +80,23 @@ Toda realização tem: **assunto** (chip) + **texto curto** + dia + autor. Apare
 ## Tela de encerramento
 Resumo de cada um: inegociáveis cumpridos + extras + total de realizações. Tom celebra **todos que se dedicaram**. Estilo "GAME OVER / FECHOU".
 
-## Modelo de dados (linguagem simples, ~4 tabelas)
+## Modelo de dados (linguagem simples, ~5 tabelas)
 - **desafios:** id, código do link, nome, duração em dias, permite_backfill (sim/não), estado (lobby/ativo/encerrado), data de início (quando largou), criado em.
 - **participantes:** id, desafio_id, nome, emoji, token do dispositivo (secreto), pronto (sim/não), última_atividade, criado em.
 - **inegociaveis:** id, participante_id, título, assunto, alvo (número ou nulo), criado em.
 - **realizacoes:** id, participante_id, tipo (inegociavel/extra), inegociavel_id (nulo se extra), assunto, texto, dia (data), criado em.
+- **reacoes:** id, realizacao_id, participante_id, criado em.
 
 ## Fora de escopo (de propósito — NÃO construir na v1)
 - Login / senha / email.
-- Fotos / upload / storage (prova social via WhatsApp por enquanto).
-- Notificações / push / mensagem automática no WhatsApp. *(Um botão "compartilhar meu feito" via link `wa.me` com texto pronto é fácil e fica pra v1.1.)*
+- Fotos / upload / storage (prova social via WhatsApp por enquanto). **Revisitado ao adicionar reações — mantido fora do v1.**
+- Notificações / push / mensagem automática no WhatsApp. **Revisitado ao adicionar reações — mantido fora do v1.** *(Um botão "compartilhar meu feito" via link `wa.me` com texto pronto é fácil e fica pra v1.1.)*
 - Realtime (v1.1).
-- Reações / palminhas / comentários no feed (v1.1).
+- Comentários no feed (v1.1). *(Reação de um toque com o mascote agora é v1 — ver seção "Reações". Isso não inclui comentário nem paleta de emoji.)*
 - Ranking, % de aderência, "atrasado/adiantado".
 - Tela "meus desafios" / vários desafios ativos por pessoa.
 - Editar o norte depois do LARGAR.
-- IA de texto livre · streaks / badges.
+- IA de texto livre · streaks / badges **entre dias** (a contagem de realizações **dentro do mesmo dia**, usada pro selo/copy, não é streak — ver seção "Realizações").
 
 ## Escopo v1 (o mínimo pra rodar com os amigos)
-Home (criar/entrar) · criar desafio (nome + duração em dias, presets 3/7/14/21 + toggle backfill) · link único · claim de identidade por dispositivo · lobby: definir ≥1 inegociável (título + assunto + alvo opcional) + PRONTO + LARGAR (criador) · norte congela ao largar · registrar realizações (cumprir inegociável ou extra) com assunto + texto, backfill se permitido, com desfazer · dash: cartões por pessoa (inegociáveis + bolinhas/alvo + extras + visto há X) + feed cronológico com filtro Hoje/Tudo · celebração (mascote + copy) · tela de encerramento · busca ao abrir/focar · copy e visual do `STYLE.md`.
+Home (criar/entrar) · criar desafio (nome + duração em dias, presets 3/7/14/21 + toggle backfill) · link único · claim de identidade por dispositivo · lobby: definir ≥1 inegociável (título + assunto + alvo opcional) + PRONTO + LARGAR (criador) · norte congela ao largar · registrar realizações (cumprir inegociável ou extra) com assunto + texto, backfill se permitido, com desfazer · reação de um toque (mascote) por realização, com contagem · dash: cartões por pessoa (inegociáveis + bolinhas/alvo + extras + visto há X) + feed cronológico com filtro Hoje/Tudo + selo/copy por contagem do dia · celebração (mascote + copy) · tela de encerramento · busca ao abrir/focar · copy e visual do `STYLE.md`.

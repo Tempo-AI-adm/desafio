@@ -24,7 +24,9 @@ Todo bloco é uma janelinha estilo sistema antigo: **barra de título** tinta co
 Uma janela por pessoa: nome + emoji na barra de título; corpo com a lista **"Meu inegociável"** (cada item = título + assunto + progresso em **bolinhas** `●●○` se tem alvo, ou um check "cumpri" se não tem); linha **"+N além do combinado"** (extras); rodapé discreto **"visto há X"**.
 
 ## Componente: feed
-Lista vertical, mais recente no topo. Cada item = emoji do assunto + autor + texto curto + horário. Sem foto. Filtro **Hoje / Tudo** no topo (default Hoje). Ao registrar, o mascote aparece pequeno comemorando.
+Lista vertical **compacta** — uma linha por realização, não um cartão inflado — mais recente no topo. Cada linha: emoji do assunto + autor + texto curto + horário + botão de reação (o mascote, sempre o mesmo símbolo, sem paleta de emoji) com a contagem ao lado. Sem foto. Filtro **Hoje / Tudo** no topo (default Hoje). Ao registrar, o mascote aparece pequeno comemorando.
+
+A densidade dessa lista se inspira em feeds compactos (ex: Hugging Face) — **só a compactação**, não o visual limpo/arredondado dessas referências. A linha continua na mesma linguagem dura do resto: borda preta (~2px), fundo creme, zero gradiente, zero canto arredondado.
 
 ## Bolinhas / progresso
 Cada unidade do alvo = um quadradinho/bolinha pixel. Preenchido (âmbar) = feito; vazio (`#E6D9C8`) = falta. Além do alvo, não estoura a barra — vira contador de extra.
@@ -44,6 +46,10 @@ Energia BR: interjeição curta + ânimo. Fala do **realizado**, nunca compara n
 
 **Strings-base (ajustar à vontade):**
 - **Registrou realização:** "SHOW." / "Boa." / "Mais um." / "Foi."
+- **Registrou realização, em camadas pela contagem do dia** (decide qual selo aparece — conta zera todo dia, **não é streak entre dias**):
+  - **1ª realização do dia:** "SHOW."
+  - **2ª realização do dia:** "TÁ ON FIRE."
+  - **3ª realização do dia (ou mais):** "AURA MÁXIMA."
 - **Cumpriu um inegociável:** "FECHOU esse." / "Inegociável honrado."
 - **Estourou o alvo:** "ESTOUROU. (+1)" / "Além do combinado."
 - **Vitória extra:** "Vitória anotada." / "SHOW, isso conta também."
