@@ -14,7 +14,14 @@ export type Participante = {
   criadoEm: string;
 };
 
-const participantes: Participante[] = [];
+declare global {
+  var __participantesStore: Participante[] | undefined;
+}
+
+// Mesmo motivo do globalThis em lib/desafios.ts: sobrevive às
+// recompilações do Turbopack em dev, uma `const` de módulo comum não.
+const participantes: Participante[] =
+  globalThis.__participantesStore ?? (globalThis.__participantesStore = []);
 
 export function criarParticipante(dados: {
   desafioId: string;

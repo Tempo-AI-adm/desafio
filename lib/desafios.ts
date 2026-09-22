@@ -17,7 +17,18 @@ export type Desafio = {
   criadoEm: string;
 };
 
-const desafios: Desafio[] = [];
+declare global {
+  var __desafiosStore: Desafio[] | undefined;
+}
+
+// Guardado em globalThis, e não numa `const` de módulo comum: em dev,
+// o Turbopack reavalia os módulos do lado do servidor do zero sempre
+// que algum arquivo do grafo muda (Server Actions/Route Handlers não
+// têm a preservação de estado que o Fast Refresh dá a componentes
+// React). Uma `const` normal perderia todos os desafios a cada
+// recompilação. `globalThis` é o objeto global do processo Node, fora
+// do grafo de módulos do bundler, então sobrevive a isso.
+const desafios: Desafio[] = globalThis.__desafiosStore ?? (globalThis.__desafiosStore = []);
 
 // Sem caracteres ambíguos (0/O, 1/I/L) pra ficar fácil de digitar o código.
 const ALFABETO_CODIGO = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
