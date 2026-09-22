@@ -27,7 +27,7 @@ export async function reivindicarIdentidadeAction(
   const emoji = String(formData.get("emoji") ?? "");
   const souCriador = formData.get("souCriador") === "1";
 
-  const desafio = buscarDesafioPorCodigo(codigo);
+  const desafio = await buscarDesafioPorCodigo(codigo);
   if (!desafio) {
     return { error: "Esse desafio não existe mais." };
   }
@@ -42,10 +42,10 @@ export async function reivindicarIdentidadeAction(
     return { error: "Escolhe um emoji da lista." };
   }
 
-  const participante = criarParticipante({ desafioId: desafio.id, nome, emoji });
+  const participante = await criarParticipante({ desafioId: desafio.id, nome, emoji });
 
   if (souCriador) {
-    definirCriadorSeVazio(desafio.id, participante.id);
+    await definirCriadorSeVazio(desafio.id, participante.id);
   }
 
   return {
@@ -73,12 +73,12 @@ export async function adicionarInegociavelAction(
   const assunto = String(formData.get("assunto") ?? "");
   const alvoRaw = String(formData.get("alvo") ?? "").trim();
 
-  const desafio = buscarDesafioPorCodigo(codigo);
+  const desafio = await buscarDesafioPorCodigo(codigo);
   if (!desafio) {
     return { error: "Esse desafio não existe mais." };
   }
 
-  const participante = buscarParticipantePorToken(desafio.id, token);
+  const participante = await buscarParticipantePorToken(desafio.id, token);
   if (!participante) {
     return { error: "Sua identidade não foi reconhecida. Recarrega a página." };
   }
@@ -106,7 +106,7 @@ export async function adicionarInegociavelAction(
     alvo = numero;
   }
 
-  criarInegociavel({ participanteId: participante.id, titulo, assunto, alvo });
+  await criarInegociavel({ participanteId: participante.id, titulo, assunto, alvo });
 
   return { ok: true };
 }
@@ -123,12 +123,12 @@ export async function alternarProntoAction(
   const codigo = String(formData.get("codigo") ?? "");
   const token = String(formData.get("token") ?? "");
 
-  const desafio = buscarDesafioPorCodigo(codigo);
+  const desafio = await buscarDesafioPorCodigo(codigo);
   if (!desafio) {
     return { error: "Esse desafio não existe mais." };
   }
 
-  const participante = buscarParticipantePorToken(desafio.id, token);
+  const participante = await buscarParticipantePorToken(desafio.id, token);
   if (!participante) {
     return { error: "Sua identidade não foi reconhecida. Recarrega a página." };
   }
@@ -138,11 +138,11 @@ export async function alternarProntoAction(
   }
 
   const querFicarPronto = !participante.pronto;
-  if (querFicarPronto && contarInegociaveisPorParticipante(participante.id) === 0) {
+  if (querFicarPronto && (await contarInegociaveisPorParticipante(participante.id)) === 0) {
     return { error: "Adiciona pelo menos 1 inegociável antes de marcar PRONTO." };
   }
 
-  marcarPronto(participante.id, querFicarPronto);
+  await marcarPronto(participante.id, querFicarPronto);
 
   return { ok: true };
 }
@@ -159,12 +159,12 @@ export async function largarAction(
   const codigo = String(formData.get("codigo") ?? "");
   const token = String(formData.get("token") ?? "");
 
-  const desafio = buscarDesafioPorCodigo(codigo);
+  const desafio = await buscarDesafioPorCodigo(codigo);
   if (!desafio) {
     return { error: "Esse desafio não existe mais." };
   }
 
-  const participante = buscarParticipantePorToken(desafio.id, token);
+  const participante = await buscarParticipantePorToken(desafio.id, token);
   if (!participante) {
     return { error: "Sua identidade não foi reconhecida. Recarrega a página." };
   }
@@ -180,7 +180,7 @@ export async function largarAction(
     return { error: "O desafio já começou." };
   }
 
-  largarDesafio(desafio.id);
+  await largarDesafio(desafio.id);
 
   return { ok: true };
 }

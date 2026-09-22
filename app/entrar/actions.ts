@@ -31,7 +31,7 @@ export async function entrarAction(
     return { error: "Digita o código do desafio." };
   }
 
-  const desafio = buscarDesafioPorCodigo(codigo);
+  const desafio = await buscarDesafioPorCodigo(codigo);
   if (!desafio) {
     return { error: "Não achamos esse desafio. Confere o código." };
   }

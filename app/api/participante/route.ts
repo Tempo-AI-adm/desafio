@@ -14,12 +14,12 @@ export async function GET(request: Request) {
     return NextResponse.json({ participante: null }, { status: 400 });
   }
 
-  const desafio = buscarDesafioPorCodigo(codigo);
+  const desafio = await buscarDesafioPorCodigo(codigo);
   if (!desafio) {
     return NextResponse.json({ participante: null }, { status: 404 });
   }
 
-  const participante = buscarParticipantePorToken(desafio.id, token);
+  const participante = await buscarParticipantePorToken(desafio.id, token);
   if (!participante) {
     return NextResponse.json({ participante: null }, { status: 404 });
   }

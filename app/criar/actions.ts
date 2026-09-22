@@ -24,7 +24,7 @@ export async function criarDesafioAction(
     return { error: "Duração precisa ser um número de dias válido (1 a 365)." };
   }
 
-  const desafio = criarDesafio({ nome, duracaoDias, permiteBackfill });
+  const desafio = await criarDesafio({ nome, duracaoDias, permiteBackfill });
 
   redirect(`/criar/sucesso/${desafio.codigo}`);
 }

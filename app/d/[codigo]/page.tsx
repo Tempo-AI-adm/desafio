@@ -5,7 +5,7 @@ import { DesafioClient } from "./DesafioClient";
 
 export default async function DesafioPage({ params }: PageProps<"/d/[codigo]">) {
   const { codigo } = await params;
-  const desafio = buscarDesafioPorCodigo(codigo);
+  const desafio = await buscarDesafioPorCodigo(codigo);
 
   if (!desafio) {
     notFound();

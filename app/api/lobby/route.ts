@@ -17,25 +17,28 @@ export async function GET(request: Request) {
     return NextResponse.json({ lobby: null }, { status: 400 });
   }
 
-  const desafio = buscarDesafioPorCodigo(codigo);
+  const desafio = await buscarDesafioPorCodigo(codigo);
   if (!desafio) {
     return NextResponse.json({ lobby: null }, { status: 404 });
   }
 
-  const eu = buscarParticipantePorToken(desafio.id, token);
+  const eu = await buscarParticipantePorToken(desafio.id, token);
   if (!eu) {
     return NextResponse.json({ lobby: null }, { status: 404 });
   }
 
-  const participantes = listarParticipantesPorDesafio(desafio.id).map((p) => ({
-    id: p.id,
-    nome: p.nome,
-    emoji: p.emoji,
-    pronto: p.pronto,
-    quantidadeInegociaveis: listarInegociaveisPorParticipante(p.id).length,
-  }));
+  const listaParticipantes = await listarParticipantesPorDesafio(desafio.id);
+  const participantes = await Promise.all(
+    listaParticipantes.map(async (p) => ({
+      id: p.id,
+      nome: p.nome,
+      emoji: p.emoji,
+      pronto: p.pronto,
+      quantidadeInegociaveis: (await listarInegociaveisPorParticipante(p.id)).length,
+    })),
+  );
 
-  const meusInegociaveis = listarInegociaveisPorParticipante(eu.id).map((i) => ({
+  const meusInegociaveis = (await listarInegociaveisPorParticipante(eu.id)).map((i) => ({
     id: i.id,
     titulo: i.titulo,
     assunto: i.assunto,

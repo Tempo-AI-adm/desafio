@@ -10,7 +10,7 @@ export default async function DesafioCriadoPage({
   params,
 }: PageProps<"/criar/sucesso/[codigo]">) {
   const { codigo } = await params;
-  const desafio = buscarDesafioPorCodigo(codigo);
+  const desafio = await buscarDesafioPorCodigo(codigo);
 
   if (!desafio) {
     notFound();
