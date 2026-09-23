@@ -240,7 +240,7 @@ export function AreaDoDesafio({
         <Janela titulo={nomeDesafio}>
           <p className="font-mono text-sm">O desafio dessa sala já encerrou.</p>
         </Janela>
-        <AcoesDoDesafio codigo={codigo} />
+        <AcoesDoDesafio codigo={codigo} nomeSala={nomeDesafio} />
       </main>
     );
   }
@@ -405,7 +405,7 @@ export function AreaDoDesafio({
           reagirErro={reagirState.error}
         />
 
-        <AcoesDoDesafio codigo={codigo} />
+        <AcoesDoDesafio codigo={codigo} nomeSala={nomeDesafio} />
 
         {selo ? (
           <div
@@ -621,7 +621,7 @@ export function AreaDoDesafio({
         </Janela>
       ) : null}
 
-      <AcoesDoDesafio codigo={codigo} />
+      <AcoesDoDesafio codigo={codigo} nomeSala={nomeDesafio} />
     </main>
   );
 }

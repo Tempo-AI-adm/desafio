@@ -99,3 +99,8 @@ export function labelRealizacoesHoje(contagemHoje: number): string {
 export function labelExtrasRegistrados(quantidade: number): string {
   return quantidade === 1 ? "+1 extra" : `+${quantidade} extras`;
 }
+
+/** Mensagem pronta do botão "Compartilhar sala" (abre o WhatsApp). */
+export function mensagemCompartilharSala(nomeSala: string, link: string): string {
+  return `Bora pro desafio ${nomeSala}! Entra aqui: ${link}`;
+}
