@@ -8,9 +8,14 @@ import type { EstadoDesafio } from "@/lib/desafios";
 import { lerDesafiosLocais, type DesafioLocal } from "@/lib/identidade-local";
 
 /**
- * "Seus desafios" da Home: lê a lista local (3 mais recentes, ver
- * lib/identidade-local.ts) e busca o estado atual de cada um no
+ * "Suas salas" da Home: lê a lista local (3 mais recentes, ver
+ * lib/identidade-local.ts) e busca o estado atual de cada uma no
  * servidor. Lista vazia = não mostra nada.
+ *
+ * Relê não só ao montar: também ao voltar pra aba (foco/visibilidade),
+ * quando o navegador restaura a página da memória (pageshow) e quando
+ * outra aba mexe na lista (storage). Senão uma Home que já estava
+ * aberta não mostra a sala que acabou de ser criada em outra aba.
  */
 export function SeusDesafios() {
   const [lista, setLista] = useState<DesafioLocal[]>([]);
@@ -39,8 +44,24 @@ export function SeusDesafios() {
     }
 
     void carregar();
+
+    function recarregar() {
+      void carregar();
+    }
+    function aoMudarVisibilidade() {
+      if (document.visibilityState === "visible") void carregar();
+    }
+    window.addEventListener("focus", recarregar);
+    window.addEventListener("pageshow", recarregar);
+    window.addEventListener("storage", recarregar);
+    document.addEventListener("visibilitychange", aoMudarVisibilidade);
+
     return () => {
       cancelado = true;
+      window.removeEventListener("focus", recarregar);
+      window.removeEventListener("pageshow", recarregar);
+      window.removeEventListener("storage", recarregar);
+      document.removeEventListener("visibilitychange", aoMudarVisibilidade);
     };
   }, []);
 
