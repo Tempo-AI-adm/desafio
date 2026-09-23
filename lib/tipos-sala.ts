@@ -46,6 +46,8 @@ export type ItemFeed = {
 
 export type DadosSala = {
   estado: EstadoDesafio;
+  salaNome: string;
+  duracaoDias: number;
   /** "hoje" (YYYY-MM-DD, fuso de Brasília) segundo o servidor */
   hoje: string;
   meuId: string;

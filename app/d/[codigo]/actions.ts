@@ -14,12 +14,14 @@ import {
   criarInegociavel,
 } from "@/lib/inegociaveis";
 import {
+  apagarMarcacaoRecente,
   buscarRealizacaoPorId,
   contarRealizacoesNoDia,
   criarRealizacao,
   hojeISO,
 } from "@/lib/realizacoes";
 import { criarReacao } from "@/lib/reacoes";
+import { LIMITE_DESFAZER_SERVIDOR_MS } from "@/lib/tempo";
 import { EMOJIS_IDENTIDADE } from "@/lib/identidade-constants";
 import { ASSUNTOS } from "@/lib/assuntos-constants";
 
@@ -207,6 +209,9 @@ export type RegistrarInegociavelState = {
   ok?: boolean;
   contagemHoje?: number;
   carimbo?: number;
+  /** o que acabou de ser criado, pra janela de desfazer na tela */
+  realizacaoId?: string;
+  inegociavelId?: string;
 };
 
 // Caminho de 1 toque: marca +1 num inegociável que a pessoa já
@@ -241,7 +246,7 @@ export async function registrarInegociavelAction(
   }
 
   const dia = hojeISO();
-  await criarRealizacao({
+  const realizacao = await criarRealizacao({
     participanteId: participante.id,
     tipo: "inegociavel",
     inegociavelId: inegociavel.id,
@@ -253,7 +258,13 @@ export async function registrarInegociavelAction(
 
   const contagemHoje = await contarRealizacoesNoDia(participante.id, dia);
 
-  return { ok: true, contagemHoje, carimbo: Date.now() };
+  return {
+    ok: true,
+    contagemHoje,
+    carimbo: Date.now(),
+    realizacaoId: realizacao.id,
+    inegociavelId: inegociavel.id,
+  };
 }
 
 export type RegistrarExtraState = {
@@ -358,4 +369,47 @@ export async function reagirAction(
   await tocarUltimaAtividade(participante.id);
 
   return { ok: true, carimbo: Date.now() };
+}
+
+export type DesfazerState = {
+  error?: string;
+  ok?: boolean;
+  desfeitoId?: string;
+  contagemHoje?: number;
+  carimbo?: number;
+};
+
+// Desfazer a marcação de inegociável que acabou de ser feita (tocar de
+// novo dentro da janela de ~5s). O servidor só apaga se for da própria
+// pessoa e ainda estiver dentro do limite; passou disso, não desfaz
+// nada (a tela já trata o próximo toque como registro novo).
+export async function desfazerRegistroAction(
+  _prevState: DesfazerState,
+  formData: FormData,
+): Promise<DesfazerState> {
+  const codigo = String(formData.get("codigo") ?? "");
+  const token = String(formData.get("token") ?? "");
+  const realizacaoId = String(formData.get("realizacaoId") ?? "");
+
+  const desafio = await buscarDesafioPorCodigo(codigo);
+  if (!desafio) {
+    return { error: "Essa sala não existe mais." };
+  }
+
+  const participante = await buscarParticipantePorToken(desafio.id, token);
+  if (!participante) {
+    return { error: "Sua identidade não foi reconhecida. Recarrega a página." };
+  }
+
+  const apagou = await apagarMarcacaoRecente({
+    realizacaoId,
+    participanteId: participante.id,
+    criadaDepoisDe: new Date(Date.now() - LIMITE_DESFAZER_SERVIDOR_MS).toISOString(),
+  });
+  if (!apagou) {
+    return { error: "Passou o tempo de desfazer. Esse registro ficou valendo." };
+  }
+
+  const contagemHoje = await contarRealizacoesNoDia(participante.id, hojeISO());
+  return { ok: true, desfeitoId: realizacaoId, contagemHoje, carimbo: Date.now() };
 }

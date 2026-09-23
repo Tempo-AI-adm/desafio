@@ -62,17 +62,17 @@ Toda realização tem: **assunto** (chip) + **texto curto** + dia + autor. Apare
 Qualquer realização no feed pode receber uma reação de **um toque** de quem também está no desafio (inclusive de si mesmo). A reação é sempre a mesma, **reagir com o monstro** (o mascote), **sem paleta de emoji pra escolher**. Mostra a contagem de reações ao lado do item no feed. Um toque = um participante por realização (não acumula clique); sem comentário associado (comentário continua fora de escopo, ver "Fora de escopo").
 
 ## O que o dash mostra
-**Cartão por pessoa (topo):**
-- nome + emoji
-- **Meu inegociável:** a lista de inegociáveis, cada um com seu progresso (bolinhas `●●○` se tem alvo; check "cumpri" se não tem)
-- **extras:** contador ("+3 além do combinado")
-- **visto há X** (última atividade)
-- selo **"ativo hoje"** quando a última atividade caiu no dia de hoje (fuso de Brasília)
-- **foguinho** ao lado do nome pela contagem do dia; tocar nele mostra uma legenda curta ("3+ realizações hoje") que some sozinha
+Tela da sala rolando, de cima pra baixo (ação rápida sempre à mão, feed com o espaço principal):
+
+**1. Cabeçalho:** nome da sala (fonte pixel) + duração ("7 dias") na barra; embaixo, a identidade da própria pessoa em destaque (emoji + nome), o **foguinho** do dia e um resumo curto ("3 realizações hoje").
+
+**2. Suas Missões (fixo no topo ao rolar, compacto):** os inegociáveis da pessoa como botões pequenos de 1 toque, cada um com o progresso (bolinhas `●●○` se tem alvo; check "cumpri" se não tem), um chip "+N extras" e o botão pequeno **"+ Vitória extra"** (abre o formulário ali mesmo). As vitórias extras em si aparecem no feed.
+
+**3. Faixa "Na sala":** só os **outros** participantes, numa faixa fina que rola na horizontal: emoji + nome + bolinha verde de **"ativo hoje"** (última atividade no dia de hoje, fuso de Brasília) + **foguinho** se aplicável. Sem progresso detalhado dos outros aqui (é secundário). Tocar no foguinho mostra uma legenda curta ("3+ realizações hoje") que some sozinha.
 
 **Última atividade:** atualizada em toda visita reconhecida à sala (abrir a página ou focar a aba), ao registrar e ao reagir. Quem só entrou pra acompanhar os amigos também conta como "ativo hoje".
 
-**Feed (abaixo dos cartões):**
+**4. Feed (o resto da tela, conteúdo principal):**
 - corrente de realizações de todos, **mais recente no topo**
 - cada item: autor + emoji do assunto + texto + horário + reação (mascote) com contagem
 - **sem foto**
@@ -88,7 +88,7 @@ Qualquer realização no feed pode receber uma reação de **um toque** de quem 
 - Registrar realização = escolher tipo (cumprir um inegociável ou extra) + assunto + texto curto.
 - Marcar um inegociável de novo enche a próxima bolinha; além do alvo vira extra.
 - **Backfill** é opção do **desafio**, decidida pelo criador na criação ("Vale registrar em dias anteriores? Sim/Não"). Sim = qualquer dia até hoje; Não = só hoje. **Nunca** dia futuro.
-- Desfazer um registro é possível (gente erra).
+- **Desfazer (janela curta):** depois de tocar num inegociável, aparece por ~5s "Feito. Toque de novo para desfazer.". Tocar de novo no mesmo inegociável dentro dessa janela apaga o registro do banco (a contagem do dia, o selo e o foguinho voltam junto). Passou a janela, qualquer toque **sempre soma** um registro novo; nunca desfaz nada depois (o servidor recusa desfazer registro com mais de 10s). Pra ninguém ver um registro desfeito a tempo, a marcação de inegociável de outra pessoa só aparece pros outros depois de ~7s.
 
 ## Tela de encerramento
 Resumo de cada um: inegociáveis cumpridos + extras + total de realizações. Tom celebra **todos que se dedicaram**. Estilo "GAME OVER / FECHOU".

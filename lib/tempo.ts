@@ -31,3 +31,16 @@ export function diaCurto(diaISO: string): string {
   const [, mes, dia] = diaISO.split("-");
   return `${dia}/${mes}`;
 }
+
+/** Janela de "toque de novo pra desfazer" depois de marcar um
+ * inegociável (Parte B do PRD "Check / registrar"). */
+export const JANELA_DESFAZER_MS = 5000;
+
+/** O servidor aceita o desfazer com folga (rede lenta, toque aos 4,9s).
+ * Passou disso, nunca desfaz: vira um registro novo. */
+export const LIMITE_DESFAZER_SERVIDOR_MS = 10000;
+
+/** Marcação de inegociável mais nova que isso não aparece pros OUTROS
+ * participantes (feed/faixa), pra quem desfez a tempo nunca ter o
+ * registro visto por ninguém. */
+export const ESCONDER_DOS_OUTROS_MS = JANELA_DESFAZER_MS + 2000;

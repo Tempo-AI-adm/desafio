@@ -114,3 +114,25 @@ export async function buscarRealizacaoPorId(id: string): Promise<Realizacao | un
   if (error) throw new Error(`Erro ao buscar realização por id: ${error.message}`);
   return data ? paraRealizacao(data as LinhaRealizacao) : undefined;
 }
+
+/** Desfazer: apaga a marcação de inegociável, mas só se for dessa
+ * pessoa e ainda estiver dentro do limite de tempo (a regra fica aqui
+ * no WHERE, não dá pra desfazer registro antigo nem de outra pessoa).
+ * Devolve se apagou. Reações da linha somem junto (on delete cascade). */
+export async function apagarMarcacaoRecente(dados: {
+  realizacaoId: string;
+  participanteId: string;
+  criadaDepoisDe: string;
+}): Promise<boolean> {
+  const { data, error } = await supabase
+    .from("realizacoes")
+    .delete()
+    .eq("id", dados.realizacaoId)
+    .eq("participante_id", dados.participanteId)
+    .eq("tipo", "inegociavel")
+    .gte("criado_em", dados.criadaDepoisDe)
+    .select("id");
+
+  if (error) throw new Error(`Erro ao desfazer registro: ${error.message}`);
+  return (data ?? []).length > 0;
+}

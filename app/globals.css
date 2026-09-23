@@ -48,3 +48,14 @@ body {
     transform: translateY(-4px);
   }
 }
+
+/* Barrinha que encolhe durante a janela de desfazer (~5s) depois de
+   marcar um inegociável. Duração vem do style inline no componente. */
+@keyframes janela-desfazer {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}

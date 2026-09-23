@@ -7,7 +7,7 @@ import {
 } from "@/lib/participantes";
 import { listarInegociaveisPorParticipantes } from "@/lib/inegociaveis";
 import { listarRealizacoesDaSala } from "@/lib/realizacoes";
-import { hojeISO } from "@/lib/tempo";
+import { ESCONDER_DOS_OUTROS_MS, hojeISO } from "@/lib/tempo";
 import type { DadosSala, InegociavelResumo, ParticipanteSala } from "@/lib/tipos-sala";
 
 // Leitura do estado atual da sala pra quem já tem identidade: estado,
@@ -38,12 +38,21 @@ export async function GET(request: Request) {
 
   const listaParticipantes = await listarParticipantesPorDesafio(desafio.id);
   const ids = listaParticipantes.map((p) => p.id);
-  const [inegociaveis, realizacoes] = await Promise.all([
+  const [inegociaveis, todasRealizacoes] = await Promise.all([
     listarInegociaveisPorParticipantes(ids),
     listarRealizacoesDaSala(ids),
   ]);
 
   const agora = Date.now();
+  // Marcação de inegociável dos OUTROS feita há poucos segundos ainda
+  // pode ser desfeita (janela de ~5s): esconde até passar, pra nunca
+  // aparecer pra ninguém um registro que foi desfeito a tempo.
+  const realizacoes = todasRealizacoes.filter(
+    (r) =>
+      r.participanteId === eu.id ||
+      r.tipo !== "inegociavel" ||
+      agora - Date.parse(r.criadoEm) > ESCONDER_DOS_OUTROS_MS,
+  );
   const hoje = hojeISO();
 
   function inegociaveisDe(participanteId: string): InegociavelResumo[] {
@@ -84,6 +93,8 @@ export async function GET(request: Request) {
 
   const lobby: DadosSala = {
     estado: desafio.estado,
+    salaNome: desafio.nome,
+    duracaoDias: desafio.duracaoDias,
     hoje,
     meuId: eu.id,
     meuNome: eu.nome,

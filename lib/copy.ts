@@ -71,14 +71,31 @@ export function labelVistoHa(minutos: number): string {
   return `visto há ${Math.floor(horas / 24)}d`;
 }
 
-/** Contador de extras do cartão (vitórias extras + marcações além do alvo). */
-export function labelAlemDoCombinado(extras: number): string {
-  return `+${extras} além do combinado`;
-}
-
 export type FiltroFeed = "hoje" | "tudo";
 
 export const FILTRO_FEED_LABEL: Record<FiltroFeed, string> = {
   hoje: "Hoje",
   tudo: "Tudo",
 };
+
+/** Aviso logo depois de marcar um inegociável (janela de desfazer). */
+export const LABEL_AVISO_DESFAZER = "Feito. Toque de novo para desfazer.";
+
+/** Selo quando o desfazer deu certo. */
+export const LABEL_DESFEITO = "Desfeito.";
+
+/** "7 dias" / "1 dia", no cabeçalho da sala. */
+export function labelDuracao(dias: number): string {
+  return dias === 1 ? "1 dia" : `${dias} dias`;
+}
+
+/** Resumo curto no cabeçalho, pela contagem do dia. */
+export function labelRealizacoesHoje(contagemHoje: number): string {
+  if (contagemHoje === 0) return "Nada registrado hoje ainda";
+  return contagemHoje === 1 ? "1 realização hoje" : `${contagemHoje} realizações hoje`;
+}
+
+/** Chip em "Suas Missões" com quantas vitórias extras a pessoa já tem. */
+export function labelExtrasRegistrados(quantidade: number): string {
+  return quantidade === 1 ? "+1 extra" : `+${quantidade} extras`;
+}

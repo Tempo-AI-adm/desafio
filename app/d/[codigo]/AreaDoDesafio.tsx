@@ -2,27 +2,31 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { AcoesDoDesafio } from "@/components/AcoesDoDesafio";
-import { CartaoPessoa } from "@/components/CartaoPessoa";
+import { CabecalhoSala } from "@/components/CabecalhoSala";
+import { FaixaParticipantes } from "@/components/FaixaParticipantes";
 import { FeedDaSala } from "@/components/FeedDaSala";
-import { Fogo } from "@/components/Fogo";
 import { Janela } from "@/components/Janela";
 import { ProgressoInegociavel } from "@/components/ProgressoInegociavel";
 import { ASSUNTOS, emojiDoAssunto } from "@/lib/assuntos-constants";
 import {
-  ESTADO_LABEL,
-  TIPO_REALIZACAO_CHIP,
+  LABEL_AVISO_DESFAZER,
+  LABEL_DESFEITO,
   labelComemoracaoPorContagemDoDia,
+  labelExtrasRegistrados,
   labelPronto,
 } from "@/lib/copy";
+import { JANELA_DESFAZER_MS } from "@/lib/tempo";
 import {
   adicionarInegociavelAction,
   alternarProntoAction,
+  desfazerRegistroAction,
   largarAction,
   registrarExtraAction,
   reagirAction,
   registrarInegociavelAction,
   type AdicionarInegociavelState,
   type AlternarProntoState,
+  type DesfazerState,
   type LargarState,
   type RegistrarExtraState,
   type ReagirState,
@@ -37,6 +41,7 @@ const ESTADO_INICIAL_LARGAR: LargarState = {};
 const ESTADO_INICIAL_REGISTRAR_INEGOCIAVEL: RegistrarInegociavelState = {};
 const ESTADO_INICIAL_REGISTRAR_EXTRA: RegistrarExtraState = {};
 const ESTADO_INICIAL_REAGIR: ReagirState = {};
+const ESTADO_INICIAL_DESFAZER: DesfazerState = {};
 
 function assuntoBotaoClasses(ativo: boolean) {
   return `flex items-center gap-1 border-2 border-ink px-2 py-1 font-mono text-xs font-bold transition-transform active:translate-x-[1px] active:translate-y-[1px] ${
@@ -44,21 +49,31 @@ function assuntoBotaoClasses(ativo: boolean) {
   }`;
 }
 
-// Deriva o texto de comemoração a mostrar sem precisar de useEffect +
-// setState (evita o problema de "setState dentro de efeito", mesmo
-// motivo do padrão já usado no resto do arquivo): compara o carimbo
-// de tempo das duas últimas ações e usa a mais recente. `key` no
-// elemento reinicia a animação CSS de sumir a cada nova realização.
-function comemoracaoMaisRecente(
-  a: { contagemHoje?: number; carimbo?: number },
-  b: { contagemHoje?: number; carimbo?: number },
+// Deriva o selo a mostrar (SHOW./TÁ ON FIRE./AURA MÁXIMA. ou
+// "Desfeito.") sem useEffect + setState: pega a ação mais recente pelo
+// carimbo de tempo. `key` no elemento reinicia a animação de sumir.
+function seloMaisRecente(
+  inegociavel: { contagemHoje?: number; carimbo?: number },
+  extra: { contagemHoje?: number; carimbo?: number },
+  desfazer: { ok?: boolean; carimbo?: number },
 ): { texto: string; carimbo: number } | null {
-  const maisRecente = (a.carimbo ?? 0) >= (b.carimbo ?? 0) ? a : b;
-  if (!maisRecente.carimbo || maisRecente.contagemHoje === undefined) return null;
-  return {
-    texto: labelComemoracaoPorContagemDoDia(maisRecente.contagemHoje),
-    carimbo: maisRecente.carimbo,
-  };
+  const candidatos = [
+    {
+      carimbo: inegociavel.carimbo ?? 0,
+      texto:
+        inegociavel.contagemHoje !== undefined
+          ? labelComemoracaoPorContagemDoDia(inegociavel.contagemHoje)
+          : null,
+    },
+    {
+      carimbo: extra.carimbo ?? 0,
+      texto: extra.contagemHoje !== undefined ? labelComemoracaoPorContagemDoDia(extra.contagemHoje) : null,
+    },
+    { carimbo: desfazer.carimbo ?? 0, texto: desfazer.ok ? LABEL_DESFEITO : null },
+  ];
+  const maisRecente = candidatos.reduce((a, b) => (b.carimbo > a.carimbo ? b : a));
+  if (!maisRecente.carimbo || !maisRecente.texto) return null;
+  return { texto: maisRecente.texto, carimbo: maisRecente.carimbo };
 }
 
 export function AreaDoDesafio({
@@ -101,7 +116,44 @@ export function AreaDoDesafio({
     ESTADO_INICIAL_REAGIR,
   );
 
-  const comemoracao = comemoracaoMaisRecente(registrarInegociavelState, registrarExtraState);
+  const [desfazerState, desfazerActionFn, desfazerPending] = useActionState(
+    desfazerRegistroAction,
+    ESTADO_INICIAL_DESFAZER,
+  );
+
+  const selo = seloMaisRecente(registrarInegociavelState, registrarExtraState, desfazerState);
+
+  // Janela de desfazer: aberta por JANELA_DESFAZER_MS depois de marcar
+  // um inegociável. O timer só fecha a janela (setState no callback do
+  // setTimeout, não no corpo do efeito). Passou o tempo, o próximo
+  // toque é sempre um registro novo.
+  const [janelaFechadaCarimbo, setJanelaFechadaCarimbo] = useState<number | null>(null);
+  useEffect(() => {
+    const carimbo = registrarInegociavelState.carimbo;
+    if (!carimbo) return;
+    const timer = setTimeout(() => setJanelaFechadaCarimbo(carimbo), JANELA_DESFAZER_MS);
+    return () => clearTimeout(timer);
+  }, [registrarInegociavelState.carimbo]);
+
+  const janelaDesfazer =
+    registrarInegociavelState.ok &&
+    registrarInegociavelState.carimbo &&
+    registrarInegociavelState.realizacaoId &&
+    registrarInegociavelState.inegociavelId &&
+    janelaFechadaCarimbo !== registrarInegociavelState.carimbo &&
+    desfazerState.desfeitoId !== registrarInegociavelState.realizacaoId
+      ? {
+          carimbo: registrarInegociavelState.carimbo,
+          realizacaoId: registrarInegociavelState.realizacaoId,
+          inegociavelId: registrarInegociavelState.inegociavelId,
+        }
+      : null;
+
+  // Form de vitória extra: fecha sozinho depois de salvar com sucesso
+  // (o carimbo da action muda), sem setState em efeito.
+  const [carimboAoAbrirExtra, setCarimboAoAbrirExtra] = useState(0);
+  const formExtraAberto =
+    mostrarFormExtra && (registrarExtraState.carimbo ?? 0) === carimboAoAbrirExtra;
 
   // Busca os dados do lobby: ao montar, ao focar a aba (sem realtime,
   // regra do PRD) e de novo sempre que uma ação (adicionar
@@ -161,6 +213,7 @@ export function AreaDoDesafio({
     registrarInegociavelState,
     registrarExtraState,
     reagirState,
+    desfazerState,
   ]);
 
   if (carregando) {
@@ -193,103 +246,107 @@ export function AreaDoDesafio({
   }
 
   if (dados.estado === "ativo") {
+    const outros = dados.participantes.filter((p) => p.id !== dados.meuId);
     return (
-      <main className="mx-auto flex min-h-dvh max-w-sm flex-col gap-5 px-4 py-8">
-        <header className="space-y-1 text-center">
-          <p className="font-press text-base leading-relaxed">COMEÇOU.</p>
-          <p className="font-mono text-xs text-ink/60">{ESTADO_LABEL[dados.estado]}</p>
-          <p className="flex items-center justify-center gap-2 pt-2 font-mono text-sm font-bold">
-            <span>
-              {dados.meuEmoji} {dados.meuNome}
-            </span>
-            <Fogo contagemHoje={dados.minhaContagemHoje} />
-          </p>
-        </header>
+      <main className="mx-auto flex min-h-dvh max-w-sm flex-col gap-4 px-4 pb-8 pt-4">
+        <CabecalhoSala
+          salaNome={dados.salaNome}
+          duracaoDias={dados.duracaoDias}
+          emoji={dados.meuEmoji}
+          nome={dados.meuNome}
+          contagemHoje={dados.minhaContagemHoje}
+        />
 
-        {comemoracao ? (
-          <div
-            key={comemoracao.carimbo}
-            className="animate-[comemoracao-sumir_2.8s_ease-out_forwards] border-2 border-ink bg-amber px-4 py-3 text-center font-press text-xs leading-relaxed shadow-hard"
-          >
-            {comemoracao.texto}
-          </div>
-        ) : null}
-
-        <Janela titulo="Suas Missões">
-          <div className="flex flex-col gap-3">
-            <p className="font-mono text-xs text-ink/60">Toca num inegociável pra marcar +1.</p>
-
-            <ul className="flex flex-col gap-2">
-              {dados.meusInegociaveis.map((i) => {
-                const assunto = ASSUNTOS.find((a) => a.valor === i.assunto);
-                return (
-                  <li key={i.id}>
-                    <form action={registrarInegociavelActionFn}>
-                      <input type="hidden" name="codigo" value={codigo} />
-                      <input type="hidden" name="token" value={token} />
-                      <input type="hidden" name="inegociavelId" value={i.id} />
-                      <button
-                        type="submit"
-                        disabled={registrarInegociavelPending}
-                        className="flex w-full items-center justify-between gap-2 border-2 border-ink bg-cream px-3 py-2 font-mono text-sm shadow-hard-sm transition-transform active:translate-x-[1px] active:translate-y-[1px] active:shadow-none disabled:opacity-60"
-                      >
-                        <span className="text-left">
-                          {assunto?.emoji ?? "✨"} {i.titulo}
-                        </span>
-                        <ProgressoInegociavel alvo={i.alvo} progresso={i.progresso} />
-                      </button>
-                    </form>
-                  </li>
-                );
-              })}
-              {dados.meusExtras.map((r) => (
-                <li
-                  key={r.id}
-                  className="flex w-full items-center justify-between gap-2 border-2 border-ink bg-cream px-3 py-2 font-mono text-sm shadow-hard-sm"
+        {/* Suas Missões: fixo no topo ao rolar, compacto. Ação rápida
+            sempre à mão; o feed embaixo é o conteúdo principal. */}
+        <div className="sticky top-0 z-20 -mx-4 bg-cream px-4 pb-2 pt-2">
+          <Janela
+            compacto
+            titulo={
+              <>
+                <span>Suas Missões</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (formExtraAberto) {
+                      setMostrarFormExtra(false);
+                    } else {
+                      setCarimboAoAbrirExtra(registrarExtraState.carimbo ?? 0);
+                      setMostrarFormExtra(true);
+                    }
+                  }}
+                  className="bg-cyan px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-ink transition-transform active:translate-x-[1px] active:translate-y-[1px]"
                 >
-                  <span className="text-left">
-                    {emojiDoAssunto(r.assunto)} {r.texto}
-                  </span>
-                  <span className="shrink-0 border border-ink px-1 text-[10px] font-bold uppercase tracking-widest text-ink/70">
-                    {TIPO_REALIZACAO_CHIP.extra}
-                  </span>
-                </li>
-              ))}
-            </ul>
+                  {formExtraAberto ? "Fechar" : "+ Vitória extra"}
+                </button>
+              </>
+            }
+          >
+            <div className="flex flex-col gap-2">
+              <ul className="flex flex-wrap gap-2">
+                {dados.meusInegociaveis.map((i) => {
+                  const naJanela = janelaDesfazer?.inegociavelId === i.id;
+                  return (
+                    <li key={i.id}>
+                      <form action={naJanela ? desfazerActionFn : registrarInegociavelActionFn}>
+                        <input type="hidden" name="codigo" value={codigo} />
+                        <input type="hidden" name="token" value={token} />
+                        <input type="hidden" name="inegociavelId" value={i.id} />
+                        {naJanela ? (
+                          <input type="hidden" name="realizacaoId" value={janelaDesfazer.realizacaoId} />
+                        ) : null}
+                        <button
+                          type="submit"
+                          disabled={registrarInegociavelPending || desfazerPending}
+                          className={`flex items-center gap-1.5 border-2 border-ink px-2 py-1.5 font-mono text-xs shadow-hard-sm transition-transform active:translate-x-[1px] active:translate-y-[1px] active:shadow-none disabled:opacity-60 ${
+                            naJanela ? "bg-amber" : "bg-cream"
+                          }`}
+                        >
+                          <span className="text-left">
+                            {emojiDoAssunto(i.assunto)} {i.titulo}
+                          </span>
+                          <ProgressoInegociavel alvo={i.alvo} progresso={i.progresso} />
+                        </button>
+                      </form>
+                    </li>
+                  );
+                })}
+                {dados.meusExtras.length > 0 ? (
+                  <li className="flex items-center border-2 border-ink bg-empty/40 px-2 py-1.5 font-mono text-xs font-bold">
+                    {labelExtrasRegistrados(dados.meusExtras.length)}
+                  </li>
+                ) : null}
+              </ul>
 
-            {registrarInegociavelState.error ? (
-              <p className="border-2 border-coral bg-cream px-3 py-2 font-mono text-sm text-coral">
-                {registrarInegociavelState.error}
-              </p>
-            ) : null}
-          </div>
-        </Janela>
+              {janelaDesfazer ? (
+                <div
+                  key={janelaDesfazer.carimbo}
+                  className="relative overflow-hidden border-2 border-ink bg-amber px-2 py-1 font-mono text-xs font-bold"
+                >
+                  {LABEL_AVISO_DESFAZER}
+                  <span
+                    aria-hidden
+                    className="absolute bottom-0 left-0 h-1 w-full origin-left bg-ink"
+                    style={{ animation: `janela-desfazer ${JANELA_DESFAZER_MS}ms linear forwards` }}
+                  />
+                </div>
+              ) : (
+                <p className="font-mono text-[11px] text-ink/60">Toca numa missão pra marcar +1.</p>
+              )}
 
-        <Janela titulo="Vitória extra">
-          <div className="flex flex-col gap-3">
-            {!mostrarFormExtra ? (
-              <button
-                type="button"
-                onClick={() => setMostrarFormExtra(true)}
-                className="border-2 border-ink bg-cyan px-4 py-3 font-mono text-sm font-bold uppercase tracking-widest shadow-hard transition-transform active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
-              >
-                Registrar vitória extra
-              </button>
-            ) : (
-              <form
-                key={registrarExtraState.carimbo ?? "novo"}
-                action={registrarExtraActionFn}
-                className="flex flex-col gap-3"
-              >
-                <input type="hidden" name="codigo" value={codigo} />
-                <input type="hidden" name="token" value={token} />
-                <input type="hidden" name="assunto" value={assuntoExtraSelecionado} />
+              {registrarInegociavelState.error || desfazerState.error ? (
+                <p className="border-2 border-coral bg-cream px-2 py-1 font-mono text-xs text-coral">
+                  {desfazerState.error ?? registrarInegociavelState.error}
+                </p>
+              ) : null}
 
-                <div className="flex flex-col gap-2">
-                  <span className="font-mono text-xs font-bold uppercase tracking-widest">
-                    Assunto
-                  </span>
-                  <div className="flex flex-wrap gap-2">
+              {formExtraAberto ? (
+                <form action={registrarExtraActionFn} className="flex flex-col gap-2 border-t-2 border-empty pt-2">
+                  <input type="hidden" name="codigo" value={codigo} />
+                  <input type="hidden" name="token" value={token} />
+                  <input type="hidden" name="assunto" value={assuntoExtraSelecionado} />
+
+                  <div className="flex flex-wrap gap-1.5">
                     {ASSUNTOS.map((a) => (
                       <button
                         key={a.valor}
@@ -302,57 +359,40 @@ export function AreaDoDesafio({
                       </button>
                     ))}
                   </div>
-                </div>
 
-                <div className="flex flex-col gap-2">
-                  <label
-                    htmlFor="texto"
-                    className="font-mono text-xs font-bold uppercase tracking-widest"
-                  >
-                    O que você fez?
-                  </label>
-                  <input
-                    id="texto"
-                    name="texto"
-                    type="text"
-                    required
-                    maxLength={140}
-                    placeholder="Ex: voltei pro jiu-jitsu"
-                    className="w-full border-2 border-ink bg-cream px-3 py-2 font-mono text-sm placeholder:text-ink/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
-                  />
-                </div>
+                  <div className="flex gap-2">
+                    <input
+                      name="texto"
+                      type="text"
+                      required
+                      maxLength={140}
+                      aria-label="O que você fez?"
+                      placeholder="O que você fez? Ex: voltei pro jiu-jitsu"
+                      className="min-w-0 flex-1 border-2 border-ink bg-cream px-2 py-1.5 font-mono text-sm placeholder:text-ink/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
+                    />
+                    <button
+                      type="submit"
+                      disabled={registrarExtraPending}
+                      className="shrink-0 border-2 border-ink bg-cyan px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-widest shadow-hard-sm transition-transform active:translate-x-[1px] active:translate-y-[1px] active:shadow-none disabled:opacity-60"
+                    >
+                      {registrarExtraPending ? "..." : "Salvar"}
+                    </button>
+                  </div>
 
-                {registrarExtraState.error ? (
-                  <p className="border-2 border-coral bg-cream px-3 py-2 font-mono text-sm text-coral">
-                    {registrarExtraState.error}
-                  </p>
-                ) : null}
+                  {registrarExtraState.error ? (
+                    <p className="border-2 border-coral bg-cream px-2 py-1 font-mono text-xs text-coral">
+                      {registrarExtraState.error}
+                    </p>
+                  ) : null}
+                </form>
+              ) : null}
+            </div>
+          </Janela>
+        </div>
 
-                <div className="flex gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setMostrarFormExtra(false)}
-                    className="flex-1 border-2 border-ink bg-cream px-4 py-3 font-mono text-sm font-bold uppercase tracking-widest shadow-hard transition-transform active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
-                  >
-                    Cancelar
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={registrarExtraPending}
-                    className="flex-1 border-2 border-ink bg-cyan px-4 py-3 font-mono text-sm font-bold uppercase tracking-widest shadow-hard transition-transform active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:opacity-60"
-                  >
-                    {registrarExtraPending ? "Salvando..." : "Salvar"}
-                  </button>
-                </div>
-              </form>
-            )}
-          </div>
-        </Janela>
-
-        <section className="flex flex-col gap-4" aria-label="Quem tá na sala">
-          {dados.participantes.map((p) => (
-            <CartaoPessoa key={p.id} pessoa={p} souEu={p.id === dados.meuId} />
-          ))}
+        <section className="flex flex-col gap-1.5">
+          <h2 className="font-mono text-[10px] font-bold uppercase tracking-widest text-ink/60">Na sala</h2>
+          <FaixaParticipantes outros={outros} />
         </section>
 
         <FeedDaSala
@@ -366,6 +406,15 @@ export function AreaDoDesafio({
         />
 
         <AcoesDoDesafio codigo={codigo} />
+
+        {selo ? (
+          <div
+            key={selo.carimbo}
+            className="pointer-events-none fixed inset-x-0 bottom-6 z-30 mx-auto w-fit animate-[comemoracao-sumir_2.8s_ease-out_forwards] border-2 border-ink bg-amber px-4 py-3 text-center font-press text-xs leading-relaxed shadow-hard"
+          >
+            {selo.texto}
+          </div>
+        ) : null}
       </main>
     );
   }
@@ -386,9 +435,9 @@ export function AreaDoDesafio({
               Defina seu mínimo inegociável para o desafio.
             </p>
             <p className="font-mono text-sm text-ink/70">
-              O que você não quer ter deixado de fazer quando ele acabar. O que
-              tiver claro na sua cabeça agora que fará o período do desafio ter
-              sido proveitoso. Você poderá adicionar novas realizações.
+              Para começar, defina uma ou mais missões que você queira realizar
+              no período do desafio. Depois você poderá adicionar novas vitórias
+              extras.
             </p>
           </div>
 
