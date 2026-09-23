@@ -5,6 +5,7 @@ import { AcoesDoDesafio } from "@/components/AcoesDoDesafio";
 import { CabecalhoSala } from "@/components/CabecalhoSala";
 import { FaixaParticipantes } from "@/components/FaixaParticipantes";
 import { FeedDaSala } from "@/components/FeedDaSala";
+import { FormMissao } from "@/components/FormMissao";
 import { Fogo } from "@/components/Fogo";
 import { Janela } from "@/components/Janela";
 import { ProgressoInegociavel } from "@/components/ProgressoInegociavel";
@@ -12,7 +13,6 @@ import { ASSUNTOS, emojiDoAssunto } from "@/lib/assuntos-constants";
 import {
   LABEL_AVISO_DESFAZER,
   LABEL_DESFEITO,
-  TIPO_REALIZACAO_CHIP,
   labelComemoracaoPorContagemDoDia,
   labelPronto,
   labelRealizacoesHoje,
@@ -23,14 +23,12 @@ import {
   alternarProntoAction,
   desfazerRegistroAction,
   largarAction,
-  registrarExtraAction,
   reagirAction,
   registrarInegociavelAction,
   type AdicionarInegociavelState,
   type AlternarProntoState,
   type DesfazerState,
   type LargarState,
-  type RegistrarExtraState,
   type ReagirState,
   type RegistrarInegociavelState,
 } from "./actions";
@@ -41,22 +39,14 @@ const ESTADO_INICIAL_INEGOCIAVEL: AdicionarInegociavelState = {};
 const ESTADO_INICIAL_PRONTO: AlternarProntoState = {};
 const ESTADO_INICIAL_LARGAR: LargarState = {};
 const ESTADO_INICIAL_REGISTRAR_INEGOCIAVEL: RegistrarInegociavelState = {};
-const ESTADO_INICIAL_REGISTRAR_EXTRA: RegistrarExtraState = {};
 const ESTADO_INICIAL_REAGIR: ReagirState = {};
 const ESTADO_INICIAL_DESFAZER: DesfazerState = {};
-
-function assuntoBotaoClasses(ativo: boolean) {
-  return `flex items-center gap-1 border-2 border-ink px-2 py-1 font-mono text-xs font-bold transition-transform active:translate-x-[1px] active:translate-y-[1px] ${
-    ativo ? "bg-amber shadow-hard-sm" : "bg-cream"
-  }`;
-}
 
 // Deriva o selo a mostrar (SHOW./TÁ ON FIRE./AURA MÁXIMA. ou
 // "Desfeito.") sem useEffect + setState: pega a ação mais recente pelo
 // carimbo de tempo. `key` no elemento reinicia a animação de sumir.
 function seloMaisRecente(
   inegociavel: { contagemHoje?: number; carimbo?: number },
-  extra: { contagemHoje?: number; carimbo?: number },
   desfazer: { ok?: boolean; carimbo?: number },
 ): { texto: string; carimbo: number } | null {
   const candidatos = [
@@ -66,10 +56,6 @@ function seloMaisRecente(
         inegociavel.contagemHoje !== undefined
           ? labelComemoracaoPorContagemDoDia(inegociavel.contagemHoje)
           : null,
-    },
-    {
-      carimbo: extra.carimbo ?? 0,
-      texto: extra.contagemHoje !== undefined ? labelComemoracaoPorContagemDoDia(extra.contagemHoje) : null,
     },
     { carimbo: desfazer.carimbo ?? 0, texto: desfazer.ok ? LABEL_DESFEITO : null },
   ];
@@ -90,9 +76,7 @@ export function AreaDoDesafio({
   const [dados, setDados] = useState<DadosSala | null>(null);
   const [carregando, setCarregando] = useState(true);
   const [erroCarregar, setErroCarregar] = useState(false);
-  const [assuntoSelecionado, setAssuntoSelecionado] = useState<string>(ASSUNTOS[0].valor);
-  const [assuntoExtraSelecionado, setAssuntoExtraSelecionado] = useState<string>(ASSUNTOS[0].valor);
-  const [mostrarFormExtra, setMostrarFormExtra] = useState(false);
+  const [mostrarFormMissao, setMostrarFormMissao] = useState(false);
 
   const [inegociavelState, inegociavelAction, inegociavelPending] = useActionState(
     adicionarInegociavelAction,
@@ -108,10 +92,6 @@ export function AreaDoDesafio({
   );
   const [registrarInegociavelState, registrarInegociavelActionFn, registrarInegociavelPending] =
     useActionState(registrarInegociavelAction, ESTADO_INICIAL_REGISTRAR_INEGOCIAVEL);
-  const [registrarExtraState, registrarExtraActionFn, registrarExtraPending] = useActionState(
-    registrarExtraAction,
-    ESTADO_INICIAL_REGISTRAR_EXTRA,
-  );
 
   const [reagirState, reagirActionFn] = useActionState(
     reagirAction,
@@ -123,7 +103,7 @@ export function AreaDoDesafio({
     ESTADO_INICIAL_DESFAZER,
   );
 
-  const selo = seloMaisRecente(registrarInegociavelState, registrarExtraState, desfazerState);
+  const selo = seloMaisRecente(registrarInegociavelState, desfazerState);
 
   // Janela de desfazer: aberta por JANELA_DESFAZER_MS depois de marcar
   // um inegociável. O timer só fecha a janela (setState no callback do
@@ -151,11 +131,11 @@ export function AreaDoDesafio({
         }
       : null;
 
-  // Form de vitória extra: fecha sozinho depois de salvar com sucesso
+  // Form de "+ Nova missão": fecha sozinho depois de criar com sucesso
   // (o carimbo da action muda), sem setState em efeito.
-  const [carimboAoAbrirExtra, setCarimboAoAbrirExtra] = useState(0);
-  const formExtraAberto =
-    mostrarFormExtra && (registrarExtraState.carimbo ?? 0) === carimboAoAbrirExtra;
+  const [carimboAoAbrirMissao, setCarimboAoAbrirMissao] = useState(0);
+  const formMissaoAberto =
+    mostrarFormMissao && (inegociavelState.carimbo ?? 0) === carimboAoAbrirMissao;
 
   // Busca os dados do lobby: ao montar, ao focar a aba (sem realtime,
   // regra do PRD) e de novo sempre que uma ação (adicionar
@@ -213,7 +193,6 @@ export function AreaDoDesafio({
     prontoState,
     largarState,
     registrarInegociavelState,
-    registrarExtraState,
     reagirState,
     desfazerState,
   ]);
@@ -278,16 +257,16 @@ export function AreaDoDesafio({
                 <button
                   type="button"
                   onClick={() => {
-                    if (formExtraAberto) {
-                      setMostrarFormExtra(false);
+                    if (formMissaoAberto) {
+                      setMostrarFormMissao(false);
                     } else {
-                      setCarimboAoAbrirExtra(registrarExtraState.carimbo ?? 0);
-                      setMostrarFormExtra(true);
+                      setCarimboAoAbrirMissao(inegociavelState.carimbo ?? 0);
+                      setMostrarFormMissao(true);
                     }
                   }}
                   className="shrink-0 bg-cyan px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-ink transition-transform active:translate-x-[1px] active:translate-y-[1px]"
                 >
-                  {formExtraAberto ? "Fechar" : "+ Vitória extra"}
+                  {formMissaoAberto ? "Fechar" : "+ Nova missão"}
                 </button>
               </>
             }
@@ -323,9 +302,9 @@ export function AreaDoDesafio({
                 })}
               </ul>
 
-              {/* Vitórias extras, uma por uma (assunto + texto completo).
-                  Altura limitada com rolagem própria, pra faixa fixa não
-                  engolir a tela quando a lista crescer. */}
+              {/* Registros antigos do tempo da "vitória extra" (antes de
+                  virar "+ Nova missão"): continuam aparecendo, sem tag.
+                  Altura limitada com rolagem própria. */}
               {dados.meusExtras.length > 0 ? (
                 <ul className="flex max-h-28 flex-col gap-1 overflow-y-auto">
                   {dados.meusExtras.map((r) => (
@@ -335,9 +314,6 @@ export function AreaDoDesafio({
                     >
                       <span className="min-w-0 break-words">
                         {emojiDoAssunto(r.assunto)} {r.texto}
-                      </span>
-                      <span className="shrink-0 border border-ink px-1 text-[10px] font-bold uppercase tracking-widest text-ink/70">
-                        {TIPO_REALIZACAO_CHIP.extra}
                       </span>
                     </li>
                   ))}
@@ -366,51 +342,17 @@ export function AreaDoDesafio({
                 </p>
               ) : null}
 
-              {formExtraAberto ? (
-                <form action={registrarExtraActionFn} className="flex flex-col gap-2 border-t-2 border-empty pt-2">
-                  <input type="hidden" name="codigo" value={codigo} />
-                  <input type="hidden" name="token" value={token} />
-                  <input type="hidden" name="assunto" value={assuntoExtraSelecionado} />
-
-                  <div className="flex flex-wrap gap-1.5">
-                    {ASSUNTOS.map((a) => (
-                      <button
-                        key={a.valor}
-                        type="button"
-                        onClick={() => setAssuntoExtraSelecionado(a.valor)}
-                        className={assuntoBotaoClasses(assuntoExtraSelecionado === a.valor)}
-                      >
-                        <span>{a.emoji}</span>
-                        <span>{a.rotulo}</span>
-                      </button>
-                    ))}
-                  </div>
-
-                  <div className="flex gap-2">
-                    <input
-                      name="texto"
-                      type="text"
-                      required
-                      maxLength={140}
-                      aria-label="O que você fez?"
-                      placeholder="O que você fez? Ex: voltei pro jiu-jitsu"
-                      className="min-w-0 flex-1 border-2 border-ink bg-cream px-2 py-1.5 font-mono text-sm placeholder:text-ink/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
-                    />
-                    <button
-                      type="submit"
-                      disabled={registrarExtraPending}
-                      className="shrink-0 border-2 border-ink bg-cyan px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-widest shadow-hard-sm transition-transform active:translate-x-[1px] active:translate-y-[1px] active:shadow-none disabled:opacity-60"
-                    >
-                      {registrarExtraPending ? "..." : "Salvar"}
-                    </button>
-                  </div>
-
-                  {registrarExtraState.error ? (
-                    <p className="border-2 border-coral bg-cream px-2 py-1 font-mono text-xs text-coral">
-                      {registrarExtraState.error}
-                    </p>
-                  ) : null}
-                </form>
+              {formMissaoAberto ? (
+                <FormMissao
+                  codigo={codigo}
+                  token={token}
+                  action={inegociavelAction}
+                  pending={inegociavelPending}
+                  error={inegociavelState.error}
+                  rotuloTitulo="Nova missão"
+                  rotuloBotao="Adicionar missão"
+                  className="border-t-2 border-empty pt-2"
+                />
               ) : null}
             </div>
           </Janela>
@@ -492,85 +434,17 @@ export function AreaDoDesafio({
           ) : null}
 
           {!dados.meuPronto ? (
-            <form
+            <FormMissao
               key={dados.meusInegociaveis.length}
+              codigo={codigo}
+              token={token}
               action={inegociavelAction}
-              className="flex flex-col gap-3 border-t-2 border-empty pt-4"
-            >
-              <input type="hidden" name="codigo" value={codigo} />
-              <input type="hidden" name="token" value={token} />
-              <input type="hidden" name="assunto" value={assuntoSelecionado} />
-
-              <div className="flex flex-col gap-2">
-                <label
-                  htmlFor="titulo"
-                  className="font-mono text-xs font-bold uppercase tracking-widest"
-                >
-                  Título do inegociável {dados.meusInegociaveis.length + 1}
-                </label>
-                <input
-                  id="titulo"
-                  name="titulo"
-                  type="text"
-                  required
-                  maxLength={60}
-                  placeholder="Ex: malhar, acabar o livro X"
-                  className="w-full border-2 border-ink bg-cream px-3 py-2 font-mono text-sm placeholder:text-ink/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
-                />
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <span className="font-mono text-xs font-bold uppercase tracking-widest">
-                  Assunto
-                </span>
-                <div className="flex flex-wrap gap-2">
-                  {ASSUNTOS.map((a) => (
-                    <button
-                      key={a.valor}
-                      type="button"
-                      onClick={() => setAssuntoSelecionado(a.valor)}
-                      className={assuntoBotaoClasses(assuntoSelecionado === a.valor)}
-                    >
-                      <span>{a.emoji}</span>
-                      <span>{a.rotulo}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <label
-                  htmlFor="alvo"
-                  className="font-mono text-xs font-bold uppercase tracking-widest"
-                >
-                  Alvo (opcional)
-                </label>
-                <input
-                  id="alvo"
-                  name="alvo"
-                  type="number"
-                  inputMode="numeric"
-                  min={1}
-                  max={365}
-                  placeholder="Nº de vezes no desafio, em branco = cumpri/não cumpri"
-                  className="w-full border-2 border-ink bg-cream px-3 py-2 font-mono text-sm placeholder:text-ink/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
-                />
-              </div>
-
-              {inegociavelState.error ? (
-                <p className="border-2 border-coral bg-cream px-3 py-2 font-mono text-sm text-coral">
-                  {inegociavelState.error}
-                </p>
-              ) : null}
-
-              <button
-                type="submit"
-                disabled={inegociavelPending}
-                className="border-2 border-ink bg-cyan px-4 py-3 font-mono text-sm font-bold uppercase tracking-widest shadow-hard transition-transform active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:opacity-60"
-              >
-                {inegociavelPending ? "Adicionando..." : "Adicionar inegociável"}
-              </button>
-            </form>
+              pending={inegociavelPending}
+              error={inegociavelState.error}
+              rotuloTitulo={`Título do inegociável ${dados.meusInegociaveis.length + 1}`}
+              rotuloBotao="Adicionar inegociável"
+              className="border-t-2 border-empty pt-4"
+            />
           ) : null}
 
           {temInegociavel && !dados.meuPronto ? (

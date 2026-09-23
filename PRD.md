@@ -3,7 +3,7 @@
 Descreve **o que** o app é. Quando o código divergir, este documento vence. Leia junto com `STYLE.md` (visual e copy) e `CLAUDE.md` (regras de execução).
 
 ## O que é
-App web mobile-first onde um grupo pequeno (3+ amigos) roda um "desafio" de constância por um número fixo de dias. Cada pessoa define seu **mínimo inegociável** (o norte) e, durante o desafio, registra **realizações**, tanto cumprir o que prometeu quanto vitórias extras que a deixaram orgulhosa. Todos veem tudo, num **feed compartilhado** com um **cartão-resumo de cada pessoa no topo**. É estilo "Twitter de feitos do desafio", sem fotos. Sério no fundo, leve/gameficado na forma. Ciclo curto: começa, roda, acaba.
+App web mobile-first onde um grupo pequeno (3+ amigos) roda um "desafio" de constância por um número fixo de dias. Cada pessoa define seu **mínimo inegociável** (o norte) e, durante o desafio, registra **realizações** marcando suas **missões**; no meio do desafio pode criar **missões novas** (algo que surgiu e deixou a pessoa orgulhosa). Todos veem tudo, num **feed compartilhado** com um **cartão-resumo de cada pessoa no topo**. É estilo "Twitter de feitos do desafio", sem fotos. Sério no fundo, leve/gameficado na forma. Ciclo curto: começa, roda, acaba.
 
 ## Princípios (não violar)
 - **Simplicidade acima de tudo.** Onboarding autoexplicativo por link único. A única coisa que se manda no grupo é "entra nesse link".
@@ -11,12 +11,12 @@ App web mobile-first onde um grupo pequeno (3+ amigos) roda um "desafio" de cons
 - **Tudo no próprio app.** Sem relatório enviado automaticamente.
 - **Sem login.** Identidade por dispositivo.
 - **Não é competição.** Todos veem tudo. O app **celebra o realizado**; nunca ranqueia, nunca mostra "atrasado/adiantado". Contagens só sobem.
-- **Planejado e espontâneo valem igual.** Cumprir o norte e uma vitória extra têm o mesmo peso e a mesma comemoração.
+- **Planejado e espontâneo valem igual.** Missão definida no lobby e missão criada no meio do desafio têm o mesmo peso e a mesma comemoração.
 
 ## Vocabulário na tela
 - **"Desafio"** é o nome do app (título/logo) e da atividade em si ("o desafio começou", "durante o desafio").
 - **"Sala"** é o que a pessoa cria e compartilha com o grupo (criar sala, entrar em uma sala, suas salas, link da sala). Só muda o texto visível: código, banco e rotas (`/d/[codigo]`, `/criar`, `/entrar`) continuam como estão.
-- **"Suas Missões"** é o bloco da própria pessoa na sala rolando: os inegociáveis (com progresso) e as vitórias extras juntos, no mesmo tratamento visual; o extra só ganha um chip pequeno "extra".
+- **"Missão"** é o nome na tela pra inegociável. **"Suas Missões"** é o bloco da própria pessoa na sala rolando, com todas as missões dela, sem distinção entre as do lobby e as criadas depois.
 
 ## Identidade (sem login)
 - Um desafio = **um link único** (ex: `/d/PEGA42`). Esse link vai no grupo. É o único que existe.
@@ -31,7 +31,7 @@ App web mobile-first onde um grupo pequeno (3+ amigos) roda um "desafio" de cons
 ## Ciclo do desafio (estados)
 `LOBBY → ATIVO → ENCERRADO`
 - **LOBBY:** entra pelo link, reivindica identidade, define seu norte (≥ 1 inegociável). Cada um aperta **PRONTO**. O criador vê o lobby encher e aperta **LARGAR** quando quiser (não declara quantos são).
-- **ATIVO:** contagem começa (dia 1..N). O **norte congela** (não dá pra editar inegociáveis). A pessoa registra realizações.
+- **ATIVO:** contagem começa (dia 1..N). As missões que já existem **não mudam** (não dá pra editar nem apagar), mas dá pra **criar missões novas** ("+ Nova missão"). A pessoa registra realizações.
 - **ENCERRADO:** no fim dos N dias, tela final que **celebra todo mundo que se dedicou** (não há vencedor). Para rodar outro, cria-se um novo (link novo).
 
 ## Os dois conceitos (não inventar outros)
@@ -47,9 +47,11 @@ O "mínimo que me propus". Cada pessoa define **pelo menos 1** no lobby. Cada in
 O norte é a âncora visível do compromisso. **Não é nota, não é denominador de ranking.**
 
 ### 2. Realizações (o feed)
-Durante o desafio, a pessoa registra uma realização sempre que fez algo que vale marcar. Uma realização é de um de dois tipos, **com o mesmo peso e a mesma comemoração**:
-- **cumprir um inegociável** (marca progresso no item do norte), ou
-- **extra / vitória** (algo fora do norte, ex: "trabalhei 5h", "voltei pro jiu-jitsu").
+Durante o desafio, a pessoa registra uma realização sempre que fez algo que vale marcar: **tocar numa missão** (inegociável) marca progresso nela.
+
+**Nova missão (substitui a antiga "vitória extra"):** fez ou quer fazer algo fora do que definiu no lobby? Cria uma **missão nova** com o mesmo formulário do lobby (título + assunto + alvo opcional). Ela entra em "Suas Missões" como uma missão normal, ainda não marcada; se já fez, cria e marca em seguida. Sem tag, sem distinção. No feed aparece uma linha de novidade ("criou a missão: Meditar"), sem reação; a realização aparece quando ela marca.
+
+*Legado:* registros antigos do tipo `extra` (do tempo da "vitória extra") continuam no banco e na tela, só sem a tag "extra". Não há mais como criar um novo.
 
 Toda realização tem: **assunto** (chip) + **texto curto** + dia + autor. Aparece no feed de todos; o app comemora (mascote + copy).
 
@@ -66,7 +68,7 @@ Tela da sala rolando, de cima pra baixo (ação rápida sempre à mão, feed com
 
 **1. Cabeçalho da sala (lobby e rolando):** uma janela igual às outras (fundo creme, barra de título escura fininha, ver `STYLE.md` "janela") só com a identidade da sala: nome (fonte pixel) + **"DIA X/Y"** depois de largar (dias de calendário em Brasília desde a data de início; antes de largar mostra só a duração, ex: "7 DIAS") + a data de hoje ("23/09").
 
-**2. Suas Missões (fixo no topo ao rolar, compacto):** a barra do painel é a identidade da própria pessoa (emoji + nome + "N realizações hoje" + **foguinho**) e o botão pequeno **"+ Vitória extra"** (abre o formulário ali mesmo). Dentro: os inegociáveis como botões pequenos de 1 toque, com progresso (bolinhas `●●○` se tem alvo; check "cumpri" se não tem), e cada vitória extra listada uma por uma (assunto + texto completo + chip "extra"), numa lista de altura limitada com rolagem própria.
+**2. Suas Missões (fixo no topo ao rolar, compacto):** a barra do painel é a identidade da própria pessoa (emoji + nome + "N realizações hoje" + **foguinho**) e o botão pequeno **"+ Nova missão"** (abre ali mesmo o mesmo formulário do lobby). Dentro: as missões como botões pequenos de 1 toque, com progresso (bolinhas `●●○` se tem alvo; check "cumpri" se não tem). Registros antigos de "vitória extra" aparecem listados embaixo, sem tag.
 
 **3. Faixa "Na sala":** só os **outros** participantes, numa faixa fina que rola na horizontal: emoji + nome + bolinha verde de **"ativo hoje"** (última atividade no dia de hoje, fuso de Brasília) + **foguinho** se aplicável. Sem progresso detalhado dos outros aqui (é secundário). Tocar no foguinho mostra uma legenda curta ("3+ realizações hoje") que some sozinha.
 
@@ -85,7 +87,7 @@ Tela da sala rolando, de cima pra baixo (ação rápida sempre à mão, feed com
 **Atualização:** busca dados ao abrir o app e ao focar a aba. Sem realtime nesta versão.
 
 ## Check / registrar / backfill
-- Registrar realização = escolher tipo (cumprir um inegociável ou extra) + assunto + texto curto.
+- Registrar realização = tocar numa missão (1 toque; assunto e texto vêm da missão). Algo novo = criar missão nova e marcar.
 - Marcar um inegociável de novo enche a próxima bolinha; além do alvo vira extra.
 - **Backfill** é opção do **desafio**, decidida pelo criador na criação ("Vale registrar em dias anteriores? Sim/Não"). Sim = qualquer dia até hoje; Não = só hoje. **Nunca** dia futuro.
 - **Desfazer (janela curta):** depois de tocar num inegociável, aparece por ~5s "Feito. Toque de novo para desfazer.". Tocar de novo no mesmo inegociável dentro dessa janela apaga o registro do banco (a contagem do dia, o selo e o foguinho voltam junto). Passou a janela, qualquer toque **sempre soma** um registro novo; nunca desfaz nada depois (o servidor recusa desfazer registro com mais de 10s). Pra ninguém ver um registro desfeito a tempo, a marcação de inegociável de outra pessoa só aparece pros outros depois de ~7s.
@@ -108,8 +110,8 @@ Resumo de cada um: inegociáveis cumpridos + extras + total de realizações. To
 - Comentários no feed (v1.1). *(Reação de um toque com o mascote agora é v1, ver seção "Reações". Isso não inclui comentário nem paleta de emoji.)*
 - Ranking, % de aderência, "atrasado/adiantado".
 - Tela "meus desafios" completa (histórico, busca etc.). A v1 tem só a lista local dos 3 mais recentes na Home (ver "Identidade").
-- Editar o norte depois do LARGAR.
+- Editar ou apagar missões depois do LARGAR (criar novas pode).
 - IA de texto livre · streaks / badges **entre dias** (a contagem de realizações **dentro do mesmo dia**, usada pro selo/copy, não é streak, ver seção "Realizações").
 
 ## Escopo v1 (o mínimo pra rodar com os amigos)
-Home (lista local dos 3 desafios mais recentes + criar/entrar com código) · sair de um desafio (só da lista local) · criar desafio (nome + duração em dias, presets 3/7/14/21 + toggle backfill) · link único · claim de identidade por dispositivo · lobby: definir ≥1 inegociável (título + assunto + alvo opcional) + PRONTO + LARGAR (criador) · norte congela ao largar · registrar realizações (cumprir inegociável ou extra) com assunto + texto, backfill se permitido, com desfazer · reação de um toque (mascote) por realização, com contagem · dash: cartões por pessoa (inegociáveis + bolinhas/alvo + extras + visto há X) + feed cronológico com filtro Hoje/Tudo + selo/copy por contagem do dia · celebração (mascote + copy) · tela de encerramento · busca ao abrir/focar · copy e visual do `STYLE.md`.
+Home (lista local dos 3 desafios mais recentes + criar/entrar com código) · sair de um desafio (só da lista local) · criar desafio (nome + duração em dias, presets 3/7/14/21 + toggle backfill) · link único · claim de identidade por dispositivo · lobby: definir ≥1 inegociável (título + assunto + alvo opcional) + PRONTO + LARGAR (criador) · missões existentes não mudam ao largar, mas dá pra criar novas · registrar realizações (tocar numa missão), backfill se permitido, com desfazer · reação de um toque (mascote) por realização, com contagem · dash: cartões por pessoa (inegociáveis + bolinhas/alvo + extras + visto há X) + feed cronológico com filtro Hoje/Tudo + selo/copy por contagem do dia · celebração (mascote + copy) · tela de encerramento · busca ao abrir/focar · copy e visual do `STYLE.md`.

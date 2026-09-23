@@ -3,7 +3,6 @@
 // enum, sempre passa por aqui. Ver STYLE.md pro tom.
 
 import type { EstadoDesafio } from "./desafios";
-import type { TipoRealizacao } from "./realizacoes";
 
 export const ESTADO_LABEL: Record<EstadoDesafio, string> = {
   lobby: "Esperando todo mundo entrar",
@@ -36,13 +35,6 @@ export function labelComemoracaoPorContagemDoDia(contagemHoje: number): string {
   if (contagemHoje === 2) return "TÁ ON FIRE.";
   return "AURA MÁXIMA.";
 }
-
-/** Chip pequeno que diz de onde veio uma realização em "Suas Missões".
- * Só o extra mostra chip; o que veio de um inegociável não precisa. */
-export const TIPO_REALIZACAO_CHIP: Record<TipoRealizacao, string | null> = {
-  inegociavel: null,
-  extra: "extra",
-};
 
 /** Nível do foguinho ao lado do nome, pela mesma contagem do dia que
  * decide o selo (2ª realização = em chamas, 3ª ou mais = aura máxima). */
@@ -103,4 +95,9 @@ export function labelDiaDoDesafio(dia: number, duracaoDias: number): string {
 /** Mensagem pronta do botão "Compartilhar sala" (abre o WhatsApp). */
 export function mensagemCompartilharSala(nomeSala: string, link: string): string {
   return `Bora pro desafio ${nomeSala}! Entra aqui: ${link}`;
+}
+
+/** Linha de novidade no feed quando alguém cria missão com a sala rolando. */
+export function labelMissaoCriada(titulo: string): string {
+  return `criou a missão: ${titulo}`;
 }

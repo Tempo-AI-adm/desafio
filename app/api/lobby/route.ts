@@ -8,7 +8,7 @@ import {
 import { listarInegociaveisPorParticipantes } from "@/lib/inegociaveis";
 import { listarRealizacoesDaSala } from "@/lib/realizacoes";
 import { ESCONDER_DOS_OUTROS_MS, diaDoDesafio, hojeISO } from "@/lib/tempo";
-import type { DadosSala, InegociavelResumo, ParticipanteSala } from "@/lib/tipos-sala";
+import type { DadosSala, InegociavelResumo, ItemFeed, ParticipanteSala } from "@/lib/tipos-sala";
 
 // Leitura do estado atual da sala pra quem já tem identidade: estado,
 // participantes (lobby e cartões), minhas missões e o feed. Sem
@@ -91,6 +91,36 @@ export async function GET(request: Request) {
 
   const euNaSala = participantes.find((p) => p.id === eu.id);
 
+  // Feed: realizações + novidade "criou a missão" pra missões criadas
+  // com a sala já rolando (as do lobby não viram novidade).
+  const inicio = desafio.dataInicio ? Date.parse(desafio.dataInicio) : null;
+  const feed: ItemFeed[] = [
+    ...realizacoes.map((r) => ({
+      id: r.id,
+      tipoItem: "realizacao" as const,
+      autorId: r.participanteId,
+      assunto: r.assunto,
+      texto: r.texto,
+      dia: r.dia,
+      criadoEm: r.criadoEm,
+      reacoes: r.reagiram.length,
+      euReagi: r.reagiram.includes(eu.id),
+    })),
+    ...inegociaveis
+      .filter((i) => inicio !== null && Date.parse(i.criadoEm) > inicio)
+      .map((i) => ({
+        id: `missao-${i.id}`,
+        tipoItem: "missao_criada" as const,
+        autorId: i.participanteId,
+        assunto: i.assunto,
+        texto: i.titulo,
+        dia: hojeISO(new Date(i.criadoEm)),
+        criadoEm: i.criadoEm,
+        reacoes: 0,
+        euReagi: false,
+      })),
+  ].sort((a, b) => Date.parse(b.criadoEm) - Date.parse(a.criadoEm));
+
   const lobby: DadosSala = {
     estado: desafio.estado,
     salaNome: desafio.nome,
@@ -108,17 +138,7 @@ export async function GET(request: Request) {
       .filter((r) => r.participanteId === eu.id && r.tipo === "extra")
       .map((r) => ({ id: r.id, assunto: r.assunto, texto: r.texto })),
     participantes,
-    feed: realizacoes.map((r) => ({
-      id: r.id,
-      autorId: r.participanteId,
-      tipo: r.tipo,
-      assunto: r.assunto,
-      texto: r.texto,
-      dia: r.dia,
-      criadoEm: r.criadoEm,
-      reacoes: r.reagiram.length,
-      euReagi: r.reagiram.includes(eu.id),
-    })),
+    feed,
   };
 
   return NextResponse.json({ lobby });

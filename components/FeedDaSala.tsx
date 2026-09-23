@@ -5,7 +5,7 @@ import { Fogo } from "@/components/Fogo";
 import { Janela } from "@/components/Janela";
 import { Mascote } from "@/components/Mascote";
 import { emojiDoAssunto } from "@/lib/assuntos-constants";
-import { FILTRO_FEED_LABEL, TIPO_REALIZACAO_CHIP, type FiltroFeed } from "@/lib/copy";
+import { FILTRO_FEED_LABEL, labelMissaoCriada, type FiltroFeed } from "@/lib/copy";
 import { diaCurto, horaCurta } from "@/lib/tempo";
 import type { ItemFeed, ParticipanteSala } from "@/lib/tipos-sala";
 
@@ -52,7 +52,7 @@ export function FeedDaSala({
   const comFogo = new Set<string>();
   const autoresVistos = new Set<string>();
   for (const r of feed) {
-    if (r.dia !== hoje || autoresVistos.has(r.autorId)) continue;
+    if (r.tipoItem !== "realizacao" || r.dia !== hoje || autoresVistos.has(r.autorId)) continue;
     autoresVistos.add(r.autorId);
     comFogo.add(r.id);
   }
@@ -80,7 +80,6 @@ export function FeedDaSala({
           <ul className="border-2 border-ink">
             {itens.map((r) => {
               const autor = autores.get(r.autorId);
-              const chip = TIPO_REALIZACAO_CHIP[r.tipo];
               const reagi = r.euReagi || reagidosAgora.has(r.id);
               const contagem = r.reacoes + (reagi && !r.euReagi ? 1 : 0);
               const quando = r.dia === hoje ? horaCurta(r.criadoEm) : `${diaCurto(r.dia)} ${horaCurta(r.criadoEm)}`;
@@ -100,36 +99,35 @@ export function FeedDaSala({
                       {autor && comFogo.has(r.id) ? <Fogo contagemHoje={autor.contagemHoje} tamanho="compacto" /> : null}
                       <span className="shrink-0">· {quando}</span>
                     </div>
-                    <p className="break-words text-sm leading-snug">
-                      {r.texto}
-                      {chip ? (
-                        <span className="ml-2 inline-block border border-ink px-1 align-middle text-[10px] font-bold uppercase tracking-widest text-ink/70">
-                          {chip}
-                        </span>
-                      ) : null}
-                    </p>
+                    {r.tipoItem === "missao_criada" ? (
+                      <p className="break-words text-sm italic leading-snug text-ink/70">{labelMissaoCriada(r.texto)}</p>
+                    ) : (
+                      <p className="break-words text-sm leading-snug">{r.texto}</p>
+                    )}
                   </div>
-                  <form
-                    action={reagirAction}
-                    onSubmit={() => setReagidosAgora((atual) => new Set(atual).add(r.id))}
-                    className="shrink-0"
-                  >
-                    <input type="hidden" name="codigo" value={codigo} />
-                    <input type="hidden" name="token" value={token} />
-                    <input type="hidden" name="realizacaoId" value={r.id} />
-                    <button
-                      type="submit"
-                      disabled={reagi}
-                      aria-pressed={reagi}
-                      aria-label={reagi ? `Você reagiu. ${contagem} reações` : `Reagir. ${contagem} reações`}
-                      className={`flex items-center gap-1 border-2 border-ink px-1.5 py-1 text-xs font-bold transition-transform active:translate-x-[1px] active:translate-y-[1px] active:shadow-none disabled:cursor-default ${
-                        reagi ? "bg-amber" : "bg-cream shadow-hard-sm"
-                      }`}
+                  {r.tipoItem === "missao_criada" ? null : (
+                    <form
+                      action={reagirAction}
+                      onSubmit={() => setReagidosAgora((atual) => new Set(atual).add(r.id))}
+                      className="shrink-0"
                     >
-                      <Mascote altura={16} />
-                      <span>{contagem}</span>
-                    </button>
-                  </form>
+                      <input type="hidden" name="codigo" value={codigo} />
+                      <input type="hidden" name="token" value={token} />
+                      <input type="hidden" name="realizacaoId" value={r.id} />
+                      <button
+                        type="submit"
+                        disabled={reagi}
+                        aria-pressed={reagi}
+                        aria-label={reagi ? `Você reagiu. ${contagem} reações` : `Reagir. ${contagem} reações`}
+                        className={`flex items-center gap-1 border-2 border-ink px-1.5 py-1 text-xs font-bold transition-transform active:translate-x-[1px] active:translate-y-[1px] active:shadow-none disabled:cursor-default ${
+                          reagi ? "bg-amber" : "bg-cream shadow-hard-sm"
+                        }`}
+                      >
+                        <Mascote altura={16} />
+                        <span>{contagem}</span>
+                      </button>
+                    </form>
+                  )}
                 </li>
               );
             })}

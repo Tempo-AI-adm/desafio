@@ -2,7 +2,6 @@
 // seguro pra importar no servidor e no navegador.
 
 import type { EstadoDesafio } from "./desafios";
-import type { TipoRealizacao } from "./realizacoes";
 
 export type InegociavelResumo = {
   id: string;
@@ -34,8 +33,9 @@ export type ParticipanteSala = {
 
 export type ItemFeed = {
   id: string;
+  /** realização (marcou algo) ou novidade "criou a missão: X" */
+  tipoItem: "realizacao" | "missao_criada";
   autorId: string;
-  tipo: TipoRealizacao;
   assunto: string;
   texto: string;
   dia: string;

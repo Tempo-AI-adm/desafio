@@ -80,6 +80,7 @@ export async function reivindicarIdentidadeAction(
 export type AdicionarInegociavelState = {
   error?: string;
   ok?: boolean;
+  carimbo?: number;
 };
 
 export async function adicionarInegociavelAction(
@@ -102,8 +103,10 @@ export async function adicionarInegociavelAction(
     return { error: "Sua identidade não foi reconhecida. Recarrega a página." };
   }
 
-  if (desafio.estado !== "lobby") {
-    return { error: "O norte já travou, o desafio começou." };
+  // Missão nova vale no lobby e com a sala rolando ("+ Nova missão").
+  // As que já existem não mudam; só dá pra somar novas.
+  if (desafio.estado === "encerrado") {
+    return { error: "O desafio dessa sala já encerrou." };
   }
 
   if (!titulo) {
@@ -126,8 +129,9 @@ export async function adicionarInegociavelAction(
   }
 
   await criarInegociavel({ participanteId: participante.id, titulo, assunto, alvo });
+  await tocarUltimaAtividade(participante.id);
 
-  return { ok: true };
+  return { ok: true, carimbo: Date.now() };
 }
 
 export type AlternarProntoState = {
@@ -265,64 +269,6 @@ export async function registrarInegociavelAction(
     realizacaoId: realizacao.id,
     inegociavelId: inegociavel.id,
   };
-}
-
-export type RegistrarExtraState = {
-  error?: string;
-  ok?: boolean;
-  contagemHoje?: number;
-  carimbo?: number;
-};
-
-// Caminho com fricção: vitória fora da lista de inegociáveis. Único
-// caminho que pede formulário, assunto (chip) + texto curto.
-export async function registrarExtraAction(
-  _prevState: RegistrarExtraState,
-  formData: FormData,
-): Promise<RegistrarExtraState> {
-  const codigo = String(formData.get("codigo") ?? "");
-  const token = String(formData.get("token") ?? "");
-  const assunto = String(formData.get("assunto") ?? "");
-  const texto = String(formData.get("texto") ?? "").trim();
-
-  const desafio = await buscarDesafioPorCodigo(codigo);
-  if (!desafio) {
-    return { error: "Essa sala não existe mais." };
-  }
-
-  const participante = await buscarParticipantePorToken(desafio.id, token);
-  if (!participante) {
-    return { error: "Sua identidade não foi reconhecida. Recarrega a página." };
-  }
-
-  if (desafio.estado !== "ativo") {
-    return { error: "O desafio não está rolando agora." };
-  }
-
-  if (!VALORES_ASSUNTO.includes(assunto)) {
-    return { error: "Escolhe um assunto da lista." };
-  }
-  if (!texto) {
-    return { error: "Conta rapidinho o que você fez." };
-  }
-  if (texto.length > 140) {
-    return { error: "Texto muito grande, até 140 letras." };
-  }
-
-  const dia = hojeISO();
-  await criarRealizacao({
-    participanteId: participante.id,
-    tipo: "extra",
-    inegociavelId: null,
-    assunto,
-    texto,
-    dia,
-  });
-  await tocarUltimaAtividade(participante.id);
-
-  const contagemHoje = await contarRealizacoesNoDia(participante.id, dia);
-
-  return { ok: true, contagemHoje, carimbo: Date.now() };
 }
 
 export type ReagirState = {
