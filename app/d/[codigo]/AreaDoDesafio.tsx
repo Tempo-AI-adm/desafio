@@ -407,8 +407,7 @@ export function AreaDoDesafio({
             </p>
             <p className="font-mono text-sm text-ink/70">
               Para começar, defina uma ou mais missões que você queira realizar
-              no período do desafio. Depois você poderá adicionar novas vitórias
-              extras.
+              no período do desafio. Depois você poderá adicionar novas missões.
             </p>
           </div>
 
