@@ -1,13 +1,25 @@
 "use server";
 
 import { buscarDesafioPorCodigo, definirCriadorSeVazio, largarDesafio } from "@/lib/desafios";
-import { buscarParticipantePorToken, criarParticipante, marcarPronto } from "@/lib/participantes";
+import {
+  buscarParticipantePorToken,
+  criarParticipante,
+  marcarPronto,
+  listarParticipantesPorDesafio,
+  tocarUltimaAtividade,
+} from "@/lib/participantes";
 import {
   buscarInegociavelPorId,
   contarInegociaveisPorParticipante,
   criarInegociavel,
 } from "@/lib/inegociaveis";
-import { contarRealizacoesNoDia, criarRealizacao, hojeISO } from "@/lib/realizacoes";
+import {
+  buscarRealizacaoPorId,
+  contarRealizacoesNoDia,
+  criarRealizacao,
+  hojeISO,
+} from "@/lib/realizacoes";
+import { criarReacao } from "@/lib/reacoes";
 import { EMOJIS_IDENTIDADE } from "@/lib/identidade-constants";
 import { ASSUNTOS } from "@/lib/assuntos-constants";
 
@@ -237,6 +249,7 @@ export async function registrarInegociavelAction(
     texto: inegociavel.titulo,
     dia,
   });
+  await tocarUltimaAtividade(participante.id);
 
   const contagemHoje = await contarRealizacoesNoDia(participante.id, dia);
 
@@ -294,8 +307,55 @@ export async function registrarExtraAction(
     texto,
     dia,
   });
+  await tocarUltimaAtividade(participante.id);
 
   const contagemHoje = await contarRealizacoesNoDia(participante.id, dia);
 
   return { ok: true, contagemHoje, carimbo: Date.now() };
+}
+
+export type ReagirState = {
+  error?: string;
+  ok?: boolean;
+  carimbo?: number;
+};
+
+// Reação de um toque no feed: sempre o mascote, sem escolher emoji.
+// Vale em realização de qualquer pessoa da mesma sala (inclusive a
+// própria). Tocar de novo não acumula (UNIQUE no banco).
+export async function reagirAction(
+  _prevState: ReagirState,
+  formData: FormData,
+): Promise<ReagirState> {
+  const codigo = String(formData.get("codigo") ?? "");
+  const token = String(formData.get("token") ?? "");
+  const realizacaoId = String(formData.get("realizacaoId") ?? "");
+
+  const desafio = await buscarDesafioPorCodigo(codigo);
+  if (!desafio) {
+    return { error: "Essa sala não existe mais." };
+  }
+
+  const participante = await buscarParticipantePorToken(desafio.id, token);
+  if (!participante) {
+    return { error: "Sua identidade não foi reconhecida. Recarrega a página." };
+  }
+
+  if (desafio.estado !== "ativo") {
+    return { error: "O desafio não está rolando agora." };
+  }
+
+  // A realização tem que ser de alguém desta mesma sala.
+  const realizacao = await buscarRealizacaoPorId(realizacaoId);
+  const autor = realizacao
+    ? (await listarParticipantesPorDesafio(desafio.id)).find((p) => p.id === realizacao.participanteId)
+    : undefined;
+  if (!realizacao || !autor) {
+    return { error: "Essa realização não é desta sala." };
+  }
+
+  await criarReacao(realizacao.id, participante.id);
+  await tocarUltimaAtividade(participante.id);
+
+  return { ok: true, carimbo: Date.now() };
 }

@@ -51,3 +51,34 @@ export function nivelFogoPorContagemDoDia(contagemHoje: number): 0 | 1 | 2 {
   if (contagemHoje === 2) return 1;
   return 0;
 }
+
+/** Legenda curta que aparece ao tocar no foguinho. */
+export function legendaFogo(contagemHoje: number): string {
+  return contagemHoje >= 3 ? "3+ realizações hoje" : "2 realizações hoje";
+}
+
+/** Selo do cartão quando a última atividade caiu no dia de hoje
+ * (fuso de Brasília). Abrir a sala já conta como atividade. */
+export const LABEL_ATIVO_HOJE = "ativo hoje";
+
+/** "visto há X" do cartão, a partir de quantos minutos faz desde a
+ * última atividade (STYLE.md: "ativo agora" / "visto há 2h"). */
+export function labelVistoHa(minutos: number): string {
+  if (minutos < 5) return "ativo agora";
+  if (minutos < 60) return `visto há ${minutos}min`;
+  const horas = Math.floor(minutos / 60);
+  if (horas < 24) return `visto há ${horas}h`;
+  return `visto há ${Math.floor(horas / 24)}d`;
+}
+
+/** Contador de extras do cartão (vitórias extras + marcações além do alvo). */
+export function labelAlemDoCombinado(extras: number): string {
+  return `+${extras} além do combinado`;
+}
+
+export type FiltroFeed = "hoje" | "tudo";
+
+export const FILTRO_FEED_LABEL: Record<FiltroFeed, string> = {
+  hoje: "Hoje",
+  tudo: "Tudo",
+};

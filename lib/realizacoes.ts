@@ -5,6 +5,8 @@
 
 import { supabase } from "./supabase";
 
+export { FUSO_DO_APP, hojeISO } from "./tempo";
+
 export type TipoRealizacao = "inegociavel" | "extra";
 
 export type Realizacao = {
@@ -40,22 +42,6 @@ function paraRealizacao(linha: LinhaRealizacao): Realizacao {
     dia: linha.dia,
     criadoEm: linha.criado_em,
   };
-}
-
-/** Fuso que define quando o "dia" vira no app (contagem do dia, selo,
- * foguinho, coluna `dia`). O servidor do Vercel roda em UTC, então
- * não dá pra confiar no relógio local dele. */
-export const FUSO_DO_APP = "America/Sao_Paulo";
-
-/** "Hoje" no formato da coluna `dia` (date, sem hora, YYYY-MM-DD),
- * no fuso de Brasília. O locale en-CA já formata como YYYY-MM-DD. */
-export function hojeISO(agora: Date = new Date()): string {
-  return new Intl.DateTimeFormat("en-CA", {
-    timeZone: FUSO_DO_APP,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(agora);
 }
 
 export async function criarRealizacao(dados: {
@@ -97,28 +83,34 @@ export async function contarRealizacoesNoDia(participanteId: string, dia: string
   return count ?? 0;
 }
 
-/** Progresso de um inegociável (quantas vezes já foi marcado), vira
- * bolinhas preenchidas se tem alvo, ou "cumpri" se não tem. */
-export async function contarRealizacoesPorInegociavel(inegociavelId: string): Promise<number> {
-  const { count, error } = await supabase
-    .from("realizacoes")
-    .select("*", { count: "exact", head: true })
-    .eq("inegociavel_id", inegociavelId);
+export type RealizacaoComReacoes = Realizacao & {
+  /** ids dos participantes que reagiram (o mascote) nessa realização */
+  reagiram: string[];
+};
 
-  if (error) throw new Error(`Erro ao contar realizações do inegociável: ${error.message}`);
-  return count ?? 0;
-}
-
-/** Vitórias extras de um participante, mais recente primeiro, pra
- * "Suas Missões" na tela da sala. */
-export async function listarExtrasPorParticipante(participanteId: string): Promise<Realizacao[]> {
+/** Todas as realizações de uma sala (dos participantes passados), mais
+ * recente primeiro, já com quem reagiu em cada uma. Uma consulta só,
+ * pro feed e pros cartões. */
+export async function listarRealizacoesDaSala(
+  participanteIds: string[],
+): Promise<RealizacaoComReacoes[]> {
+  if (participanteIds.length === 0) return [];
   const { data, error } = await supabase
     .from("realizacoes")
-    .select()
-    .eq("participante_id", participanteId)
-    .eq("tipo", "extra")
+    .select("*, reacoes(participante_id)")
+    .in("participante_id", participanteIds)
     .order("criado_em", { ascending: false });
 
-  if (error) throw new Error(`Erro ao listar extras: ${error.message}`);
-  return (data as LinhaRealizacao[]).map(paraRealizacao);
+  if (error) throw new Error(`Erro ao listar realizações da sala: ${error.message}`);
+  return (data as (LinhaRealizacao & { reacoes: { participante_id: string }[] })[]).map((l) => ({
+    ...paraRealizacao(l),
+    reagiram: l.reacoes.map((r) => r.participante_id),
+  }));
+}
+
+export async function buscarRealizacaoPorId(id: string): Promise<Realizacao | undefined> {
+  const { data, error } = await supabase.from("realizacoes").select().eq("id", id).maybeSingle();
+
+  if (error) throw new Error(`Erro ao buscar realização por id: ${error.message}`);
+  return data ? paraRealizacao(data as LinhaRealizacao) : undefined;
 }

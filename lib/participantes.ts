@@ -91,3 +91,15 @@ export async function marcarPronto(participanteId: string, pronto: boolean): Pro
 
   if (error) throw new Error(`Erro ao marcar pronto: ${error.message}`);
 }
+
+/** Marca "vi a pessoa agora": chamado em toda visita reconhecida à
+ * página da sala (ao abrir e ao focar a aba) e ao registrar/reagir.
+ * Alimenta o "visto há X" e o "ativo hoje" dos cartões. */
+export async function tocarUltimaAtividade(participanteId: string): Promise<void> {
+  const { error } = await supabase
+    .from("participantes")
+    .update({ ultima_atividade: new Date().toISOString() })
+    .eq("id", participanteId);
+
+  if (error) throw new Error(`Erro ao atualizar última atividade: ${error.message}`);
+}

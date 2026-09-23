@@ -67,12 +67,18 @@ Qualquer realização no feed pode receber uma reação de **um toque** de quem 
 - **Meu inegociável:** a lista de inegociáveis, cada um com seu progresso (bolinhas `●●○` se tem alvo; check "cumpri" se não tem)
 - **extras:** contador ("+3 além do combinado")
 - **visto há X** (última atividade)
+- selo **"ativo hoje"** quando a última atividade caiu no dia de hoje (fuso de Brasília)
+- **foguinho** ao lado do nome pela contagem do dia; tocar nele mostra uma legenda curta ("3+ realizações hoje") que some sozinha
+
+**Última atividade:** atualizada em toda visita reconhecida à sala (abrir a página ou focar a aba), ao registrar e ao reagir. Quem só entrou pra acompanhar os amigos também conta como "ativo hoje".
 
 **Feed (abaixo dos cartões):**
 - corrente de realizações de todos, **mais recente no topo**
 - cada item: autor + emoji do assunto + texto + horário + reação (mascote) com contagem
 - **sem foto**
 - filtro no topo: **Hoje / Tudo** (default = Hoje)
+- o foguinho do autor aparece só na realização mais recente de hoje dele, pra não repetir em toda linha
+- reação: o botão é o mascote (monstrinho pixel art); acende e soma +1 no toque, e depois do toque fica travado (não acumula)
 
 **Sem % de aderência, sem ranking, sem "atrasado".** O resumo é sempre contagem/progresso que só sobe.
 

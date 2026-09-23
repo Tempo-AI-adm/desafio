@@ -2,8 +2,11 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { AcoesDoDesafio } from "@/components/AcoesDoDesafio";
+import { CartaoPessoa } from "@/components/CartaoPessoa";
+import { FeedDaSala } from "@/components/FeedDaSala";
 import { Fogo } from "@/components/Fogo";
 import { Janela } from "@/components/Janela";
+import { ProgressoInegociavel } from "@/components/ProgressoInegociavel";
 import { ASSUNTOS, emojiDoAssunto } from "@/lib/assuntos-constants";
 import {
   ESTADO_LABEL,
@@ -16,54 +19,24 @@ import {
   alternarProntoAction,
   largarAction,
   registrarExtraAction,
+  reagirAction,
   registrarInegociavelAction,
   type AdicionarInegociavelState,
   type AlternarProntoState,
   type LargarState,
   type RegistrarExtraState,
+  type ReagirState,
   type RegistrarInegociavelState,
 } from "./actions";
+import type { DadosSala } from "@/lib/tipos-sala";
 
-type InegociavelResumo = {
-  id: string;
-  titulo: string;
-  assunto: string;
-  alvo: number | null;
-  progresso: number;
-};
-
-type ParticipanteLobby = {
-  id: string;
-  nome: string;
-  emoji: string;
-  pronto: boolean;
-  quantidadeInegociaveis: number;
-};
-
-type ExtraResumo = {
-  id: string;
-  assunto: string;
-  texto: string;
-};
-
-type DadosLobby = {
-  estado: "lobby" | "ativo" | "encerrado";
-  meuId: string;
-  meuNome: string;
-  meuEmoji: string;
-  minhaContagemHoje: number;
-  meusExtras: ExtraResumo[];
-  souCriador: boolean;
-  meuPronto: boolean;
-  meusInegociaveis: InegociavelResumo[];
-  participantes: ParticipanteLobby[];
-};
 
 const ESTADO_INICIAL_INEGOCIAVEL: AdicionarInegociavelState = {};
 const ESTADO_INICIAL_PRONTO: AlternarProntoState = {};
 const ESTADO_INICIAL_LARGAR: LargarState = {};
 const ESTADO_INICIAL_REGISTRAR_INEGOCIAVEL: RegistrarInegociavelState = {};
 const ESTADO_INICIAL_REGISTRAR_EXTRA: RegistrarExtraState = {};
+const ESTADO_INICIAL_REAGIR: ReagirState = {};
 
 function assuntoBotaoClasses(ativo: boolean) {
   return `flex items-center gap-1 border-2 border-ink px-2 py-1 font-mono text-xs font-bold transition-transform active:translate-x-[1px] active:translate-y-[1px] ${
@@ -97,7 +70,7 @@ export function AreaDoDesafio({
   token: string;
   nomeDesafio: string;
 }) {
-  const [dados, setDados] = useState<DadosLobby | null>(null);
+  const [dados, setDados] = useState<DadosSala | null>(null);
   const [carregando, setCarregando] = useState(true);
   const [erroCarregar, setErroCarregar] = useState(false);
   const [assuntoSelecionado, setAssuntoSelecionado] = useState<string>(ASSUNTOS[0].valor);
@@ -121,6 +94,11 @@ export function AreaDoDesafio({
   const [registrarExtraState, registrarExtraActionFn, registrarExtraPending] = useActionState(
     registrarExtraAction,
     ESTADO_INICIAL_REGISTRAR_EXTRA,
+  );
+
+  const [reagirState, reagirActionFn] = useActionState(
+    reagirAction,
+    ESTADO_INICIAL_REAGIR,
   );
 
   const comemoracao = comemoracaoMaisRecente(registrarInegociavelState, registrarExtraState);
@@ -182,6 +160,7 @@ export function AreaDoDesafio({
     largarState,
     registrarInegociavelState,
     registrarExtraState,
+    reagirState,
   ]);
 
   if (carregando) {
@@ -243,8 +222,6 @@ export function AreaDoDesafio({
             <ul className="flex flex-col gap-2">
               {dados.meusInegociaveis.map((i) => {
                 const assunto = ASSUNTOS.find((a) => a.valor === i.assunto);
-                const cumpriu = i.progresso > 0;
-                const estourou = i.alvo !== null && i.progresso > i.alvo;
                 return (
                   <li key={i.id}>
                     <form action={registrarInegociavelActionFn}>
@@ -259,26 +236,7 @@ export function AreaDoDesafio({
                         <span className="text-left">
                           {assunto?.emoji ?? "✨"} {i.titulo}
                         </span>
-                        {i.alvo ? (
-                          <span className="flex shrink-0 items-center gap-1">
-                            <span aria-hidden className="text-amber tracking-widest">
-                              {Array.from({ length: i.alvo }, (_, idx) =>
-                                idx < Math.min(i.progresso, i.alvo as number) ? "●" : "○",
-                              ).join("")}
-                            </span>
-                            {estourou ? (
-                              <span className="text-xs text-ink/60">
-                                +{i.progresso - i.alvo} extra
-                              </span>
-                            ) : null}
-                          </span>
-                        ) : (
-                          <span
-                            className={`shrink-0 ${cumpriu ? "font-bold text-green" : "text-ink/40"}`}
-                          >
-                            {cumpriu ? "✓ cumpri" : "○"}
-                          </span>
-                        )}
+                        <ProgressoInegociavel alvo={i.alvo} progresso={i.progresso} />
                       </button>
                     </form>
                   </li>
@@ -390,6 +348,22 @@ export function AreaDoDesafio({
             )}
           </div>
         </Janela>
+
+        <section className="flex flex-col gap-4" aria-label="Quem tá na sala">
+          {dados.participantes.map((p) => (
+            <CartaoPessoa key={p.id} pessoa={p} souEu={p.id === dados.meuId} />
+          ))}
+        </section>
+
+        <FeedDaSala
+          feed={dados.feed}
+          participantes={dados.participantes}
+          hoje={dados.hoje}
+          codigo={codigo}
+          token={token}
+          reagirAction={reagirActionFn}
+          reagirErro={reagirState.error}
+        />
 
         <AcoesDoDesafio codigo={codigo} />
       </main>

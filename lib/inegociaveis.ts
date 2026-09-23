@@ -62,19 +62,6 @@ export async function buscarInegociavelPorId(id: string): Promise<Inegociavel | 
   return data ? paraInegociavel(data as LinhaInegociavel) : undefined;
 }
 
-export async function listarInegociaveisPorParticipante(
-  participanteId: string,
-): Promise<Inegociavel[]> {
-  const { data, error } = await supabase
-    .from("inegociaveis")
-    .select()
-    .eq("participante_id", participanteId)
-    .order("criado_em", { ascending: true });
-
-  if (error) throw new Error(`Erro ao listar inegociáveis: ${error.message}`);
-  return (data as LinhaInegociavel[]).map(paraInegociavel);
-}
-
 export async function contarInegociaveisPorParticipante(participanteId: string): Promise<number> {
   const { count, error } = await supabase
     .from("inegociaveis")
@@ -83,4 +70,19 @@ export async function contarInegociaveisPorParticipante(participanteId: string):
 
   if (error) throw new Error(`Erro ao contar inegociáveis: ${error.message}`);
   return count ?? 0;
+}
+
+/** Inegociáveis de vários participantes de uma vez (cartões da sala). */
+export async function listarInegociaveisPorParticipantes(
+  participanteIds: string[],
+): Promise<Inegociavel[]> {
+  if (participanteIds.length === 0) return [];
+  const { data, error } = await supabase
+    .from("inegociaveis")
+    .select()
+    .in("participante_id", participanteIds)
+    .order("criado_em", { ascending: true });
+
+  if (error) throw new Error(`Erro ao listar inegociáveis da sala: ${error.message}`);
+  return (data as LinhaInegociavel[]).map(paraInegociavel);
 }
