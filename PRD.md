@@ -64,7 +64,7 @@ Qualquer realização no feed pode receber uma reação de **um toque** de quem 
 ## O que o dash mostra
 Tela da sala rolando, de cima pra baixo (ação rápida sempre à mão, feed com o espaço principal):
 
-**1. Cabeçalho da sala (lobby e rolando):** uma janela escura (grafite, ver `STYLE.md`) só com a identidade da sala: nome (fonte pixel) + **"DIA X/Y"** depois de largar (dias de calendário em Brasília desde a data de início; antes de largar mostra só a duração, ex: "7 DIAS") + a data de hoje ("23/09").
+**1. Cabeçalho da sala (lobby e rolando):** uma janela igual às outras (fundo creme, barra de título escura fininha, ver `STYLE.md` "janela") só com a identidade da sala: nome (fonte pixel) + **"DIA X/Y"** depois de largar (dias de calendário em Brasília desde a data de início; antes de largar mostra só a duração, ex: "7 DIAS") + a data de hoje ("23/09").
 
 **2. Suas Missões (fixo no topo ao rolar, compacto):** a barra do painel é a identidade da própria pessoa (emoji + nome + "N realizações hoje" + **foguinho**) e o botão pequeno **"+ Vitória extra"** (abre o formulário ali mesmo). Dentro: os inegociáveis como botões pequenos de 1 toque, com progresso (bolinhas `●●○` se tem alvo; check "cumpri" se não tem), e cada vitória extra listada uma por uma (assunto + texto completo + chip "extra"), numa lista de altura limitada com rolagem própria.
 
