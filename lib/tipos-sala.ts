@@ -48,6 +48,8 @@ export type DadosSala = {
   estado: EstadoDesafio;
   salaNome: string;
   duracaoDias: number;
+  /** dia atual do desafio (1..duração); nulo antes de largar */
+  diaAtual: number | null;
   /** "hoje" (YYYY-MM-DD, fuso de Brasília) segundo o servidor */
   hoje: string;
   meuId: string;

@@ -5,15 +5,17 @@ import { AcoesDoDesafio } from "@/components/AcoesDoDesafio";
 import { CabecalhoSala } from "@/components/CabecalhoSala";
 import { FaixaParticipantes } from "@/components/FaixaParticipantes";
 import { FeedDaSala } from "@/components/FeedDaSala";
+import { Fogo } from "@/components/Fogo";
 import { Janela } from "@/components/Janela";
 import { ProgressoInegociavel } from "@/components/ProgressoInegociavel";
 import { ASSUNTOS, emojiDoAssunto } from "@/lib/assuntos-constants";
 import {
   LABEL_AVISO_DESFAZER,
   LABEL_DESFEITO,
+  TIPO_REALIZACAO_CHIP,
   labelComemoracaoPorContagemDoDia,
-  labelExtrasRegistrados,
   labelPronto,
+  labelRealizacoesHoje,
 } from "@/lib/copy";
 import { JANELA_DESFAZER_MS } from "@/lib/tempo";
 import {
@@ -252,9 +254,8 @@ export function AreaDoDesafio({
         <CabecalhoSala
           salaNome={dados.salaNome}
           duracaoDias={dados.duracaoDias}
-          emoji={dados.meuEmoji}
-          nome={dados.meuNome}
-          contagemHoje={dados.minhaContagemHoje}
+          diaAtual={dados.diaAtual}
+          hoje={dados.hoje}
         />
 
         {/* Suas Missões: fixo no topo ao rolar, compacto. Ação rápida
@@ -264,7 +265,16 @@ export function AreaDoDesafio({
             compacto
             titulo={
               <>
-                <span>Suas Missões</span>
+                <span className="flex min-w-0 items-center gap-2">
+                  <span className="text-lg leading-none">{dados.meuEmoji}</span>
+                  <span className="flex min-w-0 flex-col">
+                    <span className="truncate">{dados.meuNome}</span>
+                    <span className="text-[10px] font-normal normal-case tracking-normal text-cream/70">
+                      Suas Missões · {labelRealizacoesHoje(dados.minhaContagemHoje)}
+                    </span>
+                  </span>
+                  <Fogo contagemHoje={dados.minhaContagemHoje} tamanho="compacto" />
+                </span>
                 <button
                   type="button"
                   onClick={() => {
@@ -275,7 +285,7 @@ export function AreaDoDesafio({
                       setMostrarFormExtra(true);
                     }
                   }}
-                  className="bg-cyan px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-ink transition-transform active:translate-x-[1px] active:translate-y-[1px]"
+                  className="shrink-0 bg-cyan px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-ink transition-transform active:translate-x-[1px] active:translate-y-[1px]"
                 >
                   {formExtraAberto ? "Fechar" : "+ Vitória extra"}
                 </button>
@@ -305,18 +315,34 @@ export function AreaDoDesafio({
                           <span className="text-left">
                             {emojiDoAssunto(i.assunto)} {i.titulo}
                           </span>
-                          <ProgressoInegociavel alvo={i.alvo} progresso={i.progresso} />
+                          <ProgressoInegociavel alvo={i.alvo} progresso={i.progresso} sobreAmbar={naJanela} />
                         </button>
                       </form>
                     </li>
                   );
                 })}
-                {dados.meusExtras.length > 0 ? (
-                  <li className="flex items-center border-2 border-ink bg-empty/40 px-2 py-1.5 font-mono text-xs font-bold">
-                    {labelExtrasRegistrados(dados.meusExtras.length)}
-                  </li>
-                ) : null}
               </ul>
+
+              {/* Vitórias extras, uma por uma (assunto + texto completo).
+                  Altura limitada com rolagem própria, pra faixa fixa não
+                  engolir a tela quando a lista crescer. */}
+              {dados.meusExtras.length > 0 ? (
+                <ul className="flex max-h-28 flex-col gap-1 overflow-y-auto">
+                  {dados.meusExtras.map((r) => (
+                    <li
+                      key={r.id}
+                      className="flex items-start justify-between gap-2 border-2 border-ink bg-cream px-2 py-1 font-mono text-xs"
+                    >
+                      <span className="min-w-0 break-words">
+                        {emojiDoAssunto(r.assunto)} {r.texto}
+                      </span>
+                      <span className="shrink-0 border border-ink px-1 text-[10px] font-bold uppercase tracking-widest text-ink/70">
+                        {TIPO_REALIZACAO_CHIP.extra}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
 
               {janelaDesfazer ? (
                 <div
@@ -424,9 +450,12 @@ export function AreaDoDesafio({
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-sm flex-col gap-5 px-4 py-8">
-      <header className="space-y-1 text-center">
-        <p className="font-mono text-sm text-ink/70">{nomeDesafio}</p>
-      </header>
+      <CabecalhoSala
+        salaNome={dados.salaNome}
+        duracaoDias={dados.duracaoDias}
+        diaAtual={dados.diaAtual}
+        hoje={dados.hoje}
+      />
 
       <Janela titulo="Seu inegociável">
         <div className="flex flex-col gap-4">

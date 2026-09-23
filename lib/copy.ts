@@ -95,9 +95,9 @@ export function labelRealizacoesHoje(contagemHoje: number): string {
   return contagemHoje === 1 ? "1 realização hoje" : `${contagemHoje} realizações hoje`;
 }
 
-/** Chip em "Suas Missões" com quantas vitórias extras a pessoa já tem. */
-export function labelExtrasRegistrados(quantidade: number): string {
-  return quantidade === 1 ? "+1 extra" : `+${quantidade} extras`;
+/** "Dia 3/7" no cabeçalho da sala, depois de largar. */
+export function labelDiaDoDesafio(dia: number, duracaoDias: number): string {
+  return `Dia ${dia}/${duracaoDias}`;
 }
 
 /** Mensagem pronta do botão "Compartilhar sala" (abre o WhatsApp). */

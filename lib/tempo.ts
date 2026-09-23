@@ -44,3 +44,16 @@ export const LIMITE_DESFAZER_SERVIDOR_MS = 10000;
  * participantes (feed/faixa), pra quem desfez a tempo nunca ter o
  * registro visto por ninguém. */
 export const ESCONDER_DOS_OUTROS_MS = JANELA_DESFAZER_MS + 2000;
+
+/** Em que dia do desafio estamos (1 = o dia em que largou), contando
+ * dias de calendário no fuso de Brasília. Limitado a 1..duração. */
+export function diaDoDesafio(dataInicioISO: string, duracaoDias: number, agora: Date = new Date()): number {
+  const paraUTC = (dia: string) => {
+    const [a, m, d] = dia.split("-").map(Number);
+    return Date.UTC(a, m - 1, d);
+  };
+  const inicio = paraUTC(hojeISO(new Date(dataInicioISO)));
+  const hoje = paraUTC(hojeISO(agora));
+  const dia = Math.floor((hoje - inicio) / 86_400_000) + 1;
+  return Math.min(Math.max(dia, 1), duracaoDias);
+}

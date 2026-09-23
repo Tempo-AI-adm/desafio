@@ -5,8 +5,10 @@ import { useRouter } from "next/navigation";
 import { mensagemCompartilharSala } from "@/lib/copy";
 import { removerDesafioLocal } from "@/lib/identidade-local";
 
+// Três botões lado a lado, mesmo tamanho (flex-1 + mesma altura).
+// Texto pequeno e com quebra de linha pra caber em tela de celular.
 const BOTAO =
-  "flex-1 border-2 border-ink px-3 py-3 text-center font-mono text-xs font-bold uppercase tracking-widest shadow-hard transition-transform active:translate-x-[2px] active:translate-y-[2px] active:shadow-none";
+  "flex flex-1 items-center justify-center border-2 border-ink px-1.5 py-2.5 text-center font-mono text-[11px] font-bold uppercase leading-tight tracking-wide shadow-hard-sm transition-transform active:translate-x-[1px] active:translate-y-[1px] active:shadow-none";
 
 /**
  * Rodapé da tela de uma sala: compartilhar no WhatsApp, criar outra,
@@ -35,18 +37,16 @@ export function AcoesDoDesafio({ codigo, nomeSala }: { codigo: string; nomeSala:
   }
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex items-stretch gap-2">
       <button type="button" onClick={compartilhar} className={`${BOTAO} bg-cyan`}>
         Compartilhar sala
       </button>
-      <div className="flex gap-3">
-        <Link href="/criar" className={`${BOTAO} bg-cream`}>
-          Criar nova sala
-        </Link>
-        <button type="button" onClick={sair} className={`${BOTAO} bg-cream`}>
-          Sair desta sala
-        </button>
-      </div>
+      <Link href="/criar" className={`${BOTAO} bg-cream`}>
+        Criar nova sala
+      </Link>
+      <button type="button" onClick={sair} className={`${BOTAO} bg-cream`}>
+        Sair desta sala
+      </button>
     </div>
   );
 }

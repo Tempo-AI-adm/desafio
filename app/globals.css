@@ -11,6 +11,8 @@
   --color-green: #2fbf71;
   --color-empty: #e6d9c8;
   --color-coral: #f1665a;
+  /* janela escura do cabeçalho da sala (identidade da sala) */
+  --color-grafite: #2b2d33;
 
   --font-mono: var(--font-jetbrains-mono), "JetBrains Mono", monospace;
   --font-press: var(--font-press-start-2p), "Press Start 2P", monospace;
