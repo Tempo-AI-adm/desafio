@@ -386,9 +386,9 @@ export function AreaDoDesafio({
               Defina seu mínimo inegociável para o desafio.
             </p>
             <p className="font-mono text-sm text-ink/70">
-              O que você não quer ter deixado de fazer quando ele acabar. Esse
-              é seu norte, e todo mundo vê. Durante o desafio você pode
-              marcar cada inegociável cumprido e adicionar novas realizações.
+              O que você não quer ter deixado de fazer quando ele acabar. O que
+              tiver claro na sua cabeça agora que fará o período do desafio ter
+              sido proveitoso. Você poderá adicionar novas realizações.
             </p>
           </div>
 

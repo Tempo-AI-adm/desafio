@@ -45,7 +45,7 @@ Energia BR: interjeição curta + ânimo. Fala do **realizado**, nunca compara n
 
 **Criar o norte:**
 > **Defina seu mínimo inegociável para o desafio.**
-> O que você não quer ter deixado de fazer quando ele acabar. Esse é seu norte, e todo mundo vê. Durante o desafio você pode marcar cada inegociável cumprido e adicionar novas realizações.
+> O que você não quer ter deixado de fazer quando ele acabar. O que tiver claro na sua cabeça agora que fará o período do desafio ter sido proveitoso. Você poderá adicionar novas realizações.
 
 **Strings-base (ajustar à vontade):**
 - **Registrou realização:** "SHOW." / "Boa." / "Mais um." / "Foi."
