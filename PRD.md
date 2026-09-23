@@ -1,9 +1,9 @@
-# desafio — PRD (fonte de verdade do produto)
+# desafio - PRD (fonte de verdade do produto)
 
 Descreve **o que** o app é. Quando o código divergir, este documento vence. Leia junto com `STYLE.md` (visual e copy) e `CLAUDE.md` (regras de execução).
 
 ## O que é
-App web mobile-first onde um grupo pequeno (3+ amigos) roda um "desafio" de constância por um número fixo de dias. Cada pessoa define seu **mínimo inegociável** (o norte) e, durante o desafio, registra **realizações** — tanto cumprir o que prometeu quanto vitórias extras que a deixaram orgulhosa. Todos veem tudo, num **feed compartilhado** com um **cartão-resumo de cada pessoa no topo**. É estilo "Twitter de feitos do desafio", sem fotos. Sério no fundo, leve/gameficado na forma. Ciclo curto: começa, roda, acaba.
+App web mobile-first onde um grupo pequeno (3+ amigos) roda um "desafio" de constância por um número fixo de dias. Cada pessoa define seu **mínimo inegociável** (o norte) e, durante o desafio, registra **realizações**, tanto cumprir o que prometeu quanto vitórias extras que a deixaram orgulhosa. Todos veem tudo, num **feed compartilhado** com um **cartão-resumo de cada pessoa no topo**. É estilo "Twitter de feitos do desafio", sem fotos. Sério no fundo, leve/gameficado na forma. Ciclo curto: começa, roda, acaba.
 
 ## Princípios (não violar)
 - **Simplicidade acima de tudo.** Onboarding autoexplicativo por link único. A única coisa que se manda no grupo é "entra nesse link".
@@ -19,7 +19,9 @@ App web mobile-first onde um grupo pequeno (3+ amigos) roda um "desafio" de cons
 - O dispositivo guarda um **token secreto** no navegador; nas próximas visitas é reconhecido.
 - **Edição:** todos veem tudo; cada dispositivo só edita o que criou.
 - **Limitação aceita:** limpar cookies / trocar de celular = perde a identidade. OK para ciclos curtos.
-- **Home:** "Criar desafio" e "Entrar em um desafio" (colar código / abrir link).
+- **Lista local de desafios:** além do token de cada desafio, o navegador guarda uma lista dos desafios em que a pessoa entrou (código + nome do desafio + emoji dela nesse desafio), limitada aos **3 mais recentes** (o mais novo entra no topo; se passar de 3, o mais antigo sai da lista). Sair da lista ou cair fora dela **não apaga nada no banco** e não mexe no token: dá pra voltar pelo código e continuar com a mesma identidade.
+- **Home (central):** se a lista local tem pelo menos 1 desafio, mostra **"Seus desafios"**, um cartão clicável por item (nome do desafio + seu emoji + estado atual, ex: "rolando" / "esperando") que leva direto pra `/d/[codigo]`. Abaixo, sempre: **"Criar novo desafio"** e **"Entrar com código"** (pra desafios fora da lista, ex: outro aparelho ou o 4º desafio).
+- **Dentro de um desafio:** "Criar novo desafio" (ao criar, entra na lista local) e **"Sair deste desafio"** (tira só esse item da lista local e volta pra Home).
 
 ## Ciclo do desafio (estados)
 `LOBBY → ATIVO → ENCERRADO`
@@ -46,13 +48,13 @@ Durante o desafio, a pessoa registra uma realização sempre que fez algo que va
 
 Toda realização tem: **assunto** (chip) + **texto curto** + dia + autor. Aparece no feed de todos; o app comemora (mascote + copy).
 
-**Contagem do dia:** o dash/feed conta quantas realizações a pessoa já fez **nesse dia** — é só exibição sobre o dado que já existe (dia + autor na realização), não cria tabela nova. Essa contagem decide qual selo/copy de comemoração aparece ao registrar (ver `STYLE.md`). É "escalar dentro do dia": a conta zera a cada dia novo e **não é streak entre dias** (streak continua fora de escopo, ver "Fora de escopo").
+**Contagem do dia:** o dash/feed conta quantas realizações a pessoa já fez **nesse dia**, é só exibição sobre o dado que já existe (dia + autor na realização), não cria tabela nova. Essa contagem decide qual selo/copy de comemoração aparece ao registrar (ver `STYLE.md`). É "escalar dentro do dia": a conta zera a cada dia novo e **não é streak entre dias** (streak continua fora de escopo, ver "Fora de escopo").
 
-## Assuntos (chips) — lista fixa, não configurável
+## Assuntos (chips) - lista fixa, não configurável
 💪 treino · 📚 estudo · 💼 trabalho · 🍳 comida · ✅ tarefa · ✨ outro. Usado em inegociáveis e realizações; dá cor/organização.
 
 ## Reações
-Qualquer realização no feed pode receber uma reação de **um toque** de quem também está no desafio (inclusive de si mesmo). A reação é sempre a mesma — **reagir com o monstro** (o mascote) — **sem paleta de emoji pra escolher**. Mostra a contagem de reações ao lado do item no feed. Um toque = um participante por realização (não acumula clique); sem comentário associado (comentário continua fora de escopo, ver "Fora de escopo").
+Qualquer realização no feed pode receber uma reação de **um toque** de quem também está no desafio (inclusive de si mesmo). A reação é sempre a mesma, **reagir com o monstro** (o mascote), **sem paleta de emoji pra escolher**. Mostra a contagem de reações ao lado do item no feed. Um toque = um participante por realização (não acumula clique); sem comentário associado (comentário continua fora de escopo, ver "Fora de escopo").
 
 ## O que o dash mostra
 **Cartão por pessoa (topo):**
@@ -87,16 +89,16 @@ Resumo de cada um: inegociáveis cumpridos + extras + total de realizações. To
 - **realizacoes:** id, participante_id, tipo (inegociavel/extra), inegociavel_id (nulo se extra), assunto, texto, dia (data), criado em.
 - **reacoes:** id, realizacao_id, participante_id, criado em.
 
-## Fora de escopo (de propósito — NÃO construir na v1)
+## Fora de escopo (de propósito - NÃO construir na v1)
 - Login / senha / email.
-- Fotos / upload / storage (prova social via WhatsApp por enquanto). **Revisitado ao adicionar reações — mantido fora do v1.**
-- Notificações / push / mensagem automática no WhatsApp. **Revisitado ao adicionar reações — mantido fora do v1.** *(Um botão "compartilhar meu feito" via link `wa.me` com texto pronto é fácil e fica pra v1.1.)*
+- Fotos / upload / storage (prova social via WhatsApp por enquanto). **Revisitado ao adicionar reações, mantido fora do v1.**
+- Notificações / push / mensagem automática no WhatsApp. **Revisitado ao adicionar reações, mantido fora do v1.** *(Um botão "compartilhar meu feito" via link `wa.me` com texto pronto é fácil e fica pra v1.1.)*
 - Realtime (v1.1).
-- Comentários no feed (v1.1). *(Reação de um toque com o mascote agora é v1 — ver seção "Reações". Isso não inclui comentário nem paleta de emoji.)*
+- Comentários no feed (v1.1). *(Reação de um toque com o mascote agora é v1, ver seção "Reações". Isso não inclui comentário nem paleta de emoji.)*
 - Ranking, % de aderência, "atrasado/adiantado".
-- Tela "meus desafios" / vários desafios ativos por pessoa.
+- Tela "meus desafios" completa (histórico, busca etc.). A v1 tem só a lista local dos 3 mais recentes na Home (ver "Identidade").
 - Editar o norte depois do LARGAR.
-- IA de texto livre · streaks / badges **entre dias** (a contagem de realizações **dentro do mesmo dia**, usada pro selo/copy, não é streak — ver seção "Realizações").
+- IA de texto livre · streaks / badges **entre dias** (a contagem de realizações **dentro do mesmo dia**, usada pro selo/copy, não é streak, ver seção "Realizações").
 
 ## Escopo v1 (o mínimo pra rodar com os amigos)
-Home (criar/entrar) · criar desafio (nome + duração em dias, presets 3/7/14/21 + toggle backfill) · link único · claim de identidade por dispositivo · lobby: definir ≥1 inegociável (título + assunto + alvo opcional) + PRONTO + LARGAR (criador) · norte congela ao largar · registrar realizações (cumprir inegociável ou extra) com assunto + texto, backfill se permitido, com desfazer · reação de um toque (mascote) por realização, com contagem · dash: cartões por pessoa (inegociáveis + bolinhas/alvo + extras + visto há X) + feed cronológico com filtro Hoje/Tudo + selo/copy por contagem do dia · celebração (mascote + copy) · tela de encerramento · busca ao abrir/focar · copy e visual do `STYLE.md`.
+Home (lista local dos 3 desafios mais recentes + criar/entrar com código) · sair de um desafio (só da lista local) · criar desafio (nome + duração em dias, presets 3/7/14/21 + toggle backfill) · link único · claim de identidade por dispositivo · lobby: definir ≥1 inegociável (título + assunto + alvo opcional) + PRONTO + LARGAR (criador) · norte congela ao largar · registrar realizações (cumprir inegociável ou extra) com assunto + texto, backfill se permitido, com desfazer · reação de um toque (mascote) por realização, com contagem · dash: cartões por pessoa (inegociáveis + bolinhas/alvo + extras + visto há X) + feed cronológico com filtro Hoje/Tudo + selo/copy por contagem do dia · celebração (mascote + copy) · tela de encerramento · busca ao abrir/focar · copy e visual do `STYLE.md`.

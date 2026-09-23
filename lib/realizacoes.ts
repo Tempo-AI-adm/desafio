@@ -43,7 +43,7 @@ function paraRealizacao(linha: LinhaRealizacao): Realizacao {
 }
 
 /** "Hoje" no formato da coluna `dia` (date, sem hora). Usa o
- * relógio/fuso do servidor — mesma simplificação já usada em
+ * relógio/fuso do servidor, mesma simplificação já usada em
  * `criadoEm`/`ultimaAtividade` no resto do app. */
 export function hojeISO(): string {
   return new Date().toISOString().slice(0, 10);
@@ -74,7 +74,7 @@ export async function criarRealizacao(dados: {
   return paraRealizacao(data as LinhaRealizacao);
 }
 
-/** Quantas realizações esse participante já tem num dia — usada pra
+/** Quantas realizações esse participante já tem num dia, usada pra
  * decidir o selo/copy de comemoração (ver lib/copy.ts). Chamar DEPOIS
  * de criar a realização, pra contar ela também. */
 export async function contarRealizacoesNoDia(participanteId: string, dia: string): Promise<number> {
@@ -88,7 +88,7 @@ export async function contarRealizacoesNoDia(participanteId: string, dia: string
   return count ?? 0;
 }
 
-/** Progresso de um inegociável (quantas vezes já foi marcado) — vira
+/** Progresso de um inegociável (quantas vezes já foi marcado), vira
  * bolinhas preenchidas se tem alvo, ou "cumpri" se não tem. */
 export async function contarRealizacoesPorInegociavel(inegociavelId: string): Promise<number> {
   const { count, error } = await supabase

@@ -1,4 +1,5 @@
 import { BotaoGrande } from "@/components/BotaoGrande";
+import { SeusDesafios } from "@/components/SeusDesafios";
 
 export default function Home() {
   return (
@@ -8,22 +9,25 @@ export default function Home() {
           DESAFIO
         </h1>
         <p className="font-mono text-sm text-ink/70">
-          Constância com os amigos. Todo mundo vê tudo, ninguém compete.
+          Constância com os amigos. Todo mundo vê tudo, ninguém compete. Um
+          incentivo pra sua melhor versão.
         </p>
       </header>
+
+      <SeusDesafios />
 
       <div className="flex w-full flex-col gap-5">
         <BotaoGrande
           href="/criar"
           cor="amber"
-          label="Criar desafio"
+          label="Criar novo desafio"
           sub="Comece um novo, do zero"
         />
         <BotaoGrande
           href="/entrar"
           cor="cyan"
-          label="Entrar em um desafio"
-          sub="Já tenho um código"
+          label="Entrar com código"
+          sub="Recebeu um código ou link? Entra aqui"
         />
       </div>
     </main>

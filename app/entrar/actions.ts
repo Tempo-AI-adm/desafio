@@ -9,12 +9,12 @@ export type EntrarState = {
 
 // A pessoa pode colar o código puro (ex: "PEGA42") ou o link inteiro
 // que o botão "Copiar link" copia (ex: "/d/PEGA42", ou uma URL
-// completa tipo "https://site.com/d/PEGA42") — o texto de ajuda da
+// completa tipo "https://site.com/d/PEGA42"), o texto de ajuda da
 // tela promete que os dois funcionam, então normalizamos aqui.
 function normalizarCodigoDigitado(valor: string): string {
   const bruto = valor.trim();
   // Casa "d/CODIGO" no fim (com ou sem barra antes, com ou sem barra
-  // depois) em qualquer lugar da string — pega tanto "/d/PEGA42"
+  // depois) em qualquer lugar da string, pega tanto "/d/PEGA42"
   // quanto uma URL completa "https://site.com/d/PEGA42".
   const match = bruto.match(/(?:^|\/)d\/([^/?#\s]+)\/?$/i);
   if (match) return match[1];

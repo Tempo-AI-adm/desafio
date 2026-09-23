@@ -41,7 +41,7 @@ export async function reivindicarIdentidadeAction(
     return { error: "Escolhe um nome." };
   }
   if (nome.length > 30) {
-    return { error: "Nome muito grande — até 30 letras." };
+    return { error: "Nome muito grande, até 30 letras." };
   }
   if (!(EMOJIS_IDENTIDADE as readonly string[]).includes(emoji)) {
     return { error: "Escolhe um emoji da lista." };
@@ -89,14 +89,14 @@ export async function adicionarInegociavelAction(
   }
 
   if (desafio.estado !== "lobby") {
-    return { error: "O norte já travou — o desafio começou." };
+    return { error: "O norte já travou, o desafio começou." };
   }
 
   if (!titulo) {
     return { error: "Dá um título pro inegociável." };
   }
   if (titulo.length > 60) {
-    return { error: "Título muito grande — até 60 letras." };
+    return { error: "Título muito grande, até 60 letras." };
   }
   if (!VALORES_ASSUNTO.includes(assunto)) {
     return { error: "Escolhe um assunto da lista." };
@@ -175,7 +175,7 @@ export async function largarAction(
   }
 
   // Autoridade vem do servidor (desafio.criadorParticipanteId), nunca
-  // de uma flag que o cliente mandou — só quem o servidor registrou
+  // de uma flag que o cliente mandou, só quem o servidor registrou
   // como criador pode largar.
   if (desafio.criadorParticipanteId !== participante.id) {
     return { error: "Só quem criou o desafio pode largar." };
@@ -198,9 +198,9 @@ export type RegistrarInegociavelState = {
 };
 
 // Caminho de 1 toque: marca +1 num inegociável que a pessoa já
-// definiu. Assunto e texto da realização vêm do próprio inegociável —
+// definiu. Assunto e texto da realização vêm do próprio inegociável,
 // não pede formulário nenhum. Estourar o alvo continua funcionando
-// (não trava em 100%, é só mais um +1 — ver PRD "Check / registrar").
+// (não trava em 100%, é só mais um +1, ver PRD "Check / registrar").
 export async function registrarInegociavelAction(
   _prevState: RegistrarInegociavelState,
   formData: FormData,
@@ -251,7 +251,7 @@ export type RegistrarExtraState = {
 };
 
 // Caminho com fricção: vitória fora da lista de inegociáveis. Único
-// caminho que pede formulário — assunto (chip) + texto curto.
+// caminho que pede formulário, assunto (chip) + texto curto.
 export async function registrarExtraAction(
   _prevState: RegistrarExtraState,
   formData: FormData,
@@ -282,7 +282,7 @@ export async function registrarExtraAction(
     return { error: "Conta rapidinho o que você fez." };
   }
   if (texto.length > 140) {
-    return { error: "Texto muito grande — até 140 letras." };
+    return { error: "Texto muito grande, até 140 letras." };
   }
 
   const dia = hojeISO();

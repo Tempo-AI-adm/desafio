@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 /**
- * "Janela" — o bloco base do STYLE.md: barra de título tinta + corpo
+ * "Janela", o bloco base do STYLE.md: barra de título tinta + corpo
  * creme com borda dura e sombra sólida deslocada. Zero gradiente,
  * zero canto arredondado.
  */

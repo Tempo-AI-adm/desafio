@@ -11,7 +11,7 @@ export function CopiarLinkBotao({ texto }: { texto: string }) {
       setCopiado(true);
       setTimeout(() => setCopiado(false), 2000);
     } catch {
-      // Sem permissão de clipboard (ex: http sem TLS) — sem drama, só ignora.
+      // Sem permissão de clipboard (ex: http sem TLS), sem drama, só ignora.
     }
   }
 

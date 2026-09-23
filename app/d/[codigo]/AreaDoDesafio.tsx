@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
+import { AcoesDoDesafio } from "@/components/AcoesDoDesafio";
 import { Janela } from "@/components/Janela";
 import { ASSUNTOS } from "@/lib/assuntos-constants";
 import { ESTADO_LABEL, labelComemoracaoPorContagemDoDia, labelPronto } from "@/lib/copy";
@@ -55,7 +56,7 @@ function assuntoBotaoClasses(ativo: boolean) {
 }
 
 // Deriva o texto de comemoração a mostrar sem precisar de useEffect +
-// setState (evita o problema de "setState dentro de efeito" — mesmo
+// setState (evita o problema de "setState dentro de efeito", mesmo
 // motivo do padrão já usado no resto do arquivo): compara o carimbo
 // de tempo das duas últimas ações e usa a mais recente. `key` no
 // elemento reinicia a animação CSS de sumir a cada nova realização.
@@ -108,10 +109,10 @@ export function AreaDoDesafio({
 
   const comemoracao = comemoracaoMaisRecente(registrarInegociavelState, registrarExtraState);
 
-  // Busca os dados do lobby: ao montar, ao focar a aba (sem realtime —
+  // Busca os dados do lobby: ao montar, ao focar a aba (sem realtime,
   // regra do PRD) e de novo sempre que uma ação (adicionar
   // inegociável, PRONTO, LARGAR, registrar realização) terminar. Tudo
-  // num único efeito, com a função assíncrona definida por dentro —
+  // num único efeito, com a função assíncrona definida por dentro,
   // evita o problema de "setState dentro de efeito" que dá quando
   // essa função é compartilhada entre vários efeitos via referência
   // externa.
@@ -191,6 +192,7 @@ export function AreaDoDesafio({
         <Janela titulo={nomeDesafio}>
           <p className="font-mono text-sm">Esse desafio já encerrou.</p>
         </Janela>
+        <AcoesDoDesafio codigo={codigo} />
       </main>
     );
   }
@@ -353,6 +355,8 @@ export function AreaDoDesafio({
             )}
           </div>
         </Janela>
+
+        <AcoesDoDesafio codigo={codigo} />
       </main>
     );
   }
@@ -374,7 +378,7 @@ export function AreaDoDesafio({
             </p>
             <p className="font-mono text-sm text-ink/70">
               O que você não quer ter deixado de fazer quando ele acabar. Esse
-              é seu norte — e todo mundo vê. Durante o desafio você pode
+              é seu norte, e todo mundo vê. Durante o desafio você pode
               marcar cada inegociável cumprido e adicionar novas realizações.
             </p>
           </div>
@@ -461,7 +465,7 @@ export function AreaDoDesafio({
                   inputMode="numeric"
                   min={1}
                   max={365}
-                  placeholder="Nº de vezes no desafio — em branco = cumpri/não cumpri"
+                  placeholder="Nº de vezes no desafio, em branco = cumpri/não cumpri"
                   className="w-full border-2 border-ink bg-cream px-3 py-2 font-mono text-sm placeholder:text-ink/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
                 />
               </div>
@@ -532,7 +536,7 @@ export function AreaDoDesafio({
             <input type="hidden" name="codigo" value={codigo} />
             <input type="hidden" name="token" value={token} />
             <p className="font-mono text-xs text-ink/60">
-              Você pode largar mesmo que nem todo mundo esteja pronto — a
+              Você pode largar mesmo que nem todo mundo esteja pronto, a
               decisão é sua.
             </p>
             {largarState.error ? (
@@ -550,6 +554,8 @@ export function AreaDoDesafio({
           </form>
         </Janela>
       ) : null}
+
+      <AcoesDoDesafio codigo={codigo} />
     </main>
   );
 }

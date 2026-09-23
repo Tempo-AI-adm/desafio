@@ -7,7 +7,7 @@ const CORES = {
 
 /**
  * Botão grande estilo fliperama: borda dura + sombra sólida, e no
- * clique "afunda" (some a sombra, desloca 2px) — feedback do STYLE.md.
+ * clique "afunda" (some a sombra, desloca 2px), feedback do STYLE.md.
  */
 export function BotaoGrande({
   href,

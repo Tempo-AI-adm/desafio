@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Tokens de cor e tipografia do STYLE.md — espírito "retrô-terminal",
+/* Tokens de cor e tipografia do STYLE.md, espírito "retrô-terminal",
    janelas com borda dura e sombra sólida deslocada. Zero gradiente,
    zero canto arredondado, zero sombra difusa. */
 @theme {
@@ -15,7 +15,7 @@
   --font-mono: var(--font-jetbrains-mono), "JetBrains Mono", monospace;
   --font-press: var(--font-press-start-2p), "Press Start 2P", monospace;
 
-  /* sombra sólida deslocada, sem blur — o "corpo" da janela/botão */
+  /* sombra sólida deslocada, sem blur, o "corpo" da janela/botão */
   --shadow-hard: 4px 4px 0 0 var(--color-ink);
   --shadow-hard-sm: 2px 2px 0 0 var(--color-ink);
 }
@@ -35,7 +35,7 @@ body {
 }
 
 /* Toast de comemoração ao registrar realização: fica visível uns
-   segundos e some sozinho, sem precisar de setTimeout/estado — troca
+   segundos e some sozinho, sem precisar de setTimeout/estado, troca
    de `key` no React reinicia a animação a cada nova realização. */
 @keyframes comemoracao-sumir {
   0%,

@@ -6,6 +6,7 @@ import { EMOJIS_IDENTIDADE } from "@/lib/identidade-constants";
 import {
   chaveCriadorLocalStorage,
   chaveTokenLocalStorage,
+  registrarDesafioLocal,
 } from "@/lib/identidade-local";
 import {
   reivindicarIdentidadeAction,
@@ -31,7 +32,7 @@ function emojiBotaoClasses(ativo: boolean) {
 export function DesafioClient({ desafio }: { desafio: DesafioResumo }) {
   const [fase, setFase] = useState<Fase>("carregando");
   // Token do participante reconhecido ao checar o localStorage (fluxo
-  // de retorno) — precisamos dele pra mandar nas ações do lobby
+  // de retorno), precisamos dele pra mandar nas ações do lobby
   // (adicionar inegociável, PRONTO, LARGAR). Os dados do participante
   // em si a AreaDoDesafio busca sozinha via /api/lobby.
   const [tokenCarregado, setTokenCarregado] = useState<string | null>(null);
@@ -49,7 +50,7 @@ export function DesafioClient({ desafio }: { desafio: DesafioResumo }) {
 
   // Ao montar: procura o token salvo neste navegador pra esse desafio e
   // confirma com o servidor. Sem token, ou token que o servidor não
-  // reconhece mais (ex: reiniciou), cai pra tela de identidade — sem
+  // reconhece mais (ex: reiniciou), cai pra tela de identidade, sem
   // mostrar erro nenhum, é um caso normal.
   useEffect(() => {
     let cancelado = false;
@@ -77,6 +78,11 @@ export function DesafioClient({ desafio }: { desafio: DesafioResumo }) {
         if (res.ok) {
           const data = await res.json();
           if (data.participante) {
+            registrarDesafioLocal({
+              codigo: desafio.codigo,
+              nome: desafio.nome,
+              emoji: data.participante.emoji,
+            });
             if (!cancelado) {
               setTokenCarregado(token);
               setFase("reconhecido");
@@ -85,7 +91,7 @@ export function DesafioClient({ desafio }: { desafio: DesafioResumo }) {
           }
         }
       } catch {
-        // sem rede/servidor fora do ar — trata como sem identidade, sem crash
+        // sem rede/servidor fora do ar, trata como sem identidade, sem crash
       }
 
       try {
@@ -100,10 +106,10 @@ export function DesafioClient({ desafio }: { desafio: DesafioResumo }) {
     return () => {
       cancelado = true;
     };
-  }, [desafio.codigo]);
+  }, [desafio.codigo, desafio.nome]);
 
   // Quando a action de reivindicar identidade volta com sucesso, guarda
-  // o token no localStorage (localStorage é o "sistema externo" aqui —
+  // o token no localStorage (localStorage é o "sistema externo" aqui,
   // a tela em si já reage a state.participante direto, sem outro
   // setState no meio do caminho).
   useEffect(() => {
@@ -116,7 +122,12 @@ export function DesafioClient({ desafio }: { desafio: DesafioResumo }) {
     } catch {
       // ignora
     }
-  }, [participanteRecemCriado, desafio.codigo]);
+    registrarDesafioLocal({
+      codigo: desafio.codigo,
+      nome: desafio.nome,
+      emoji: participanteRecemCriado.emoji,
+    });
+  }, [participanteRecemCriado, desafio.codigo, desafio.nome]);
 
   if (fase === "carregando") {
     return (
@@ -194,7 +205,7 @@ export function DesafioClient({ desafio }: { desafio: DesafioResumo }) {
   }
 
   // reconhecido === true (token confirmado ou identidade recém-criada).
-  // tokenAtivo sempre existe aqui na prática — o `null` só cobre o
+  // tokenAtivo sempre existe aqui na prática, o `null` só cobre o
   // instante entre "reconhecido virou true" e o efeito de localStorage
   // rodar, então mantemos o "Carregando..." nesse raro meio-tempo.
   if (!tokenAtivo) {

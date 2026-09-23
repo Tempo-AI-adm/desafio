@@ -1,4 +1,4 @@
-// Constantes puras (sem lógica de servidor) — lista fixa de assuntos
+// Constantes puras (sem lógica de servidor), lista fixa de assuntos
 // (PRD.md "Assuntos (chips)"), usada tanto em inegociáveis quanto,
 // numa fatia futura, em realizações. Seguras pra importar em Server
 // e Client Components.

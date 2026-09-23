@@ -6,8 +6,8 @@ import { contarRealizacoesPorInegociavel } from "@/lib/realizacoes";
 
 // Leitura do estado atual do desafio pra quem já tem identidade:
 // participantes (quem entrou, quem tá pronto), meus inegociáveis, se
-// sou o criador (calculado aqui, no servidor — nunca confia em flag
-// que o cliente mandou) e o estado do desafio. Sem realtime — o
+// sou o criador (calculado aqui, no servidor, nunca confia em flag
+// que o cliente mandou) e o estado do desafio. Sem realtime, o
 // cliente busca isso ao montar e ao focar a aba (regra do PRD).
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);

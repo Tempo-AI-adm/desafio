@@ -1,5 +1,5 @@
 // Persistência real via Supabase (tabela `inegociaveis`, ver
-// supabase/schema.sql). Mesmos nomes/formas de antes — só
+// supabase/schema.sql). Mesmos nomes/formas de antes, só
 // assíncronas agora. Só é importado por Server Actions e Route
 // Handlers, nunca vai pro bundle do navegador.
 

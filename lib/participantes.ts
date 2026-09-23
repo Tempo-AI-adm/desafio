@@ -1,5 +1,5 @@
 // Persistência real via Supabase (tabela `participantes`, ver
-// supabase/schema.sql). Mesmos nomes/formas de lib/desafios.ts — só
+// supabase/schema.sql). Mesmos nomes/formas de lib/desafios.ts, só
 // assíncronas agora. Só é importado por Server Actions, Route
 // Handlers e Server Components, nunca vai pro bundle do navegador.
 

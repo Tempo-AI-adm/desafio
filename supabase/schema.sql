@@ -1,6 +1,6 @@
--- Schema do "desafio" — ~5 tabelas do PRD.md ("Modelo de dados").
+-- Schema do "desafio", ~5 tabelas do PRD.md ("Modelo de dados").
 -- Cole isso inteiro no SQL Editor do painel do Supabase e rode.
--- Não é rodado automaticamente por nada no app — é só pra referência
+-- Não é rodado automaticamente por nada no app, é só pra referência
 -- e pra colar manualmente.
 
 create extension if not exists pgcrypto;
@@ -15,7 +15,7 @@ create table if not exists public.desafios (
   estado                  text not null default 'lobby'
                             check (estado in ('lobby', 'ativo', 'encerrado')),
   -- Aponta pra participantes.id, mas participantes só existe depois
-  -- (referencia desafios.id) — a FK circular é adicionada no fim do
+  -- (referencia desafios.id), a FK circular é adicionada no fim do
   -- arquivo com ALTER TABLE, depois que as duas tabelas existirem.
   criador_participante_id uuid,
   data_inicio             timestamptz,
@@ -92,7 +92,7 @@ create index if not exists idx_reacoes_realizacao_id
 -- O app não usa Supabase Auth (identidade é por token de dispositivo,
 -- verificado no código do servidor, não pelo Postgres). Habilito RLS
 -- em todas as tabelas (boa prática / o "Security Advisor" do Supabase
--- pede) com políticas permissivas pra anon key — a mesma coisa que já
+-- pede) com políticas permissivas pra anon key, a mesma coisa que já
 -- temos hoje, onde qualquer verificação de "quem pode fazer o quê"
 -- acontece nas Server Actions, não no banco. Dá pra apertar isso
 -- depois, se um dia entrar login de verdade.

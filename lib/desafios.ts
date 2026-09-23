@@ -1,6 +1,6 @@
 // Persistência real via Supabase (tabela `desafios`, ver
 // supabase/schema.sql). Mesmos nomes e formas de função de quando
-// isso era um mock em memória — só ficaram assíncronas, porque agora
+// isso era um mock em memória, só ficaram assíncronas, porque agora
 // é uma chamada de rede de verdade. Só é importado por Server
 // Actions e Server Components, então nunca vai pro bundle do
 // navegador.
@@ -80,7 +80,7 @@ export async function criarDesafio(dados: {
 
     if (!error) return paraDesafio(data as LinhaDesafio);
     if (error.code !== "23505") {
-      // 23505 = unique_violation no Postgres — qualquer outro erro não adianta tentar de novo.
+      // 23505 = unique_violation no Postgres, qualquer outro erro não adianta tentar de novo.
       throw new Error(`Erro ao criar desafio: ${error.message}`);
     }
   }
@@ -102,7 +102,7 @@ export async function buscarDesafioPorId(id: string): Promise<Desafio | undefine
   return data ? paraDesafio(data as LinhaDesafio) : undefined;
 }
 
-/** Marca o criador só se ainda não tiver um — o primeiro a reivindicar
+/** Marca o criador só se ainda não tiver um, o primeiro a reivindicar
  * com a "flag de criador" (ver components/MarcarCriadorDoDesafio) vence.
  * O `.is(..., null)` na cláusula garante isso direto no UPDATE, sem
  * corrida entre ler e escrever. */
@@ -119,7 +119,7 @@ export async function definirCriadorSeVazio(
   if (error) throw new Error(`Erro ao definir criador: ${error.message}`);
 }
 
-/** LARGAR: lobby -> ativo, registra data de início. Idempotente — se
+/** LARGAR: lobby -> ativo, registra data de início. Idempotente, se
  * já não estiver em lobby (ex: dois cliques em corrida), o UPDATE não
  * casa linha nenhuma e só devolvemos o desafio como já está. */
 export async function largarDesafio(desafioId: string): Promise<Desafio | undefined> {

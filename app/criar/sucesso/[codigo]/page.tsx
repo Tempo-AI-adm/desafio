@@ -20,7 +20,7 @@ export default async function DesafioCriadoPage({
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-sm flex-col justify-center gap-6 px-4 py-8">
-      <MarcarCriadorDoDesafio codigo={desafio.codigo} />
+      <MarcarCriadorDoDesafio codigo={desafio.codigo} nome={desafio.nome} />
       <header className="space-y-1 text-center">
         <p className="font-press text-lg leading-relaxed text-ink">VALENDO.</p>
         <p className="font-mono text-sm text-ink/70">Desafio criado. Manda esse link no grupo.</p>

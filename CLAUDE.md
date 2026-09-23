@@ -1,4 +1,4 @@
-# CLAUDE.md — regras para o Claude Code
+# CLAUDE.md - regras para o Claude Code
 
 Você é o executor técnico. O dono decide produto e testa; você escreve o código. **Leia sempre `PRD.md` (o quê) e `STYLE.md` (visual e copy) antes de agir.** Em dúvida ou pra inventar algo fora do PRD, **pare e pergunte.**
 
@@ -33,4 +33,4 @@ Você é o executor técnico. O dono decide produto e testa; você escreve o có
 ## Nunca
 - Reescrever o que já funciona sem pedir.
 - "Melhorar" o escopo por conta própria.
-- Deixar segredos (chaves do Supabase) no código versionado — usar variáveis de ambiente.
+- Deixar segredos (chaves do Supabase) no código versionado, usar variáveis de ambiente.
