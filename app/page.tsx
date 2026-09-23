@@ -9,8 +9,7 @@ export default function Home() {
           DESAFIO
         </h1>
         <p className="font-mono text-sm text-ink/70">
-          Constância com os amigos. Todo mundo vê tudo, ninguém compete. Um
-          incentivo pra sua melhor versão.
+          Um incentivo pra sua melhor versão.
         </p>
       </header>
 
