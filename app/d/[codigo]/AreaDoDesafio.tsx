@@ -2,9 +2,15 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { AcoesDoDesafio } from "@/components/AcoesDoDesafio";
+import { Fogo } from "@/components/Fogo";
 import { Janela } from "@/components/Janela";
-import { ASSUNTOS } from "@/lib/assuntos-constants";
-import { ESTADO_LABEL, labelComemoracaoPorContagemDoDia, labelPronto } from "@/lib/copy";
+import { ASSUNTOS, emojiDoAssunto } from "@/lib/assuntos-constants";
+import {
+  ESTADO_LABEL,
+  TIPO_REALIZACAO_CHIP,
+  labelComemoracaoPorContagemDoDia,
+  labelPronto,
+} from "@/lib/copy";
 import {
   adicionarInegociavelAction,
   alternarProntoAction,
@@ -34,9 +40,19 @@ type ParticipanteLobby = {
   quantidadeInegociaveis: number;
 };
 
+type ExtraResumo = {
+  id: string;
+  assunto: string;
+  texto: string;
+};
+
 type DadosLobby = {
   estado: "lobby" | "ativo" | "encerrado";
   meuId: string;
+  meuNome: string;
+  meuEmoji: string;
+  minhaContagemHoje: number;
+  meusExtras: ExtraResumo[];
   souCriador: boolean;
   meuPronto: boolean;
   meusInegociaveis: InegociavelResumo[];
@@ -180,7 +196,7 @@ export function AreaDoDesafio({
     return (
       <main className="mx-auto flex min-h-dvh max-w-sm flex-col items-center justify-center gap-3 px-4 py-8">
         <p className="border-2 border-coral bg-cream px-3 py-2 font-mono text-sm text-coral">
-          Não deu pra carregar o desafio agora. Recarrega a página.
+          Não deu pra carregar a sala agora. Recarrega a página.
         </p>
       </main>
     );
@@ -190,7 +206,7 @@ export function AreaDoDesafio({
     return (
       <main className="mx-auto flex min-h-dvh max-w-sm flex-col items-center justify-center gap-3 px-4 py-8">
         <Janela titulo={nomeDesafio}>
-          <p className="font-mono text-sm">Esse desafio já encerrou.</p>
+          <p className="font-mono text-sm">O desafio dessa sala já encerrou.</p>
         </Janela>
         <AcoesDoDesafio codigo={codigo} />
       </main>
@@ -203,6 +219,12 @@ export function AreaDoDesafio({
         <header className="space-y-1 text-center">
           <p className="font-press text-base leading-relaxed">COMEÇOU.</p>
           <p className="font-mono text-xs text-ink/60">{ESTADO_LABEL[dados.estado]}</p>
+          <p className="flex items-center justify-center gap-2 pt-2 font-mono text-sm font-bold">
+            <span>
+              {dados.meuEmoji} {dados.meuNome}
+            </span>
+            <Fogo contagemHoje={dados.minhaContagemHoje} />
+          </p>
         </header>
 
         {comemoracao ? (
@@ -214,7 +236,7 @@ export function AreaDoDesafio({
           </div>
         ) : null}
 
-        <Janela titulo="Seus inegociáveis">
+        <Janela titulo="Suas Missões">
           <div className="flex flex-col gap-3">
             <p className="font-mono text-xs text-ink/60">Toca num inegociável pra marcar +1.</p>
 
@@ -262,6 +284,19 @@ export function AreaDoDesafio({
                   </li>
                 );
               })}
+              {dados.meusExtras.map((r) => (
+                <li
+                  key={r.id}
+                  className="flex w-full items-center justify-between gap-2 border-2 border-ink bg-cream px-3 py-2 font-mono text-sm shadow-hard-sm"
+                >
+                  <span className="text-left">
+                    {emojiDoAssunto(r.assunto)} {r.texto}
+                  </span>
+                  <span className="shrink-0 border border-ink px-1 text-[10px] font-bold uppercase tracking-widest text-ink/70">
+                    {TIPO_REALIZACAO_CHIP.extra}
+                  </span>
+                </li>
+              ))}
             </ul>
 
             {registrarInegociavelState.error ? (
@@ -486,6 +521,14 @@ export function AreaDoDesafio({
             </form>
           ) : null}
 
+          {temInegociavel && !dados.meuPronto ? (
+            <p className="border-2 border-ink bg-empty/40 px-3 py-2 font-mono text-xs text-ink/70">
+              Quer adicionar outro inegociável? Adicione acima.
+              <br />
+              Pronto pra começar? Aperte <span className="font-bold text-ink">PRONTO</span>.
+            </p>
+          ) : null}
+
           <form action={prontoAction}>
             <input type="hidden" name="codigo" value={codigo} />
             <input type="hidden" name="token" value={token} />
@@ -531,7 +574,7 @@ export function AreaDoDesafio({
       </Janela>
 
       {dados.souCriador ? (
-        <Janela titulo="Você criou esse desafio">
+        <Janela titulo="Você criou essa sala">
           <form action={largarActionFn} className="flex flex-col gap-3">
             <input type="hidden" name="codigo" value={codigo} />
             <input type="hidden" name="token" value={token} />

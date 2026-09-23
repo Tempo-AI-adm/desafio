@@ -23,6 +23,9 @@ Todo bloco é uma janelinha estilo sistema antigo: **barra de título** tinta co
 ## Componente: cartão da pessoa (topo do dash)
 Uma janela por pessoa: nome + emoji na barra de título; corpo com a lista **"Meu inegociável"** (cada item = título + assunto + progresso em **bolinhas** `●●○` se tem alvo, ou um check "cumpri" se não tem); linha **"+N além do combinado"** (extras); rodapé discreto **"visto há X"**.
 
+## Componente: foguinho ("em chamas")
+Ícone de fogo em pixel art (poucos blocos, `shape-rendering: crispEdges`), ao lado do nome da pessoa. Segue a contagem do dia: **2ª realização** = pequeno, só âmbar; **3ª ou mais** = maior, chama coral com miolo âmbar. Some quando o dia vira. Não é streak.
+
 ## Componente: feed
 Lista vertical **compacta**, uma linha por realização, não um cartão inflado, mais recente no topo. Cada linha: emoji do assunto + autor + texto curto + horário + botão de reação (o mascote, sempre o mesmo símbolo, sem paleta de emoji) com a contagem ao lado. Sem foto. Filtro **Hoje / Tudo** no topo (default Hoje). Ao registrar, o mascote aparece pequeno comemorando.
 

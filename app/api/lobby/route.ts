@@ -2,7 +2,12 @@ import { NextResponse } from "next/server";
 import { buscarDesafioPorCodigo } from "@/lib/desafios";
 import { buscarParticipantePorToken, listarParticipantesPorDesafio } from "@/lib/participantes";
 import { listarInegociaveisPorParticipante } from "@/lib/inegociaveis";
-import { contarRealizacoesPorInegociavel } from "@/lib/realizacoes";
+import {
+  contarRealizacoesNoDia,
+  contarRealizacoesPorInegociavel,
+  hojeISO,
+  listarExtrasPorParticipante,
+} from "@/lib/realizacoes";
 
 // Leitura do estado atual do desafio pra quem já tem identidade:
 // participantes (quem entrou, quem tá pronto), meus inegociáveis, se
@@ -50,10 +55,21 @@ export async function GET(request: Request) {
     })),
   );
 
+  const meusExtras = (await listarExtrasPorParticipante(eu.id)).map((r) => ({
+    id: r.id,
+    assunto: r.assunto,
+    texto: r.texto,
+  }));
+  const minhaContagemHoje = await contarRealizacoesNoDia(eu.id, hojeISO());
+
   return NextResponse.json({
     lobby: {
       estado: desafio.estado,
       meuId: eu.id,
+      meuNome: eu.nome,
+      meuEmoji: eu.emoji,
+      minhaContagemHoje,
+      meusExtras,
       souCriador: desafio.criadorParticipanteId === eu.id,
       meuPronto: eu.pronto,
       meusInegociaveis,

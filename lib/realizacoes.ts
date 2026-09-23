@@ -99,3 +99,17 @@ export async function contarRealizacoesPorInegociavel(inegociavelId: string): Pr
   if (error) throw new Error(`Erro ao contar realizações do inegociável: ${error.message}`);
   return count ?? 0;
 }
+
+/** Vitórias extras de um participante, mais recente primeiro, pra
+ * "Suas Missões" na tela da sala. */
+export async function listarExtrasPorParticipante(participanteId: string): Promise<Realizacao[]> {
+  const { data, error } = await supabase
+    .from("realizacoes")
+    .select()
+    .eq("participante_id", participanteId)
+    .eq("tipo", "extra")
+    .order("criado_em", { ascending: false });
+
+  if (error) throw new Error(`Erro ao listar extras: ${error.message}`);
+  return (data as LinhaRealizacao[]).map(paraRealizacao);
+}

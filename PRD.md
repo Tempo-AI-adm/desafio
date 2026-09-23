@@ -13,6 +13,11 @@ App web mobile-first onde um grupo pequeno (3+ amigos) roda um "desafio" de cons
 - **Não é competição.** Todos veem tudo. O app **celebra o realizado**; nunca ranqueia, nunca mostra "atrasado/adiantado". Contagens só sobem.
 - **Planejado e espontâneo valem igual.** Cumprir o norte e uma vitória extra têm o mesmo peso e a mesma comemoração.
 
+## Vocabulário na tela
+- **"Desafio"** é o nome do app (título/logo) e da atividade em si ("o desafio começou", "durante o desafio").
+- **"Sala"** é o que a pessoa cria e compartilha com o grupo (criar sala, entrar em uma sala, suas salas, link da sala). Só muda o texto visível: código, banco e rotas (`/d/[codigo]`, `/criar`, `/entrar`) continuam como estão.
+- **"Suas Missões"** é o bloco da própria pessoa na sala rolando: os inegociáveis (com progresso) e as vitórias extras juntos, no mesmo tratamento visual; o extra só ganha um chip pequeno "extra".
+
 ## Identidade (sem login)
 - Um desafio = **um link único** (ex: `/d/PEGA42`). Esse link vai no grupo. É o único que existe.
 - Na 1ª vez que um dispositivo abre o link, a pessoa reivindica identidade: **nome + emoji**.
@@ -48,7 +53,7 @@ Durante o desafio, a pessoa registra uma realização sempre que fez algo que va
 
 Toda realização tem: **assunto** (chip) + **texto curto** + dia + autor. Aparece no feed de todos; o app comemora (mascote + copy).
 
-**Contagem do dia:** o dash/feed conta quantas realizações a pessoa já fez **nesse dia**, é só exibição sobre o dado que já existe (dia + autor na realização), não cria tabela nova. Essa contagem decide qual selo/copy de comemoração aparece ao registrar (ver `STYLE.md`). É "escalar dentro do dia": a conta zera a cada dia novo e **não é streak entre dias** (streak continua fora de escopo, ver "Fora de escopo").
+**Contagem do dia:** o dash/feed conta quantas realizações a pessoa já fez **nesse dia**, é só exibição sobre o dado que já existe (dia + autor na realização), não cria tabela nova. Essa contagem decide qual selo/copy de comemoração aparece ao registrar (ver `STYLE.md`). É "escalar dentro do dia": a conta zera a cada dia novo e **não é streak entre dias** (streak continua fora de escopo, ver "Fora de escopo"). A mesma contagem acende um **foguinho** pixel art ao lado do nome: pequeno na 2ª realização do dia, maior e com duas cores na 3ª ou mais.
 
 ## Assuntos (chips) - lista fixa, não configurável
 💪 treino · 📚 estudo · 💼 trabalho · 🍳 comida · ✅ tarefa · ✨ outro. Usado em inegociáveis e realizações; dá cor/organização.

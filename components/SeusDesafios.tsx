@@ -47,7 +47,7 @@ export function SeusDesafios() {
   if (lista.length === 0) return null;
 
   return (
-    <Janela titulo="Seus desafios" className="w-full">
+    <Janela titulo="Suas salas" className="w-full">
       <ul className="flex flex-col gap-2">
         {lista.map((d) => {
           const estado = estados[d.codigo];

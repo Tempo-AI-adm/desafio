@@ -23,14 +23,14 @@ export function AcoesDoDesafio({ codigo }: { codigo: string }) {
         href="/criar"
         className="flex-1 border-2 border-ink bg-cream px-3 py-3 text-center font-mono text-xs font-bold uppercase tracking-widest shadow-hard transition-transform active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
       >
-        Criar novo desafio
+        Criar nova sala
       </Link>
       <button
         type="button"
         onClick={sair}
         className="flex-1 border-2 border-ink bg-cream px-3 py-3 font-mono text-xs font-bold uppercase tracking-widest shadow-hard transition-transform active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
       >
-        Sair deste desafio
+        Sair desta sala
       </button>
     </div>
   );

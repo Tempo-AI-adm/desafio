@@ -19,14 +19,14 @@ export default function EntrarPage() {
         &larr; voltar
       </Link>
 
-      <Janela titulo="Entrar em um desafio">
+      <Janela titulo="Entrar em uma sala">
         <form action={formAction} className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
             <label
               htmlFor="codigo"
               className="font-mono text-xs font-bold uppercase tracking-widest"
             >
-              Código do desafio
+              Código da sala
             </label>
             <input
               id="codigo"

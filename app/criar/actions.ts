@@ -16,7 +16,7 @@ export async function criarDesafioAction(
   const permiteBackfill = formData.get("permiteBackfill") === "sim";
 
   if (!nome) {
-    return { error: "Dá um nome pro desafio." };
+    return { error: "Dá um nome pra sala." };
   }
 
   const duracaoDias = Number(duracaoRaw);

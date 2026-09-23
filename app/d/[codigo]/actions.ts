@@ -34,7 +34,7 @@ export async function reivindicarIdentidadeAction(
 
   const desafio = await buscarDesafioPorCodigo(codigo);
   if (!desafio) {
-    return { error: "Esse desafio não existe mais." };
+    return { error: "Essa sala não existe mais." };
   }
 
   if (!nome) {
@@ -80,7 +80,7 @@ export async function adicionarInegociavelAction(
 
   const desafio = await buscarDesafioPorCodigo(codigo);
   if (!desafio) {
-    return { error: "Esse desafio não existe mais." };
+    return { error: "Essa sala não existe mais." };
   }
 
   const participante = await buscarParticipantePorToken(desafio.id, token);
@@ -130,7 +130,7 @@ export async function alternarProntoAction(
 
   const desafio = await buscarDesafioPorCodigo(codigo);
   if (!desafio) {
-    return { error: "Esse desafio não existe mais." };
+    return { error: "Essa sala não existe mais." };
   }
 
   const participante = await buscarParticipantePorToken(desafio.id, token);
@@ -166,7 +166,7 @@ export async function largarAction(
 
   const desafio = await buscarDesafioPorCodigo(codigo);
   if (!desafio) {
-    return { error: "Esse desafio não existe mais." };
+    return { error: "Essa sala não existe mais." };
   }
 
   const participante = await buscarParticipantePorToken(desafio.id, token);
@@ -178,7 +178,7 @@ export async function largarAction(
   // de uma flag que o cliente mandou, só quem o servidor registrou
   // como criador pode largar.
   if (desafio.criadorParticipanteId !== participante.id) {
-    return { error: "Só quem criou o desafio pode largar." };
+    return { error: "Só quem criou a sala pode largar." };
   }
 
   if (desafio.estado !== "lobby") {
@@ -211,7 +211,7 @@ export async function registrarInegociavelAction(
 
   const desafio = await buscarDesafioPorCodigo(codigo);
   if (!desafio) {
-    return { error: "Esse desafio não existe mais." };
+    return { error: "Essa sala não existe mais." };
   }
 
   const participante = await buscarParticipantePorToken(desafio.id, token);
@@ -263,7 +263,7 @@ export async function registrarExtraAction(
 
   const desafio = await buscarDesafioPorCodigo(codigo);
   if (!desafio) {
-    return { error: "Esse desafio não existe mais." };
+    return { error: "Essa sala não existe mais." };
   }
 
   const participante = await buscarParticipantePorToken(desafio.id, token);

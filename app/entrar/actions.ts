@@ -28,12 +28,12 @@ export async function entrarAction(
   const codigo = normalizarCodigoDigitado(String(formData.get("codigo") ?? ""));
 
   if (!codigo) {
-    return { error: "Digita o código do desafio." };
+    return { error: "Digita o código da sala." };
   }
 
   const desafio = await buscarDesafioPorCodigo(codigo);
   if (!desafio) {
-    return { error: "Não achamos esse desafio. Confere o código." };
+    return { error: "Não achamos essa sala. Confere o código." };
   }
 
   redirect(`/d/${desafio.codigo}`);

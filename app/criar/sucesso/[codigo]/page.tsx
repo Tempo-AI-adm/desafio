@@ -23,7 +23,7 @@ export default async function DesafioCriadoPage({
       <MarcarCriadorDoDesafio codigo={desafio.codigo} nome={desafio.nome} />
       <header className="space-y-1 text-center">
         <p className="font-press text-lg leading-relaxed text-ink">VALENDO.</p>
-        <p className="font-mono text-sm text-ink/70">Desafio criado. Manda esse link no grupo.</p>
+        <p className="font-mono text-sm text-ink/70">Sala criada. Manda esse link no grupo.</p>
       </header>
 
       <Janela titulo={desafio.nome}>
@@ -39,7 +39,7 @@ export default async function DesafioCriadoPage({
 
           <div className="flex flex-col gap-2">
             <span className="font-mono text-xs font-bold uppercase tracking-widest">
-              Link do desafio
+              Link da sala
             </span>
             <div className="border-2 border-ink bg-empty/40 px-3 py-2 font-mono text-sm break-all">
               {link}
@@ -52,7 +52,7 @@ export default async function DesafioCriadoPage({
               href={link}
               className="flex-1 border-2 border-ink bg-amber px-4 py-3 text-center font-mono text-sm font-bold uppercase tracking-widest shadow-hard transition-transform active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
             >
-              Ir pro desafio
+              Ir pra sala
             </Link>
           </div>
         </div>

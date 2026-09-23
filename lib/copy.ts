@@ -3,6 +3,7 @@
 // enum, sempre passa por aqui. Ver STYLE.md pro tom.
 
 import type { EstadoDesafio } from "./desafios";
+import type { TipoRealizacao } from "./realizacoes";
 
 export const ESTADO_LABEL: Record<EstadoDesafio, string> = {
   lobby: "Esperando todo mundo entrar",
@@ -34,4 +35,19 @@ export function labelComemoracaoPorContagemDoDia(contagemHoje: number): string {
   if (contagemHoje <= 1) return "SHOW.";
   if (contagemHoje === 2) return "TÁ ON FIRE.";
   return "AURA MÁXIMA.";
+}
+
+/** Chip pequeno que diz de onde veio uma realização em "Suas Missões".
+ * Só o extra mostra chip; o que veio de um inegociável não precisa. */
+export const TIPO_REALIZACAO_CHIP: Record<TipoRealizacao, string | null> = {
+  inegociavel: null,
+  extra: "extra",
+};
+
+/** Nível do foguinho ao lado do nome, pela mesma contagem do dia que
+ * decide o selo (2ª realização = em chamas, 3ª ou mais = aura máxima). */
+export function nivelFogoPorContagemDoDia(contagemHoje: number): 0 | 1 | 2 {
+  if (contagemHoje >= 3) return 2;
+  if (contagemHoje === 2) return 1;
+  return 0;
 }

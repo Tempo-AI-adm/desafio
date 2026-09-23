@@ -42,14 +42,14 @@ export default function CriarDesafioPage() {
         &larr; voltar
       </Link>
 
-      <Janela titulo="Criar desafio">
+      <Janela titulo="Criar sala">
         <form action={formAction} className="flex flex-col gap-6">
           <input type="hidden" name="duracaoDias" value={duracaoFinal} />
           <input type="hidden" name="permiteBackfill" value={backfill} />
 
           <div className="flex flex-col gap-2">
             <label htmlFor="nome" className="font-mono text-xs font-bold uppercase tracking-widest">
-              Nome do desafio
+              Nome da sala
             </label>
             <input
               id="nome"
@@ -136,7 +136,7 @@ export default function CriarDesafioPage() {
             disabled={pending}
             className="border-2 border-ink bg-amber px-4 py-3 font-mono text-sm font-bold uppercase tracking-widest shadow-hard transition-transform active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:opacity-60"
           >
-            {pending ? "Criando..." : "Criar desafio"}
+            {pending ? "Criando..." : "Criar sala"}
           </button>
         </form>
       </Janela>

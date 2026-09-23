@@ -196,7 +196,7 @@ export function DesafioClient({ desafio }: { desafio: DesafioResumo }) {
               disabled={pending || !emojiSelecionado}
               className="border-2 border-ink bg-amber px-4 py-3 font-mono text-sm font-bold uppercase tracking-widest shadow-hard transition-transform active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:opacity-60"
             >
-              {pending ? "Entrando..." : "Entrar no desafio"}
+              {pending ? "Entrando..." : "Entrar na sala"}
             </button>
           </form>
         </Janela>
