@@ -42,11 +42,20 @@ function paraRealizacao(linha: LinhaRealizacao): Realizacao {
   };
 }
 
-/** "Hoje" no formato da coluna `dia` (date, sem hora). Usa o
- * relógio/fuso do servidor, mesma simplificação já usada em
- * `criadoEm`/`ultimaAtividade` no resto do app. */
-export function hojeISO(): string {
-  return new Date().toISOString().slice(0, 10);
+/** Fuso que define quando o "dia" vira no app (contagem do dia, selo,
+ * foguinho, coluna `dia`). O servidor do Vercel roda em UTC, então
+ * não dá pra confiar no relógio local dele. */
+export const FUSO_DO_APP = "America/Sao_Paulo";
+
+/** "Hoje" no formato da coluna `dia` (date, sem hora, YYYY-MM-DD),
+ * no fuso de Brasília. O locale en-CA já formata como YYYY-MM-DD. */
+export function hojeISO(agora: Date = new Date()): string {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: FUSO_DO_APP,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(agora);
 }
 
 export async function criarRealizacao(dados: {

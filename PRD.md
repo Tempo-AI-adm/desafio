@@ -53,7 +53,7 @@ Durante o desafio, a pessoa registra uma realização sempre que fez algo que va
 
 Toda realização tem: **assunto** (chip) + **texto curto** + dia + autor. Aparece no feed de todos; o app comemora (mascote + copy).
 
-**Contagem do dia:** o dash/feed conta quantas realizações a pessoa já fez **nesse dia**, é só exibição sobre o dado que já existe (dia + autor na realização), não cria tabela nova. Essa contagem decide qual selo/copy de comemoração aparece ao registrar (ver `STYLE.md`). É "escalar dentro do dia": a conta zera a cada dia novo e **não é streak entre dias** (streak continua fora de escopo, ver "Fora de escopo"). A mesma contagem acende um **foguinho** pixel art ao lado do nome: pequeno na 2ª realização do dia, maior e com duas cores na 3ª ou mais.
+**Contagem do dia:** o dash/feed conta quantas realizações a pessoa já fez **nesse dia**, é só exibição sobre o dado que já existe (dia + autor na realização), não cria tabela nova. Essa contagem decide qual selo/copy de comemoração aparece ao registrar (ver `STYLE.md`). É "escalar dentro do dia": a conta zera a cada dia novo (o dia vira à **meia-noite de Brasília**, fuso `America/Sao_Paulo`, não pelo relógio do servidor) e **não é streak entre dias** (streak continua fora de escopo, ver "Fora de escopo"). A mesma contagem acende um **foguinho** pixel art ao lado do nome: pequeno na 2ª realização do dia, maior e com duas cores na 3ª ou mais.
 
 ## Assuntos (chips) - lista fixa, não configurável
 💪 treino · 📚 estudo · 💼 trabalho · 🍳 comida · ✅ tarefa · ✨ outro. Usado em inegociáveis e realizações; dá cor/organização.
