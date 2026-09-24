@@ -113,3 +113,30 @@ export const TEXTO_LOBBY_NORTE =
 
 /** Leitor de tela do "✓" nos registros antigos de "vitória extra". */
 export const LABEL_REGISTRO_FEITO = "feito";
+
+// ---- Home ----
+
+export const HOME_FRASE = "Um incentivo pra sua melhor versão (ou o Twitter de aura farmada)";
+
+export const HOME_COMO_FUNCIONA = "Como funciona";
+
+export const HOME_COMO_FUNCIONA_TEXTO = [
+  "O ritmo é só seu, mas a satisfação é compartilhada.",
+  "Você define suas missões e registra suas realizações.",
+  "Seja malhar 3x, estudar 4h, ligar pra família ou só ter cozinhado pra semana.",
+];
+
+export const HOME_VER_EXEMPLO = "Ver um exemplo do resultado final";
+
+/** Card decorativo da Home: dados FIXOS de exemplo, não vêm do banco. */
+export const HOME_EXEMPLO = {
+  rotulo: "exemplo",
+  titulo: "Resultado final",
+  sala: "Setembro sem desculpa",
+  resumo: "7 dias · 4 amigos",
+  pessoa: "🦊 Ana",
+  selo: "FECHOU O DESAFIO.",
+  missoes: "3 missões cumpridas",
+  bonus: "2 bônus além do combinado",
+  reacoes: "5 reações recebidas",
+};
