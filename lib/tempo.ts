@@ -45,15 +45,27 @@ export const LIMITE_DESFAZER_SERVIDOR_MS = 10000;
  * registro visto por ninguém. */
 export const ESCONDER_DOS_OUTROS_MS = JANELA_DESFAZER_MS + 2000;
 
-/** Em que dia do desafio estamos (1 = o dia em que largou), contando
- * dias de calendário no fuso de Brasília. Limitado a 1..duração. */
-export function diaDoDesafio(dataInicioISO: string, duracaoDias: number, agora: Date = new Date()): number {
+/** Dia corrido desde a largada (1 = o dia em que largou), contando
+ * dias de calendário no fuso de Brasília. Sem limite: passa da duração
+ * quando o desafio já acabou. */
+function diaCorrido(dataInicioISO: string, agora: Date): number {
   const paraUTC = (dia: string) => {
     const [a, m, d] = dia.split("-").map(Number);
     return Date.UTC(a, m - 1, d);
   };
   const inicio = paraUTC(hojeISO(new Date(dataInicioISO)));
   const hoje = paraUTC(hojeISO(agora));
-  const dia = Math.floor((hoje - inicio) / 86_400_000) + 1;
-  return Math.min(Math.max(dia, 1), duracaoDias);
+  return Math.floor((hoje - inicio) / 86_400_000) + 1;
+}
+
+/** Em que dia do desafio estamos, limitado a 1..duração ("DIA X/Y"). */
+export function diaDoDesafio(dataInicioISO: string, duracaoDias: number, agora: Date = new Date()): number {
+  return Math.min(Math.max(diaCorrido(dataInicioISO, agora), 1), duracaoDias);
+}
+
+/** O desafio acabou? Os N dias são o dia da largada + os seguintes; ele
+ * acaba na virada (meia-noite de Brasília) do último dia. Ex: largou
+ * dia 10 com 7 dias = vale do dia 10 ao 16, encerra quando vira o 17. */
+export function desafioVenceu(dataInicioISO: string, duracaoDias: number, agora: Date = new Date()): boolean {
+  return diaCorrido(dataInicioISO, agora) > duracaoDias;
 }

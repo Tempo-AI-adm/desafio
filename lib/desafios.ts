@@ -6,6 +6,7 @@
 // navegador.
 
 import { supabase } from "./supabase";
+import { desafioVenceu } from "./tempo";
 
 export type EstadoDesafio = "lobby" | "ativo" | "encerrado";
 
@@ -87,12 +88,35 @@ export async function criarDesafio(dados: {
   throw new Error("Não consegui gerar um código único pro desafio. Tenta de novo.");
 }
 
+/** Busca a sala pelo código. Também é aqui que o encerramento por data
+ * acontece (sem job agendado): se a sala está "ativo" e já passou do
+ * último dia, vira "encerrado" nesse momento. Toda leitura de sala do
+ * app passa por aqui (páginas, APIs e ações), então ninguém vê nem
+ * registra numa sala vencida como se ainda estivesse rolando. */
 export async function buscarDesafioPorCodigo(codigo: string): Promise<Desafio | undefined> {
   const alvo = codigo.trim().toUpperCase();
   const { data, error } = await supabase.from("desafios").select().eq("codigo", alvo).maybeSingle();
 
   if (error) throw new Error(`Erro ao buscar desafio por código: ${error.message}`);
-  return data ? paraDesafio(data as LinhaDesafio) : undefined;
+  if (!data) return undefined;
+  return encerrarSeVenceu(paraDesafio(data as LinhaDesafio));
+}
+
+/** ativo -> encerrado quando a data passou. O `.eq("estado", "ativo")`
+ * no UPDATE deixa isso idempotente (duas buscas ao mesmo tempo não
+ * brigam). Devolve a sala já com o estado certo. */
+async function encerrarSeVenceu(desafio: Desafio): Promise<Desafio> {
+  if (desafio.estado !== "ativo" || !desafio.dataInicio) return desafio;
+  if (!desafioVenceu(desafio.dataInicio, desafio.duracaoDias)) return desafio;
+
+  const { error } = await supabase
+    .from("desafios")
+    .update({ estado: "encerrado" })
+    .eq("id", desafio.id)
+    .eq("estado", "ativo");
+
+  if (error) throw new Error(`Erro ao encerrar desafio: ${error.message}`);
+  return { ...desafio, estado: "encerrado" };
 }
 
 export async function buscarDesafioPorId(id: string): Promise<Desafio | undefined> {

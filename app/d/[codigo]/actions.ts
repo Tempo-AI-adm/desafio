@@ -347,6 +347,12 @@ export async function desfazerRegistroAction(
     return { error: "Sua identidade não foi reconhecida. Recarrega a página." };
   }
 
+  // Sala encerrada (ou que ainda nem largou) não aceita mais mudança
+  // nos registros, nem desfazer.
+  if (desafio.estado !== "ativo") {
+    return { error: "O desafio não está rolando agora." };
+  }
+
   const apagou = await apagarMarcacaoRecente({
     realizacaoId,
     participanteId: participante.id,

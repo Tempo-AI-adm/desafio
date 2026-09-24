@@ -23,14 +23,17 @@ export function FeedDaSala({
   token,
   reagirAction,
   reagirErro,
+  somenteLeitura = false,
 }: {
   feed: ItemFeed[];
   participantes: ParticipanteSala[];
   hoje: string;
   codigo: string;
   token: string;
-  reagirAction: (formData: FormData) => void;
+  reagirAction?: (formData: FormData) => void;
   reagirErro?: string;
+  /** sala encerrada: histórico só pra ler, reações aparecem sem botão */
+  somenteLeitura?: boolean;
 }) {
   // Reação otimista: acende o mascote e soma +1 no toque, sem esperar
   // o servidor (que leva ~1-3s pra gravar e a sala ser buscada de novo).
@@ -87,7 +90,15 @@ export function FeedDaSala({
                       <p className="break-words text-sm leading-snug">{r.texto}</p>
                     )}
                   </div>
-                  {r.tipoItem === "missao_criada" ? null : (
+                  {r.tipoItem === "missao_criada" ? null : somenteLeitura || !reagirAction ? (
+                    <span
+                      aria-label={`${r.reacoes} reações`}
+                      className="flex shrink-0 items-center gap-1 border-2 border-ink/30 px-1.5 py-1 text-xs font-bold text-ink/60"
+                    >
+                      <Mascote altura={16} />
+                      <span>{r.reacoes}</span>
+                    </span>
+                  ) : (
                     <form
                       action={reagirAction}
                       onSubmit={() => setReagidosAgora((atual) => new Set(atual).add(r.id))}

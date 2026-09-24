@@ -214,12 +214,29 @@ export function AreaDoDesafio({
     );
   }
 
+  // Sala encerrada: sem registrar, sem reagir (o servidor também recusa).
+  // O feed fica como histórico, só pra ler.
   if (dados.estado === "encerrado") {
     return (
-      <main className="mx-auto flex min-h-dvh max-w-sm flex-col items-center justify-center gap-3 px-4 py-8">
-        <Janela titulo={nomeDesafio}>
+      <main className="mx-auto flex min-h-dvh max-w-sm flex-col gap-4 px-4 pb-8 pt-4">
+        <CabecalhoSala
+          salaNome={dados.salaNome}
+          duracaoDias={dados.duracaoDias}
+          diaAtual={dados.diaAtual}
+          hoje={dados.hoje}
+          agora={dados.agora}
+        />
+        <Janela titulo={dados.salaNome}>
           <p className="font-mono text-sm">O desafio dessa sala já encerrou.</p>
         </Janela>
+        <FeedDaSala
+          feed={dados.feed}
+          participantes={dados.participantes}
+          hoje={dados.hoje}
+          codigo={codigo}
+          token={token}
+          somenteLeitura
+        />
         <AcoesDoDesafio codigo={codigo} nomeSala={nomeDesafio} />
       </main>
     );

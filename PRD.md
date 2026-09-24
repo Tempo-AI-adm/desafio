@@ -32,7 +32,7 @@ App web mobile-first onde um grupo pequeno (3+ amigos) roda um "desafio" de cons
 `LOBBY → ATIVO → ENCERRADO`
 - **LOBBY:** entra pelo link, reivindica identidade, define seu norte (≥ 1 inegociável). Cada um aperta **PRONTO**. O criador vê o lobby encher e aperta **LARGAR** quando quiser (não declara quantos são).
 - **ATIVO:** contagem começa (dia 1..N). As missões que já existem **não mudam** (não dá pra editar nem apagar), mas dá pra **criar missões novas** ("+ Nova missão"). A pessoa registra realizações.
-- **ENCERRADO:** no fim dos N dias, tela final que **celebra todo mundo que se dedicou** (não há vencedor). Para rodar outro, cria-se um novo (link novo).
+- **ENCERRADO:** no fim dos N dias, tela final que **celebra todo mundo que se dedicou** (não há vencedor). Para rodar outro, cria-se um novo (link novo). **Encerramento automático, sem job agendado:** vale do dia da largada até o fim do N-ésimo dia (meia-noite de Brasília); na primeira vez que alguém busca a sala depois disso (abrir a página, focar a aba, Home, qualquer ação), o estado vira "encerrado" no banco. Daí em diante o servidor recusa marcar, desfazer, criar missão e reagir; o feed fica como histórico, só leitura.
 
 ## Os dois conceitos (não inventar outros)
 
