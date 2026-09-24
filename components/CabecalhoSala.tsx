@@ -35,7 +35,9 @@ export function CabecalhoSala({
 }) {
   return (
     <Janela titulo="Sala" painel>
-      <h1 className="break-words font-press text-sm leading-[1.7] sm:text-base">{salaNome}</h1>
+      {/* Em maiúsculas (só no CSS; o nome salvo não muda): as minúsculas
+          da Press Start 2P são baixinhas e o nome parecia "espremido". */}
+      <h1 className="break-words font-press text-sm uppercase leading-[1.6] sm:text-base">{salaNome}</h1>
       <div className="mt-3 flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest">
         <span className="border-2 border-ink bg-amber px-2 py-0.5">
           {diaAtual !== null ? labelDiaDoDesafio(diaAtual, duracaoDias) : labelDuracao(duracaoDias)}

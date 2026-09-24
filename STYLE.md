@@ -16,7 +16,7 @@ Fundo claro; **a tinta preta faz a cara** (bordas grossas, barras de título pre
 
 ## Tipografia (Google Fonts)
 - **Corpo, números, UI:** JetBrains Mono.
-- **Títulos grandes / logo:** Press Start 2P (pesada, só títulos curtos).
+- **Títulos grandes / logo:** Press Start 2P (pesada, só títulos curtos). Sempre em **MAIÚSCULAS**: as minúsculas dessa fonte são baixinhas e parecem espremidas.
 
 ## Componente: "janela"
 Todo bloco é uma janelinha estilo sistema antigo: **barra de título** tinta, **fina** (texto pequeno, pouco respiro vertical, pra não pesar), com texto claro; **corpo** creme com **borda dura preta** (~2px) e **sombra sólida deslocada** (`4px 4px 0 #1E1E1E`); canto reto; **zero gradiente, zero sombra difusa.**
