@@ -2,9 +2,11 @@ import { Fogo } from "@/components/Fogo";
 import { Janela } from "@/components/Janela";
 import {
   LABEL_ATIVOS_HOJE,
+  LABEL_SELO_ENCERRADO,
   LABEL_SO_VOCE_HOJE,
   labelDiaDoDesafio,
   labelDuracao,
+  labelPeriodo,
   labelVistoHa,
 } from "@/lib/copy";
 import { diaCurto, horaCurta } from "@/lib/tempo";
@@ -16,6 +18,7 @@ import type { ParticipanteSala } from "@/lib/tipos-sala";
  * escura fininha. Dentro, o nome da sala em destaque (fonte pixel) e
  * "DIA X/Y" (ou só a duração antes de largar) + data e hora de hoje
  * (fuso de Brasília, hora da última busca; sem relógio rodando).
+ * Encerrada: selo neutro "ENCERRADO" + período real ("16/09 — 22/09").
  * Com a sala rolando, também "Ativos hoje": quem teve atividade hoje
  * (a própria pessoa primeiro), cada um com a insígnia do dia se tiver
  * (o foguinho). Uma bolinha verde só, ao lado do rótulo.
@@ -27,6 +30,7 @@ export function CabecalhoSala({
   hoje,
   agora,
   ativosHoje,
+  periodoEncerrado,
 }: {
   salaNome: string;
   duracaoDias: number;
@@ -37,20 +41,31 @@ export function CabecalhoSala({
   agora: string;
   /** só na sala rolando; no lobby quem já chegou aparece em outra janela */
   ativosHoje?: ParticipanteSala[];
+  /** só na sala encerrada: troca "Dia X/Y" + hoje por "Encerrado" + período */
+  periodoEncerrado?: { inicio: string; fim: string } | null;
 }) {
   return (
     <Janela titulo="Sala" painel>
       {/* Em maiúsculas (só no CSS; o nome salvo não muda): as minúsculas
           da Press Start 2P são baixinhas e o nome parecia "espremido". */}
       <h1 className="break-words font-press text-sm uppercase leading-[1.6] sm:text-base">{salaNome}</h1>
-      <div className="mt-3 flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest">
-        <span className="border-2 border-ink bg-amber px-2 py-0.5">
-          {diaAtual !== null ? labelDiaDoDesafio(diaAtual, duracaoDias) : labelDuracao(duracaoDias)}
-        </span>
-        <span className="text-ink/60">
-          {diaCurto(hoje)} · {horaCurta(agora)}
-        </span>
-      </div>
+      {periodoEncerrado ? (
+        // Encerrada: selo neutro (status, não conquista) + período real
+        // do desafio; a hora de agora não importa mais.
+        <div className="mt-3 flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest">
+          <span className="border-2 border-ink/50 px-2 py-0.5 text-ink/70">{LABEL_SELO_ENCERRADO}</span>
+          <span className="text-ink/60">{labelPeriodo(periodoEncerrado.inicio, periodoEncerrado.fim)}</span>
+        </div>
+      ) : (
+        <div className="mt-3 flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest">
+          <span className="border-2 border-ink bg-amber px-2 py-0.5">
+            {diaAtual !== null ? labelDiaDoDesafio(diaAtual, duracaoDias) : labelDuracao(duracaoDias)}
+          </span>
+          <span className="text-ink/60">
+            {diaCurto(hoje)} · {horaCurta(agora)}
+          </span>
+        </div>
+      )}
 
       {ativosHoje ? (
         <div className="mt-3 flex flex-col gap-1.5 border-t-2 border-ink/15 pt-2">

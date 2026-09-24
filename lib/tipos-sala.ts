@@ -50,6 +50,8 @@ export type DadosSala = {
   duracaoDias: number;
   /** dia atual do desafio (1..duração); nulo antes de largar */
   diaAtual: number | null;
+  /** primeiro e último dia (YYYY-MM-DD, Brasília); nulo antes de largar */
+  periodo: { inicio: string; fim: string } | null;
   /** "hoje" (YYYY-MM-DD, fuso de Brasília) segundo o servidor */
   hoje: string;
   /** momento da busca (ISO), pra hora no cabeçalho; atualiza a cada busca */

@@ -230,6 +230,7 @@ export function AreaDoDesafio({
           diaAtual={dados.diaAtual}
           hoje={dados.hoje}
           agora={dados.agora}
+          periodoEncerrado={dados.periodo}
         />
         <ResultadoFinal
           titulo={TITULO_RESULTADO_FINAL}

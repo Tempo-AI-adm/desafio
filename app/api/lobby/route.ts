@@ -7,7 +7,7 @@ import {
 } from "@/lib/participantes";
 import { listarInegociaveisPorParticipantes } from "@/lib/inegociaveis";
 import { listarRealizacoesDaSala } from "@/lib/realizacoes";
-import { ESCONDER_DOS_OUTROS_MS, diaDoDesafio, hojeISO } from "@/lib/tempo";
+import { ESCONDER_DOS_OUTROS_MS, diaDoDesafio, hojeISO, periodoDoDesafio } from "@/lib/tempo";
 import type { DadosSala, InegociavelResumo, ItemFeed, ParticipanteSala } from "@/lib/tipos-sala";
 
 // Leitura do estado atual da sala pra quem já tem identidade: estado,
@@ -126,6 +126,7 @@ export async function GET(request: Request) {
     salaNome: desafio.nome,
     duracaoDias: desafio.duracaoDias,
     diaAtual: desafio.dataInicio ? diaDoDesafio(desafio.dataInicio, desafio.duracaoDias) : null,
+    periodo: desafio.dataInicio ? periodoDoDesafio(desafio.dataInicio, desafio.duracaoDias) : null,
     hoje,
     agora: new Date(agora).toISOString(),
     meuId: eu.id,

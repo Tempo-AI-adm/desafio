@@ -3,6 +3,7 @@
 // enum, sempre passa por aqui. Ver STYLE.md pro tom.
 
 import type { EstadoDesafio } from "./desafios";
+import { diaCurto } from "./tempo";
 
 export const ESTADO_LABEL: Record<EstadoDesafio, string> = {
   lobby: "Esperando todo mundo entrar",
@@ -81,6 +82,16 @@ export function labelDuracao(dias: number): string {
 /** "Dia 3/7" no cabeçalho da sala, depois de largar. */
 export function labelDiaDoDesafio(dia: number, duracaoDias: number): string {
   return `Dia ${dia}/${duracaoDias}`;
+}
+
+/** Selo do cabeçalho da sala encerrada, no lugar de "Dia X/Y". Neutro:
+ * é status, não conquista. */
+export const LABEL_SELO_ENCERRADO = "Encerrado";
+
+/** "16/09 — 22/09": período real do desafio, no cabeçalho da sala
+ * encerrada (datas YYYY-MM-DD, fuso de Brasília). */
+export function labelPeriodo(inicio: string, fim: string): string {
+  return `${diaCurto(inicio)} — ${diaCurto(fim)}`;
 }
 
 /** Mensagem pronta do botão "Compartilhar sala" (abre o WhatsApp). */

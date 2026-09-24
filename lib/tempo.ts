@@ -58,6 +58,19 @@ function diaCorrido(dataInicioISO: string, agora: Date): number {
   return Math.floor((hoje - inicio) / 86_400_000) + 1;
 }
 
+/** Primeiro e último dia do desafio (YYYY-MM-DD, fuso de Brasília): o
+ * dia da largada e o N-ésimo dia contando com ele. Ex: largou 16/09 com
+ * 7 dias = 16/09 a 22/09. */
+export function periodoDoDesafio(
+  dataInicioISO: string,
+  duracaoDias: number,
+): { inicio: string; fim: string } {
+  const inicio = hojeISO(new Date(dataInicioISO));
+  const [a, m, d] = inicio.split("-").map(Number);
+  const fim = new Date(Date.UTC(a, m - 1, d + duracaoDias - 1)).toISOString().slice(0, 10);
+  return { inicio, fim };
+}
+
 /** Em que dia do desafio estamos, limitado a 1..duração ("DIA X/Y"). */
 export function diaDoDesafio(dataInicioISO: string, duracaoDias: number, agora: Date = new Date()): number {
   return Math.min(Math.max(diaCorrido(dataInicioISO, agora), 1), duracaoDias);
