@@ -133,14 +133,14 @@ export const HOME_VER_EXEMPLO = "Ver um exemplo do resultado final";
  * ordem = ordem de entrada na sala (nunca por quantidade) e o destaque é
  * binário (completou tudo que se propôs ou não), números são só detalhe.
  * Os dados foram escolhidos pra mostrar isso: Cacá se propôs 1 e fez 1
- * (fechou tudo, igual a Ana), Beto fez mais que a Cacá e seguiu no ritmo. */
+ * (fechou tudo, igual a Ana), Beto fez mais que a Cacá e seguiu no próprio ritmo. */
 export const HOME_EXEMPLO = {
   rotulo: "exemplo",
   titulo: "Resultado final",
   sala: "Desafio maromba",
   resumo: "7 dias · 3 amigos",
   seloFechouTudo: "FECHOU TUDO QUE SE PROPÔS.",
-  seloNoRitmo: "SEGUIU NO RITMO DELE.",
+  seloNoRitmo: "SEGUIU NO PRÓPRIO RITMO.",
   // Ordem de entrada na sala.
   pessoas: [
     { emoji: "🐼", nome: "Beto", fechouTudo: false, missoes: 2, bonus: 0, reacoes: 3 },

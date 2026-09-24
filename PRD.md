@@ -101,7 +101,7 @@ Resumo de cada um: inegociáveis cumpridos + extras + total de realizações. To
 ## Resultado final - princípio de apresentação
 Participantes nunca são ordenados nem destacados por quantidade de missões cumpridas. A ordem de exibição é neutra (ordem de entrada na sala). O status de cada pessoa reflete se ela completou tudo que se propôs para si mesma (binário), não a contagem absoluta - isso vale tanto para o card de exemplo quanto para a futura tela de encerramento real.
 - Completou tudo que se propôs: selo âmbar **"FECHOU TUDO QUE SE PROPÔS."**
-- Não completou tudo: selo neutro e gentil **"SEGUIU NO RITMO DELE."** (sem cor de alerta).
+- Não completou tudo: selo neutro e gentil **"SEGUIU NO PRÓPRIO RITMO."** (sem cor de alerta).
 - Números (missões cumpridas, bônus, reações) aparecem só como detalhe, sem definir ordem nem destaque. Quem se propôs 1 missão e cumpriu fez 100% do que prometeu, igual a quem se propôs 7 e cumpriu 7.
 ## Modelo de dados (linguagem simples, ~5 tabelas)
 - **desafios:** id, código do link, nome, duração em dias, permite_backfill (sim/não), estado (lobby/ativo/encerrado), data de início (quando largou), criado em.
