@@ -237,6 +237,7 @@ export function AreaDoDesafio({
           duracaoDias={dados.duracaoDias}
           diaAtual={dados.diaAtual}
           hoje={dados.hoje}
+          agora={dados.agora}
           ativosHoje={ativosHoje}
         />
 
@@ -387,6 +388,7 @@ export function AreaDoDesafio({
         duracaoDias={dados.duracaoDias}
         diaAtual={dados.diaAtual}
         hoje={dados.hoje}
+        agora={dados.agora}
       />
 
       <Janela titulo="Seu inegociável">

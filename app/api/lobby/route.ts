@@ -127,6 +127,7 @@ export async function GET(request: Request) {
     duracaoDias: desafio.duracaoDias,
     diaAtual: desafio.dataInicio ? diaDoDesafio(desafio.dataInicio, desafio.duracaoDias) : null,
     hoje,
+    agora: new Date(agora).toISOString(),
     meuId: eu.id,
     meuNome: eu.nome,
     meuEmoji: eu.emoji,

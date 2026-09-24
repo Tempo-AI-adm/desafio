@@ -52,6 +52,8 @@ export type DadosSala = {
   diaAtual: number | null;
   /** "hoje" (YYYY-MM-DD, fuso de Brasília) segundo o servidor */
   hoje: string;
+  /** momento da busca (ISO), pra hora no cabeçalho; atualiza a cada busca */
+  agora: string;
   meuId: string;
   meuNome: string;
   meuEmoji: string;
