@@ -40,7 +40,7 @@ App web mobile-first onde um grupo pequeno (3+ amigos) roda um "desafio" de cons
 O "mínimo que me propus". Cada pessoa define **pelo menos 1** no lobby. Cada inegociável tem:
 - **título** (ex: "malhar", "acabar o livro X")
 - **assunto** (chip, lista fixa abaixo)
-- **alvo (opcional):** um número de vezes no desafio inteiro (ex: 2).
+- **alvo (opcional):** um número de vezes no desafio inteiro (ex: 2). No formulário a pessoa escolhe **"Única"** (sem alvo) ou **"Repetir"** (aparece "Quantas vezes?"; cada toque conta 1 vez feita, não é quantidade nem duração).
   - **Com alvo:** vira bolinhas de progresso (`●●○`). Marcar além do alvo conta como **bônus** ("estourou"): bolinhas a mais em outra cor + uma estrelinha (insígnia) ao lado.
   - **Sem alvo:** é um item de "cumpri / não cumpri" (marca uma vez).
 

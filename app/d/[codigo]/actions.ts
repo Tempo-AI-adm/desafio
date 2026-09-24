@@ -123,7 +123,7 @@ export async function adicionarInegociavelAction(
   if (alvoRaw) {
     const numero = Number(alvoRaw);
     if (!Number.isInteger(numero) || numero < 1 || numero > 365) {
-      return { error: "Alvo precisa ser um número válido (1 a 365) ou ficar em branco." };
+      return { error: "Quantas vezes precisa ser um número de 1 a 365." };
     }
     alvo = numero;
   }
