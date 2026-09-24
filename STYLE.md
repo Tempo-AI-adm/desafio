@@ -45,7 +45,6 @@ Monstrinho quadriculado, deadpan, 1–2 cores, mesma linguagem (borda dura + som
 Energia BR: interjeição curta + ânimo. Fala do **realizado**, nunca compara nem envergonha, nunca "atrasado". Planejado e extra recebem a mesma comemoração. Sem emoji-spam. Maiúscula só em clímax (largar, estourar, encerrar).
 
 **Criar o norte:**
-> **Defina seu mínimo inegociável para o desafio.**
 > Para começar, defina uma ou mais missões que você queira realizar no período do desafio. Depois você poderá adicionar novas missões.
 
 **Strings-base (ajustar à vontade):**

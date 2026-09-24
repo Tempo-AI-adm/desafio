@@ -11,6 +11,7 @@ import { ASSUNTOS, emojiDoAssunto } from "@/lib/assuntos-constants";
 import {
   LABEL_AVISO_DESFAZER,
   LABEL_DESFEITO,
+  TEXTO_LOBBY_NORTE,
   labelComemoracaoPorContagemDoDia,
   labelPronto,
 } from "@/lib/copy";
@@ -393,15 +394,7 @@ export function AreaDoDesafio({
 
       <Janela titulo="Seu inegociável">
         <div className="flex flex-col gap-4">
-          <div>
-            <p className="font-mono text-sm font-bold">
-              Defina seu mínimo inegociável para o desafio.
-            </p>
-            <p className="font-mono text-sm text-ink/70">
-              Para começar, defina uma ou mais missões que você queira realizar
-              no período do desafio. Depois você poderá adicionar novas missões.
-            </p>
-          </div>
+          <p className="font-mono text-sm text-ink/70">{TEXTO_LOBBY_NORTE}</p>
 
           {temInegociavel ? (
             <ul className="flex flex-col gap-2">

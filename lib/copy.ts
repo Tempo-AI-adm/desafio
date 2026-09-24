@@ -106,3 +106,7 @@ export const TIPO_MISSAO_LABEL: Record<TipoMissao, string> = {
 };
 
 export const LABEL_QUANTAS_VEZES = "Repetir quantas vezes?";
+
+/** Texto do lobby, na janela "Seu inegociável" (STYLE.md "Criar o norte"). */
+export const TEXTO_LOBBY_NORTE =
+  "Para começar, defina uma ou mais missões que você queira realizar no período do desafio. Depois você poderá adicionar novas missões.";
