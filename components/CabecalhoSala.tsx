@@ -51,15 +51,14 @@ export function CabecalhoSala({
             <span aria-hidden className="inline-block h-2 w-2 bg-green" />
             {LABEL_ATIVOS_HOJE}
           </span>
-          <ul className="-mx-1 flex items-center gap-1.5 overflow-x-auto px-1 pb-1">
+          {/* Lista simples, sem caixa por pessoa (não parece botão),
+              separada só por espaço: um "·" começaria a linha quando a
+              lista quebra. */}
+          <ul className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-xs font-bold">
             {ativosHoje.map((p) => (
-              <li
-                key={p.id}
-                title={labelVistoHa(p.minutosDesdeAtividade)}
-                className="flex shrink-0 items-center gap-1 border-2 border-ink bg-cream px-1.5 py-0.5 font-mono text-[11px] font-bold"
-              >
+              <li key={p.id} title={labelVistoHa(p.minutosDesdeAtividade)} className="flex items-center gap-1">
                 <span>{p.emoji}</span>
-                <span className="max-w-[6rem] truncate">{p.nome}</span>
+                <span className="max-w-[7rem] truncate">{p.nome}</span>
                 <Fogo contagemHoje={p.contagemHoje} tamanho="compacto" />
               </li>
             ))}

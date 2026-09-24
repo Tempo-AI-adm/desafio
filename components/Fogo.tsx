@@ -70,7 +70,7 @@ export function Fogo({
           height={altura}
           shapeRendering="crispEdges"
           aria-hidden
-          className="origin-bottom motion-safe:animate-[respirar_2.4s_ease-in-out_infinite]"
+          className="origin-bottom motion-safe:animate-[respirar_1.1s_ease-in-out_infinite]"
         >
           {PIXELS.map((p) => (
             <rect key={`${p.x}-${p.y}`} x={p.x} y={p.y} width={1} height={1} fill={cores[p.tipo]} />
