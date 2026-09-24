@@ -68,7 +68,7 @@ Tela da sala rolando, de cima pra baixo (ação rápida sempre à mão, feed com
 
 **1. Cabeçalho da sala (lobby e rolando):** uma janela igual às outras (fundo creme, barra de título escura fininha, ver `STYLE.md` "janela") só com a identidade da sala: nome (fonte pixel) + **"DIA X/Y"** depois de largar (dias de calendário em Brasília desde a data de início; antes de largar mostra só a duração, ex: "7 DIAS") + a data de hoje ("23/09").
 
-**2. Suas Missões (fixo no topo ao rolar, compacto):** a barra do painel é a identidade da própria pessoa (emoji + nome + "N realizações hoje" + **foguinho**) e o botão pequeno **"+ Nova missão"** (abre ali mesmo o mesmo formulário do lobby). Dentro: as missões como botões pequenos de 1 toque, com progresso (bolinhas `●●○` se tem alvo; check "cumpri" se não tem). Registros antigos de "vitória extra" aparecem listados embaixo, sem tag.
+**2. Suas Missões (fixo no topo ao rolar, compacto):** a barra do painel é a identidade da própria pessoa (emoji + nome + **foguinho**) e o botão pequeno **"+ Nova missão"** (abre ali mesmo o mesmo formulário do lobby). Dentro: as missões como botões pequenos de 1 toque, com progresso (bolinhas `●●○` se tem alvo; check "cumpri" se não tem). Registros antigos de "vitória extra" aparecem listados embaixo, sem tag.
 
 **3. Faixa "Na sala":** só os **outros** participantes, numa faixa fina que rola na horizontal: emoji + nome + bolinha verde de **"ativo hoje"** (última atividade no dia de hoje, fuso de Brasília) + **foguinho** se aplicável. Sem progresso detalhado dos outros aqui (é secundário). Tocar no foguinho mostra uma legenda curta ("3+ realizações hoje") que some sozinha.
 

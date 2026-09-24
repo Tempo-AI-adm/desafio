@@ -81,12 +81,6 @@ export function labelDuracao(dias: number): string {
   return dias === 1 ? "1 dia" : `${dias} dias`;
 }
 
-/** Resumo curto no cabeçalho, pela contagem do dia. */
-export function labelRealizacoesHoje(contagemHoje: number): string {
-  if (contagemHoje === 0) return "Nada registrado hoje ainda";
-  return contagemHoje === 1 ? "1 realização hoje" : `${contagemHoje} realizações hoje`;
-}
-
 /** "Dia 3/7" no cabeçalho da sala, depois de largar. */
 export function labelDiaDoDesafio(dia: number, duracaoDias: number): string {
   return `Dia ${dia}/${duracaoDias}`;

@@ -15,7 +15,6 @@ import {
   LABEL_DESFEITO,
   labelComemoracaoPorContagemDoDia,
   labelPronto,
-  labelRealizacoesHoje,
 } from "@/lib/copy";
 import { JANELA_DESFAZER_MS } from "@/lib/tempo";
 import {
@@ -249,7 +248,7 @@ export function AreaDoDesafio({
                   <span className="flex min-w-0 flex-col">
                     <span className="truncate">{dados.meuNome}</span>
                     <span className="text-[10px] font-normal normal-case tracking-normal text-cream/70">
-                      Suas Missões · {labelRealizacoesHoje(dados.minhaContagemHoje)}
+                      Suas Missões
                     </span>
                   </span>
                   <Fogo contagemHoje={dados.minhaContagemHoje} tamanho="compacto" />
