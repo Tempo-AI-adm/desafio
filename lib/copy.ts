@@ -129,19 +129,23 @@ export const HOME_COMO_FUNCIONA_TEXTO = [
 export const HOME_VER_EXEMPLO = "Ver um exemplo do resultado final";
 
 /** Card decorativo da Home: dados FIXOS de exemplo, não vêm do banco.
- * Mostra o grupo todo, inclusive quem não bateu tudo (transparência
- * gentil, sem ranking): a ordem é só a de chegada, não de pontos. */
+ * Segue o princípio do PRD "Resultado final - princípio de apresentação":
+ * ordem = ordem de entrada na sala (nunca por quantidade) e o destaque é
+ * binário (completou tudo que se propôs ou não), números são só detalhe.
+ * Os dados foram escolhidos pra mostrar isso: Cacá se propôs 1 e fez 1
+ * (fechou tudo, igual a Ana), Beto fez mais que a Cacá e seguiu no ritmo. */
 export const HOME_EXEMPLO = {
   rotulo: "exemplo",
   titulo: "Resultado final",
-  sala: "Setembro sem desculpa",
+  sala: "Desafio maromba",
   resumo: "7 dias · 3 amigos",
-  seloFechou: "FECHOU O DESAFIO.",
-  seloProxima: "fica pra próxima.",
+  seloFechouTudo: "FECHOU TUDO QUE SE PROPÔS.",
+  seloNoRitmo: "SEGUIU NO RITMO DELE.",
+  // Ordem de entrada na sala.
   pessoas: [
-    { emoji: "🦊", nome: "Ana", fechou: true, missoes: 3, bonus: 2, reacoes: 5 },
-    { emoji: "🐼", nome: "Beto", fechou: true, missoes: 2, bonus: 0, reacoes: 3 },
-    { emoji: "🦉", nome: "Cacá", fechou: false, missoes: 1, bonus: 0, reacoes: 0 },
+    { emoji: "🐼", nome: "Beto", fechouTudo: false, missoes: 2, bonus: 0, reacoes: 3 },
+    { emoji: "🦊", nome: "Ana", fechouTudo: true, missoes: 3, bonus: 2, reacoes: 5 },
+    { emoji: "🦉", nome: "Cacá", fechouTudo: true, missoes: 1, bonus: 0, reacoes: 2 },
   ],
 };
 

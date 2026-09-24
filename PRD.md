@@ -25,7 +25,7 @@ App web mobile-first onde um grupo pequeno (3+ amigos) roda um "desafio" de cons
 - **Edição:** todos veem tudo; cada dispositivo só edita o que criou.
 - **Limitação aceita:** limpar cookies / trocar de celular = perde a identidade. OK para ciclos curtos.
 - **Lista local de desafios:** além do token de cada desafio, o navegador guarda uma lista dos desafios em que a pessoa entrou (código + nome do desafio + emoji dela nesse desafio), limitada aos **3 mais recentes** (o mais novo entra no topo; se passar de 3, o mais antigo sai da lista). Sair da lista ou cair fora dela **não apaga nada no banco** e não mexe no token: dá pra voltar pelo código e continuar com a mesma identidade.
-- **Home (central):** sempre visível, nesta ordem: logo "desafioo" → uma frase ("Um incentivo pra sua melhor versão (ou o Twitter de aura farmada)") → **"Suas salas"** (só se a lista local tiver alguma: cartão por sala com nome + seu emoji + estado, ex: "rolando" / "esperando", levando direto pra `/d/[codigo]`) → botões **"Criar sala"** e **"Entrar em uma sala"** (código, pra salas fora da lista, ex: outro aparelho ou a 4ª sala). Embaixo, dois links pequenos que abrem no lugar (fechados por padrão, sem navegar): **"Como funciona ↓"** (o texto explicativo) e **"Ver um exemplo do resultado final →"** (card decorativo com dados FIXOS de exemplo, com rótulo "exemplo"; não usa dados reais. Mostra 3 pessoas fictícias, inclusive uma que "fica pra próxima", pra deixar claro que o resultado mostra o grupo todo com transparência gentil, sem ranking).
+- **Home (central):** sempre visível, nesta ordem: logo "desafioo" → uma frase ("Um incentivo pra sua melhor versão (ou o Twitter de aura farmada)") → **"Suas salas"** (só se a lista local tiver alguma: cartão por sala com nome + seu emoji + estado, ex: "rolando" / "esperando", levando direto pra `/d/[codigo]`) → botões **"Criar sala"** e **"Entrar em uma sala"** (código, pra salas fora da lista, ex: outro aparelho ou a 4ª sala). Embaixo, dois links pequenos que abrem no lugar (fechados por padrão, sem navegar): **"Como funciona ↓"** (o texto explicativo) e **"Ver um exemplo do resultado final →"** (card decorativo com dados FIXOS de exemplo, com rótulo "exemplo"; não usa dados reais. Mostra 3 pessoas fictícias na ordem de entrada, com o selo binário de cada uma, seguindo "Resultado final - princípio de apresentação").
 - **Dentro de um desafio:** "Criar novo desafio" (ao criar, entra na lista local) e **"Sair deste desafio"** (tira só esse item da lista local e volta pra Home).
 
 ## Ciclo do desafio (estados)
@@ -97,6 +97,12 @@ Tela da sala rolando, de cima pra baixo (ação rápida sempre à mão, feed com
 ## Tela de encerramento
 Resumo de cada um: inegociáveis cumpridos + extras + total de realizações. Tom celebra **todos que se dedicaram**. Estilo "GAME OVER / FECHOU".
 
+
+## Resultado final - princípio de apresentação
+Participantes nunca são ordenados nem destacados por quantidade de missões cumpridas. A ordem de exibição é neutra (ordem de entrada na sala). O status de cada pessoa reflete se ela completou tudo que se propôs para si mesma (binário), não a contagem absoluta - isso vale tanto para o card de exemplo quanto para a futura tela de encerramento real.
+- Completou tudo que se propôs: selo âmbar **"FECHOU TUDO QUE SE PROPÔS."**
+- Não completou tudo: selo neutro e gentil **"SEGUIU NO RITMO DELE."** (sem cor de alerta).
+- Números (missões cumpridas, bônus, reações) aparecem só como detalhe, sem definir ordem nem destaque. Quem se propôs 1 missão e cumpriu fez 100% do que prometeu, igual a quem se propôs 7 e cumpriu 7.
 ## Modelo de dados (linguagem simples, ~5 tabelas)
 - **desafios:** id, código do link, nome, duração em dias, permite_backfill (sim/não), estado (lobby/ativo/encerrado), data de início (quando largou), criado em.
 - **participantes:** id, desafio_id, nome, emoji, token do dispositivo (secreto), pronto (sim/não), última_atividade, criado em.

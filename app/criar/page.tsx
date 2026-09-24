@@ -57,7 +57,7 @@ export default function CriarDesafioPage() {
               type="text"
               required
               maxLength={60}
-              placeholder="Ex: Setembro sem desculpa"
+              placeholder="Ex: Desafio maromba"
               className={inputClasses}
             />
           </div>
