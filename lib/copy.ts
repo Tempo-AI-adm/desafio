@@ -128,15 +128,31 @@ export const HOME_COMO_FUNCIONA_TEXTO = [
 
 export const HOME_VER_EXEMPLO = "Ver um exemplo do resultado final";
 
-/** Card decorativo da Home: dados FIXOS de exemplo, não vêm do banco. */
+/** Card decorativo da Home: dados FIXOS de exemplo, não vêm do banco.
+ * Mostra o grupo todo, inclusive quem não bateu tudo (transparência
+ * gentil, sem ranking): a ordem é só a de chegada, não de pontos. */
 export const HOME_EXEMPLO = {
   rotulo: "exemplo",
   titulo: "Resultado final",
   sala: "Setembro sem desculpa",
-  resumo: "7 dias · 4 amigos",
-  pessoa: "🦊 Ana",
-  selo: "FECHOU O DESAFIO.",
-  missoes: "3 missões cumpridas",
-  bonus: "2 bônus além do combinado",
-  reacoes: "5 reações recebidas",
+  resumo: "7 dias · 3 amigos",
+  seloFechou: "FECHOU O DESAFIO.",
+  seloProxima: "fica pra próxima.",
+  pessoas: [
+    { emoji: "🦊", nome: "Ana", fechou: true, missoes: 3, bonus: 2, reacoes: 5 },
+    { emoji: "🐼", nome: "Beto", fechou: true, missoes: 2, bonus: 0, reacoes: 3 },
+    { emoji: "🦉", nome: "Cacá", fechou: false, missoes: 1, bonus: 0, reacoes: 0 },
+  ],
 };
+
+export function labelMissoesCumpridas(n: number): string {
+  return n === 1 ? "1 missão cumprida" : `${n} missões cumpridas`;
+}
+
+export function labelBonus(n: number): string {
+  return n === 1 ? "1 bônus" : `${n} bônus`;
+}
+
+export function labelReacoes(n: number): string {
+  return n === 1 ? "1 reação" : `${n} reações`;
+}
