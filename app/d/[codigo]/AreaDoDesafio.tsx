@@ -11,6 +11,7 @@ import { ASSUNTOS, emojiDoAssunto } from "@/lib/assuntos-constants";
 import {
   LABEL_AVISO_DESFAZER,
   LABEL_DESFEITO,
+  LABEL_REGISTRO_FEITO,
   TEXTO_LOBBY_NORTE,
   labelComemoracaoPorContagemDoDia,
   labelPronto,
@@ -300,7 +301,8 @@ export function AreaDoDesafio({
               </ul>
 
               {/* Registros antigos do tempo da "vitória extra" (antes de
-                  virar "+ Nova missão"): continuam aparecendo, sem tag.
+                  virar "+ Nova missão"): continuam aparecendo, sem tag e
+                  com "✓", porque já são coisas feitas (não dá pra marcar).
                   Altura limitada com rolagem própria. */}
               {dados.meusExtras.length > 0 ? (
                 <ul className="flex max-h-28 flex-col gap-1 overflow-y-auto">
@@ -311,6 +313,9 @@ export function AreaDoDesafio({
                     >
                       <span className="min-w-0 break-words">
                         {emojiDoAssunto(r.assunto)} {r.texto}
+                      </span>
+                      <span aria-label={LABEL_REGISTRO_FEITO} className="shrink-0 font-bold text-green">
+                        ✓
                       </span>
                     </li>
                   ))}
