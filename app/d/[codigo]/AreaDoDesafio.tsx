@@ -11,7 +11,6 @@ import { ResultadoFinal } from "@/components/ResultadoFinal";
 import { ASSUNTOS, emojiDoAssunto } from "@/lib/assuntos-constants";
 import { resultadoDaSala } from "@/lib/resultado";
 import {
-  CHAMADA_ENCERRAMENTO,
   TITULO_RESULTADO_FINAL,
   labelResumoResultado,
   LABEL_AVISO_DESFAZER,
@@ -234,8 +233,7 @@ export function AreaDoDesafio({
         />
         <ResultadoFinal
           titulo={TITULO_RESULTADO_FINAL}
-          chamada={CHAMADA_ENCERRAMENTO}
-          sala={dados.salaNome}
+          mascote
           resumo={labelResumoResultado(dados.duracaoDias, dados.participantes.length)}
           pessoas={resultadoDaSala(dados)}
           meuId={dados.meuId}

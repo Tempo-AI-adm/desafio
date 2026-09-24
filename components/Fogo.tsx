@@ -3,7 +3,7 @@
 import { useState } from "react";
 import {
   labelComemoracaoPorContagemDoDia,
-  legendaFogo,
+  LEGENDA_FOGO,
   nivelFogoPorContagemDoDia,
 } from "@/lib/copy";
 import { pixelsComContorno } from "@/lib/pixel-art";
@@ -33,7 +33,7 @@ const ALTURAS = {
 } as const;
 
 /**
- * Tocar no foguinho mostra uma legenda curta ("3+ realizações hoje")
+ * Tocar no foguinho mostra uma legenda curta ("2 ou mais no mesmo dia = dia em chamas.")
  * ao lado, que some sozinha (mesma animação do selo de comemoração).
  * Sem modal, sem navegar.
  */
@@ -61,7 +61,7 @@ export function Fogo({
       <button
         type="button"
         onClick={() => setLegendaCarimbo(Date.now())}
-        aria-label={`${texto} ${legendaFogo(contagemHoje)}`}
+        aria-label={`${texto} ${LEGENDA_FOGO}`}
         className="inline-flex shrink-0 p-0.5"
       >
         <svg
@@ -81,9 +81,9 @@ export function Fogo({
         <span
           key={legendaCarimbo}
           onAnimationEnd={() => setLegendaCarimbo(null)}
-          className="animate-[comemoracao-sumir_2.2s_ease-out_forwards] whitespace-nowrap border-2 border-ink bg-amber px-1.5 py-0.5 font-mono text-[10px] font-bold normal-case tracking-normal text-ink"
+          className="w-max max-w-[11rem] animate-[comemoracao-sumir_2.2s_ease-out_forwards] border-2 border-ink bg-amber px-1.5 py-0.5 font-mono text-[10px] font-bold normal-case tracking-normal text-ink"
         >
-          {legendaFogo(contagemHoje)}
+          {LEGENDA_FOGO}
         </span>
       ) : null}
     </span>

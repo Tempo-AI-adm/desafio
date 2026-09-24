@@ -45,10 +45,9 @@ export function nivelFogoPorContagemDoDia(contagemHoje: number): 0 | 1 | 2 {
   return 0;
 }
 
-/** Legenda curta que aparece ao tocar no foguinho. */
-export function legendaFogo(contagemHoje: number): string {
-  return contagemHoje >= 3 ? "3+ realizações hoje" : "2 realizações hoje";
-}
+/** Legenda que aparece ao tocar no foguinho (os dois tamanhos): ele
+ * acende a partir da 2ª realização do dia. */
+export const LEGENDA_FOGO = "2 ou mais no mesmo dia = dia em chamas.";
 
 /** Rótulo da lista dos outros participantes no cabeçalho da sala. É
  * diário/aproximado (quem abriu ou registrou hoje), não presença ao vivo. */
@@ -167,9 +166,6 @@ export const SELO_FECHOU_TUDO = "FECHOU TUDO QUE SE PROPÔS.";
 export const SELO_NO_RITMO = "SEGUIU NO PRÓPRIO RITMO.";
 
 export const TITULO_RESULTADO_FINAL = "Resultado final";
-
-/** Clímax no topo do resultado da sala encerrada (STYLE.md "Encerramento"). */
-export const CHAMADA_ENCERRAMENTO = "FECHOU O DESAFIO.";
 
 /** Rótulo em cima da lista de participantes do resultado. */
 export const LABEL_TODO_MUNDO = "Todo mundo";
