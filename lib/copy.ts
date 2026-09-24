@@ -105,7 +105,4 @@ export const TIPO_MISSAO_LABEL: Record<TipoMissao, string> = {
   repetir: "Repetir",
 };
 
-export const LABEL_QUANTAS_VEZES = "Quantas vezes?";
-
-export const AJUDA_QUANTAS_VEZES =
-  "Cada toque conta como 1 vez feita - não é quantidade nem duração. Ex: 'Estudar' repetir 5x conta 5 sessões de estudo, não 5 horas.";
+export const LABEL_QUANTAS_VEZES = "Quantas vezes essa missão deve se repetir?";

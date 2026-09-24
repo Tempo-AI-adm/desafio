@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { ASSUNTOS } from "@/lib/assuntos-constants";
 import {
-  AJUDA_QUANTAS_VEZES,
   LABEL_QUANTAS_VEZES,
   TIPO_MISSAO_LABEL,
   type TipoMissao,
@@ -26,7 +25,7 @@ const TIPOS_MISSAO: TipoMissao[] = ["unica", "repetir"];
 /**
  * Formulário de missão (inegociável): título + assunto (chip) + tipo
  * "Única" ou "Repetir". Única = alvo nulo (cumpri/não cumpri); Repetir
- * = pede "Quantas vezes?" e vira o alvo (bolinhas). No banco não muda
+ * = pede quantas vezes a missão se repete e vira o alvo (bolinhas). No banco não muda
  * nada: só o jeito de preencher. O mesmo no lobby e no "+ Nova missão".
  */
 export function FormMissao({
@@ -123,7 +122,6 @@ export function FormMissao({
             placeholder="Ex: 5"
             className="w-full border-2 border-ink bg-cream px-3 py-2 font-mono text-sm placeholder:text-ink/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
           />
-          <p className="font-mono text-[11px] leading-snug text-ink/60">{AJUDA_QUANTAS_VEZES}</p>
         </div>
       ) : null}
 
