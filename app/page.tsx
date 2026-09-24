@@ -1,12 +1,13 @@
 import { BotaoGrande } from "@/components/BotaoGrande";
+import { Logo } from "@/components/Logo";
 import { SeusDesafios } from "@/components/SeusDesafios";
 
 export default function Home() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-sm flex-col items-center justify-center gap-10 px-4 py-10">
       <header className="space-y-4 text-center">
-        <h1 className="font-press text-2xl leading-relaxed sm:text-3xl">
-          DESAFIO
+        <h1>
+          <Logo className="mx-auto w-full max-w-[18rem]" />
         </h1>
         <p className="font-mono text-sm font-bold">
           Um incentivo pra sua melhor versão
