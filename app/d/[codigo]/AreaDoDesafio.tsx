@@ -5,7 +5,6 @@ import { AcoesDoDesafio } from "@/components/AcoesDoDesafio";
 import { CabecalhoSala } from "@/components/CabecalhoSala";
 import { FeedDaSala } from "@/components/FeedDaSala";
 import { FormMissao } from "@/components/FormMissao";
-import { Fogo } from "@/components/Fogo";
 import { Janela } from "@/components/Janela";
 import { ProgressoInegociavel } from "@/components/ProgressoInegociavel";
 import { ASSUNTOS, emojiDoAssunto } from "@/lib/assuntos-constants";
@@ -243,16 +242,7 @@ export function AreaDoDesafio({
             compacto
             titulo={
               <>
-                <span className="flex min-w-0 items-center gap-2">
-                  <span className="text-lg leading-none">{dados.meuEmoji}</span>
-                  <span className="flex min-w-0 flex-col">
-                    <span className="truncate">{dados.meuNome}</span>
-                    <span className="text-[10px] font-normal normal-case tracking-normal text-cream/70">
-                      Suas Missões
-                    </span>
-                  </span>
-                  <Fogo contagemHoje={dados.minhaContagemHoje} tamanho="compacto" />
-                </span>
+                <span>Suas Missões</span>
                 <button
                   type="button"
                   onClick={() => {
