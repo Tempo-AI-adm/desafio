@@ -139,8 +139,6 @@ export const HOME_EXEMPLO = {
   titulo: "Resultado final",
   sala: "Desafio maromba",
   resumo: "7 dias · 3 amigos",
-  seloFechouTudo: "FECHOU TUDO QUE SE PROPÔS.",
-  seloNoRitmo: "SEGUIU NO PRÓPRIO RITMO.",
   // Ordem de entrada na sala.
   pessoas: [
     { emoji: "🐼", nome: "Beto", fechouTudo: false, missoes: 2, bonus: 0, reacoes: 3 },
@@ -148,6 +146,25 @@ export const HOME_EXEMPLO = {
     { emoji: "🦉", nome: "Cacá", fechouTudo: true, missoes: 1, bonus: 0, reacoes: 2 },
   ],
 };
+
+// ---- Resultado final (exemplo da Home e sala encerrada) ----
+
+/** Selo binário: cumpriu tudo que se propôs ou não (PRD "Resultado final"). */
+export const SELO_FECHOU_TUDO = "FECHOU TUDO QUE SE PROPÔS.";
+export const SELO_NO_RITMO = "SEGUIU NO PRÓPRIO RITMO.";
+
+export const TITULO_RESULTADO_FINAL = "Resultado final";
+
+/** Clímax no topo do resultado da sala encerrada (STYLE.md "Encerramento"). */
+export const CHAMADA_ENCERRAMENTO = "FECHOU O DESAFIO.";
+
+/** Marca a própria pessoa em listas de participantes. */
+export const LABEL_VOCE = "(você)";
+
+/** "7 dias · 3 amigos", embaixo do nome da sala no resultado. */
+export function labelResumoResultado(duracaoDias: number, pessoas: number): string {
+  return `${labelDuracao(duracaoDias)} · ${pessoas === 1 ? "1 amigo" : `${pessoas} amigos`}`;
+}
 
 export function labelMissoesCumpridas(n: number): string {
   return n === 1 ? "1 missão cumprida" : `${n} missões cumpridas`;

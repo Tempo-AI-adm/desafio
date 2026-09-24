@@ -7,8 +7,13 @@ import { FeedDaSala } from "@/components/FeedDaSala";
 import { FormMissao } from "@/components/FormMissao";
 import { Janela } from "@/components/Janela";
 import { ProgressoInegociavel } from "@/components/ProgressoInegociavel";
+import { ResultadoFinal } from "@/components/ResultadoFinal";
 import { ASSUNTOS, emojiDoAssunto } from "@/lib/assuntos-constants";
+import { resultadoDaSala } from "@/lib/resultado";
 import {
+  CHAMADA_ENCERRAMENTO,
+  TITULO_RESULTADO_FINAL,
+  labelResumoResultado,
   LABEL_AVISO_DESFAZER,
   LABEL_DESFEITO,
   LABEL_REGISTRO_FEITO,
@@ -226,9 +231,14 @@ export function AreaDoDesafio({
           hoje={dados.hoje}
           agora={dados.agora}
         />
-        <Janela titulo={dados.salaNome}>
-          <p className="font-mono text-sm">O desafio dessa sala já encerrou.</p>
-        </Janela>
+        <ResultadoFinal
+          titulo={TITULO_RESULTADO_FINAL}
+          chamada={CHAMADA_ENCERRAMENTO}
+          sala={dados.salaNome}
+          resumo={labelResumoResultado(dados.duracaoDias, dados.participantes.length)}
+          pessoas={resultadoDaSala(dados)}
+          meuId={dados.meuId}
+        />
         <FeedDaSala
           feed={dados.feed}
           participantes={dados.participantes}

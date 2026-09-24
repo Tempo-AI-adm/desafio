@@ -95,7 +95,10 @@ Tela da sala rolando, de cima pra baixo (ação rápida sempre à mão, feed com
 - **Desfazer (janela curta):** depois de tocar num inegociável, aparece por ~5s "Feito. Toque de novo para desfazer.". Tocar de novo no mesmo inegociável dentro dessa janela apaga o registro do banco (a contagem do dia, o selo e o foguinho voltam junto). Passou a janela, qualquer toque **sempre soma** um registro novo; nunca desfaz nada depois (o servidor recusa desfazer registro com mais de 10s). Pra ninguém ver um registro desfeito a tempo, a marcação de inegociável de outra pessoa só aparece pros outros depois de ~7s.
 
 ## Tela de encerramento
-Resumo de cada um: inegociáveis cumpridos + extras + total de realizações. Tom celebra **todos que se dedicaram**. Estilo "GAME OVER / FECHOU".
+Na sala encerrada, no lugar de "Suas Missões": janela **"Resultado final"** com o mascote + "FECHOU O DESAFIO.", nome da sala, "7 dias · 3 amigos" e uma linha por pessoa (ordem de entrada, "(você)" ao lado do próprio nome): selo binário + detalhe em cinza (missões cumpridas, bônus, reações recebidas). Mesmo layout do exemplo da Home. Embaixo, o feed como histórico, só leitura. Tom celebra **todos que se dedicaram**.
+- **Missão cumprida:** sem alvo = marcou pelo menos 1 vez; com alvo = chegou no alvo. Missões criadas no meio do desafio contam igual.
+- **Fechou tudo:** cumpriu todas as missões que tinha (e tinha pelo menos uma).
+- **Bônus:** marcações além do alvo + registros antigos de "vitória extra".
 
 
 ## Resultado final - princípio de apresentação
