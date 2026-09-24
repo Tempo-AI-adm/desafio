@@ -12,6 +12,8 @@ export type PessoaResultado = {
   /** cumpriu todas as missões que se propôs (e tinha pelo menos uma) */
   fechouTudo: boolean;
   missoes: number;
+  /** quantas missões a pessoa tinha (só aparece na linha dela) */
+  definidas: number;
   bonus: number;
   reacoes: number;
 };
@@ -32,6 +34,7 @@ export function resultadoDaSala(dados: DadosSala): PessoaResultado[] {
       nome: p.nome,
       fechouTudo: p.inegociaveis.length > 0 && cumpridas === p.inegociaveis.length,
       missoes: cumpridas,
+      definidas: p.inegociaveis.length,
       bonus: p.extras,
       reacoes: dados.feed
         .filter((f) => f.autorId === p.id)

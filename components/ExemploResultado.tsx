@@ -21,6 +21,7 @@ export function ExemploResultado() {
       sala={HOME_EXEMPLO.sala}
       resumo={HOME_EXEMPLO.resumo}
       pessoas={HOME_EXEMPLO.pessoas.map((p) => ({ ...p, id: p.nome }))}
+      meuId={HOME_EXEMPLO.voce}
     />
   );
 }

@@ -144,17 +144,19 @@ export const HOME_VER_EXEMPLO = "Ver um exemplo do resultado final";
  * ordem = ordem de entrada na sala (nunca por quantidade) e o destaque é
  * binário (completou tudo que se propôs ou não), números são só detalhe.
  * Os dados foram escolhidos pra mostrar isso: Cacá se propôs 1 e fez 1
- * (fechou tudo, igual a Ana), Beto fez mais que a Cacá e seguiu no próprio ritmo. */
+ * (fechou tudo, igual a Ana), Beto fez mais que a Cacá e seguiu no próprio ritmo.
+ * Ana faz o papel de "você" (vem primeiro, com realce e "3 de 3 missões"). */
 export const HOME_EXEMPLO = {
   rotulo: "exemplo",
   titulo: "Resultado final",
   sala: "Desafio maromba",
   resumo: "7 dias · 3 amigos",
-  // Ordem de entrada na sala.
+  voce: "Ana",
+  // Ordem de entrada na sala (a tela põe "você" primeiro).
   pessoas: [
-    { emoji: "🐼", nome: "Beto", fechouTudo: false, missoes: 2, bonus: 0, reacoes: 3 },
-    { emoji: "🦊", nome: "Ana", fechouTudo: true, missoes: 3, bonus: 2, reacoes: 5 },
-    { emoji: "🦉", nome: "Cacá", fechouTudo: true, missoes: 1, bonus: 0, reacoes: 2 },
+    { emoji: "🐼", nome: "Beto", fechouTudo: false, missoes: 2, definidas: 3, bonus: 0, reacoes: 3 },
+    { emoji: "🦊", nome: "Ana", fechouTudo: true, missoes: 3, definidas: 3, bonus: 2, reacoes: 5 },
+    { emoji: "🦉", nome: "Cacá", fechouTudo: true, missoes: 1, definidas: 1, bonus: 0, reacoes: 2 },
   ],
 };
 
@@ -168,6 +170,15 @@ export const TITULO_RESULTADO_FINAL = "Resultado final";
 
 /** Clímax no topo do resultado da sala encerrada (STYLE.md "Encerramento"). */
 export const CHAMADA_ENCERRAMENTO = "FECHOU O DESAFIO.";
+
+/** Rótulo em cima da lista de participantes do resultado. */
+export const LABEL_TODO_MUNDO = "Todo mundo";
+
+/** Só na linha da própria pessoa: "2 de 3 missões" (definiu vs. cumpriu,
+ * comparação consigo mesma, nunca com os outros). */
+export function labelMissoesDeDefinidas(cumpridas: number, definidas: number): string {
+  return `${cumpridas} de ${definidas} ${definidas === 1 ? "missão" : "missões"}`;
+}
 
 /** Marca a própria pessoa em listas de participantes. */
 export const LABEL_VOCE = "(você)";
