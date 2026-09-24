@@ -298,29 +298,24 @@ export function AreaDoDesafio({
                     </li>
                   );
                 })}
+                {/* Registros antigos do tempo da "vitória extra" (antes de
+                    virar "+ Nova missão"): no mesmo fluxo das missões, com
+                    a largura do conteúdo e "✓" (já são coisas feitas). Sem
+                    sombra: não são botões, não dá pra marcar. */}
+                {dados.meusExtras.map((r) => (
+                  <li
+                    key={r.id}
+                    className="flex max-w-full items-center gap-1.5 border-2 border-ink bg-cream px-2 py-1.5 font-mono text-xs"
+                  >
+                    <span className="min-w-0 break-words">
+                      {emojiDoAssunto(r.assunto)} {r.texto}
+                    </span>
+                    <span aria-label={LABEL_REGISTRO_FEITO} className="shrink-0 font-bold text-green">
+                      ✓
+                    </span>
+                  </li>
+                ))}
               </ul>
-
-              {/* Registros antigos do tempo da "vitória extra" (antes de
-                  virar "+ Nova missão"): continuam aparecendo, sem tag e
-                  com "✓", porque já são coisas feitas (não dá pra marcar).
-                  Altura limitada com rolagem própria. */}
-              {dados.meusExtras.length > 0 ? (
-                <ul className="flex max-h-28 flex-col gap-1 overflow-y-auto">
-                  {dados.meusExtras.map((r) => (
-                    <li
-                      key={r.id}
-                      className="flex items-start justify-between gap-2 border-2 border-ink bg-cream px-2 py-1 font-mono text-xs"
-                    >
-                      <span className="min-w-0 break-words">
-                        {emojiDoAssunto(r.assunto)} {r.texto}
-                      </span>
-                      <span aria-label={LABEL_REGISTRO_FEITO} className="shrink-0 font-bold text-green">
-                        ✓
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
 
               {janelaDesfazer ? (
                 <div
