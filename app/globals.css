@@ -62,6 +62,50 @@ body {
   }
 }
 
+/* Olhinhos (mascote) piscando: ciclo de 10s com duas piscadas secas de
+   ~150ms (em 4,5s e no fim), pra não parecer um metrônomo. O olho
+   aberto some e o fechado aparece no mesmo instante. */
+@keyframes olhinhos-aberto {
+  0%,
+  43.5%,
+  45%,
+  98.5% {
+    opacity: 1;
+  }
+  43.51%,
+  44.99%,
+  98.51%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes olhinhos-fechado {
+  0%,
+  43.5%,
+  45%,
+  98.5% {
+    opacity: 0;
+  }
+  43.51%,
+  44.99%,
+  98.51%,
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Olhinhos subindo e descendo de leve (bob sutil). */
+@keyframes olhinhos-flutuar {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15%);
+  }
+}
+
 /* Foguinho "respirando": pulsação leve de escala pra sinalizar que dá
    pra tocar, sem distrair. Só pra quem não pediu menos movimento. */
 @keyframes respirar {

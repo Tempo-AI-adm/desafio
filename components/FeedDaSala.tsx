@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Fogo } from "@/components/Fogo";
 import { Janela } from "@/components/Janela";
-import { Mascote } from "@/components/Mascote";
+import { Olhinhos } from "@/components/Olhinhos";
 import { emojiDoAssunto } from "@/lib/assuntos-constants";
 import { labelMissaoCriada } from "@/lib/copy";
 import { diaCurto, horaCurta } from "@/lib/tempo";
@@ -95,7 +95,7 @@ export function FeedDaSala({
                       aria-label={`${r.reacoes} reações`}
                       className="flex shrink-0 items-center gap-1 border-2 border-ink/30 px-1.5 py-1 text-xs font-bold text-ink/60"
                     >
-                      <Mascote altura={16} />
+                      <Olhinhos altura={10} />
                       <span>{r.reacoes}</span>
                     </span>
                   ) : (
@@ -116,7 +116,7 @@ export function FeedDaSala({
                           reagi ? "bg-amber" : "bg-cream shadow-hard-sm"
                         }`}
                       >
-                        <Mascote altura={16} />
+                        <Olhinhos altura={10} />
                         <span>{contagem}</span>
                       </button>
                     </form>

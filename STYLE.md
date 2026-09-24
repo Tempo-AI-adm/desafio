@@ -29,7 +29,7 @@ Uma janela por pessoa: nome + emoji na barra de título; corpo com a lista **"Me
 Ícone de fogo em pixel art (poucos blocos, `shape-rendering: crispEdges`), ao lado do nome da pessoa. Segue a contagem do dia: **2ª realização** = pequeno, só âmbar; **3ª ou mais** = maior, chama coral com miolo âmbar. Some quando o dia vira. Não é streak. **Respira**: pulsação leve de escala (100% → 110% → 100%, ~1,1s, em loop) pra sinalizar que dá pra tocar; desligada pra quem pede menos movimento no sistema.
 
 ## Componente: feed
-Lista vertical **compacta**, uma linha por realização, não um cartão inflado, mais recente no topo. Cada linha: emoji do assunto + autor + texto curto + horário + botão de reação (o mascote, sempre o mesmo símbolo, sem paleta de emoji) com a contagem ao lado. Sem foto. Sem filtro: sempre tudo; item de outro dia mostra a data junto da hora ("22/09 · 15:31"). Ao registrar, o mascote aparece pequeno comemorando.
+Lista vertical **compacta**, uma linha por realização, não um cartão inflado, mais recente no topo. Cada linha: emoji do assunto + autor + texto curto + horário + botão de reação (os olhinhos, sempre o mesmo símbolo, sem paleta de emoji) com a contagem ao lado. Sem foto. Sem filtro: sempre tudo; item de outro dia mostra a data junto da hora ("22/09 · 15:31"). Ao registrar, o mascote aparece pequeno comemorando.
 
 A densidade dessa lista se inspira em feeds compactos (ex: Hugging Face), **só a compactação**, não o visual limpo/arredondado dessas referências. A linha continua na mesma linguagem dura do resto: borda preta (~2px), fundo creme, zero gradiente, zero canto arredondado.
 
@@ -40,7 +40,7 @@ Cada unidade do alvo = um quadradinho/bolinha pixel. Preenchido (âmbar) = feito
 Retângulo com borda dura preta + sombra sólida. No clique **afunda** (tira a sombra, desloca 2px), feedback de fliperama.
 
 ## Mascote
-Monstrinho quadriculado, deadpan, 1–2 cores, mesma linguagem (borda dura + sombra sólida). Pequeno: header, lobby ("esperando os outros"), ao registrar realização (comemorando), como botão de reação no feed (ver "Reações" no PRD), e no encerramento (comemorando/derrotado). **É símbolo, não personagem.** 2–3 expressões.
+O par de **olhinhos** do logo "desafioo" (SVGs de olho aberto/fechado do Figma, `components/Olhinhos.tsx`; cores = tinta + cinza-painel). Como decoração, **pisca** (troca seca aberto→fechado, ~150ms, a cada ~4-6s) e **sobe e desce de leve**, CSS puro, parado pra quem pede menos movimento. Como ícone de reação (botão do feed, chip de reações do resultado) fica **parado**, olho aberto. Pequeno, discreto. **É símbolo, não personagem.** (Substitui o antigo monstrinho azul.)
 
 ## Tom de copy
 Energia BR: interjeição curta + ânimo. Fala do **realizado**, nunca compara nem envergonha, nunca "atrasado". Planejado e extra recebem a mesma comemoração. Sem emoji-spam. Maiúscula só em clímax (largar, estourar, encerrar).

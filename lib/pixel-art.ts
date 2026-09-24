@@ -1,4 +1,4 @@
-// Ícones pixel art do app (foguinho, mascote, estrela de bônus): cada
+// Ícones pixel art do app (foguinho, estrela de bônus): cada
 // desenho é uma grade de caracteres ("." = vazio, qualquer outro = uma
 // cor). Em volta ganha um contorno de 1 pixel cor de tinta, senão o
 // âmbar some no fundo creme. Função pura, segura no servidor e no navegador.

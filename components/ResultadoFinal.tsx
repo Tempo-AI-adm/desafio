@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Estrela } from "@/components/Estrela";
 import { Janela } from "@/components/Janela";
-import { Mascote } from "@/components/Mascote";
+import { Olhinhos } from "@/components/Olhinhos";
 import {
   LABEL_TODO_MUNDO,
   LABEL_VOCE,
@@ -52,7 +52,7 @@ export function ResultadoFinal({
   meuId,
 }: {
   titulo: ReactNode;
-  /** mascote ao lado de "Todo mundo" (sala encerrada de verdade) */
+  /** mascote (olhinhos piscando) ao lado de "Todo mundo" (sala encerrada de verdade) */
   mascote?: boolean;
   /** topo do exemplo da Home, que não tem o cabeçalho "SALA" da sala real */
   cabecalho?: ReactNode;
@@ -70,7 +70,7 @@ export function ResultadoFinal({
       <div className="flex flex-col gap-2 text-left font-mono">
         {cabecalho}
         <p className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-ink/60">
-          {mascote ? <Mascote altura={18} /> : null}
+          {mascote ? <Olhinhos altura={10} animado /> : null}
           {LABEL_TODO_MUNDO}
         </p>
         <ul className="flex flex-col gap-2">
@@ -114,7 +114,7 @@ export function ResultadoFinal({
                   ) : null}
                   {p.reacoes > 0 ? (
                     <Chip>
-                      <Mascote altura={13} />
+                      <Olhinhos altura={8} />
                       {labelReacoes(p.reacoes)}
                     </Chip>
                   ) : null}

@@ -63,7 +63,7 @@ Toda realização tem: **assunto** (chip) + **texto curto** + dia + autor. Apare
 *No banco* os valores gravados continuam os antigos (`treino`, `estudo`, `trabalho`, `comida`, `tarefa`, `outro`, com check no `supabase/schema.sql`); a tela traduz pra nome + emoji (`lib/assuntos-constants.ts`), então registros antigos já aparecem com os nomes novos, sem migração.
 
 ## Reações
-Qualquer realização no feed pode receber uma reação de **um toque** de quem também está no desafio (inclusive de si mesmo). A reação é sempre a mesma, **reagir com o monstro** (o mascote), **sem paleta de emoji pra escolher**. Mostra a contagem de reações ao lado do item no feed. Um toque = um participante por realização (não acumula clique); sem comentário associado (comentário continua fora de escopo, ver "Fora de escopo").
+Qualquer realização no feed pode receber uma reação de **um toque** de quem também está no desafio (inclusive de si mesmo). A reação é sempre a mesma, **reagir com os olhinhos** (o mascote), **sem paleta de emoji pra escolher**. Mostra a contagem de reações ao lado do item no feed. Um toque = um participante por realização (não acumula clique); sem comentário associado (comentário continua fora de escopo, ver "Fora de escopo").
 
 ## O que o dash mostra
 Tela da sala rolando, de cima pra baixo (ação rápida sempre à mão, feed com o espaço principal):
@@ -82,7 +82,7 @@ Tela da sala rolando, de cima pra baixo (ação rápida sempre à mão, feed com
 - **sem foto**
 - **sem filtro**: sempre mostra tudo, mais recente no topo. Item de hoje mostra só a hora; item de outro dia (fuso de Brasília) mostra data + hora ("22/09 · 15:31")
 - o foguinho do autor aparece só na realização mais recente de hoje dele, pra não repetir em toda linha
-- reação: o botão é o mascote (monstrinho pixel art); acende e soma +1 no toque, e depois do toque fica travado (não acumula)
+- reação: o botão é o mascote (os olhinhos do logo, parados); acende e soma +1 no toque, e depois do toque fica travado (não acumula)
 
 **Sem % de aderência, sem ranking, sem "atrasado".** O resumo é sempre contagem/progresso que só sobe.
 
