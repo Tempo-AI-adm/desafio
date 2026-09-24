@@ -27,7 +27,7 @@ Uma janela por pessoa: nome + emoji na barra de título; corpo com a lista **"Me
 Ícone de fogo em pixel art (poucos blocos, `shape-rendering: crispEdges`), ao lado do nome da pessoa. Segue a contagem do dia: **2ª realização** = pequeno, só âmbar; **3ª ou mais** = maior, chama coral com miolo âmbar. Some quando o dia vira. Não é streak.
 
 ## Componente: feed
-Lista vertical **compacta**, uma linha por realização, não um cartão inflado, mais recente no topo. Cada linha: emoji do assunto + autor + texto curto + horário + botão de reação (o mascote, sempre o mesmo símbolo, sem paleta de emoji) com a contagem ao lado. Sem foto. Filtro **Hoje / Tudo** no topo (default Hoje). Ao registrar, o mascote aparece pequeno comemorando.
+Lista vertical **compacta**, uma linha por realização, não um cartão inflado, mais recente no topo. Cada linha: emoji do assunto + autor + texto curto + horário + botão de reação (o mascote, sempre o mesmo símbolo, sem paleta de emoji) com a contagem ao lado. Sem foto. Sem filtro: sempre tudo; item de outro dia mostra a data junto da hora ("22/09 · 15:31"). Ao registrar, o mascote aparece pequeno comemorando.
 
 A densidade dessa lista se inspira em feeds compactos (ex: Hugging Face), **só a compactação**, não o visual limpo/arredondado dessas referências. A linha continua na mesma linguagem dura do resto: borda preta (~2px), fundo creme, zero gradiente, zero canto arredondado.
 

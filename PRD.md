@@ -78,7 +78,7 @@ Tela da sala rolando, de cima pra baixo (ação rápida sempre à mão, feed com
 - corrente de realizações de todos, **mais recente no topo**
 - cada item: autor + emoji do assunto + texto + horário + reação (mascote) com contagem
 - **sem foto**
-- filtro no topo: **Hoje / Tudo** (default = Hoje)
+- **sem filtro**: sempre mostra tudo, mais recente no topo. Item de hoje mostra só a hora; item de outro dia (fuso de Brasília) mostra data + hora ("22/09 · 15:31")
 - o foguinho do autor aparece só na realização mais recente de hoje dele, pra não repetir em toda linha
 - reação: o botão é o mascote (monstrinho pixel art); acende e soma +1 no toque, e depois do toque fica travado (não acumula)
 
@@ -114,4 +114,4 @@ Resumo de cada um: inegociáveis cumpridos + extras + total de realizações. To
 - IA de texto livre · streaks / badges **entre dias** (a contagem de realizações **dentro do mesmo dia**, usada pro selo/copy, não é streak, ver seção "Realizações").
 
 ## Escopo v1 (o mínimo pra rodar com os amigos)
-Home (lista local dos 3 desafios mais recentes + criar/entrar com código) · sair de um desafio (só da lista local) · criar desafio (nome + duração em dias, presets 3/7/14/21 + toggle backfill) · link único · claim de identidade por dispositivo · lobby: definir ≥1 inegociável (título + assunto + alvo opcional) + PRONTO + LARGAR (criador) · missões existentes não mudam ao largar, mas dá pra criar novas · registrar realizações (tocar numa missão), backfill se permitido, com desfazer · reação de um toque (mascote) por realização, com contagem · dash: cartões por pessoa (inegociáveis + bolinhas/alvo + extras + visto há X) + feed cronológico com filtro Hoje/Tudo + selo/copy por contagem do dia · celebração (mascote + copy) · tela de encerramento · busca ao abrir/focar · copy e visual do `STYLE.md`.
+Home (lista local dos 3 desafios mais recentes + criar/entrar com código) · sair de um desafio (só da lista local) · criar desafio (nome + duração em dias, presets 3/7/14/21 + toggle backfill) · link único · claim de identidade por dispositivo · lobby: definir ≥1 inegociável (título + assunto + alvo opcional) + PRONTO + LARGAR (criador) · missões existentes não mudam ao largar, mas dá pra criar novas · registrar realizações (tocar numa missão), backfill se permitido, com desfazer · reação de um toque (mascote) por realização, com contagem · dash: cartões por pessoa (inegociáveis + bolinhas/alvo + extras + visto há X) + feed cronológico (sempre tudo, data nos itens de outros dias) + selo/copy por contagem do dia · celebração (mascote + copy) · tela de encerramento · busca ao abrir/focar · copy e visual do `STYLE.md`.

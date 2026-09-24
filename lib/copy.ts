@@ -66,12 +66,6 @@ export function labelVistoHa(minutos: number): string {
   return `visto há ${Math.floor(horas / 24)}d`;
 }
 
-export type FiltroFeed = "hoje" | "tudo";
-
-export const FILTRO_FEED_LABEL: Record<FiltroFeed, string> = {
-  hoje: "Hoje",
-  tudo: "Tudo",
-};
 
 /** Aviso logo depois de marcar um inegociável (janela de desfazer). */
 export const LABEL_AVISO_DESFAZER = "Feito. Toque de novo para desfazer.";
