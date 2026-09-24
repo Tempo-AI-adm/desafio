@@ -105,4 +105,4 @@ export const TIPO_MISSAO_LABEL: Record<TipoMissao, string> = {
   repetir: "Repetir",
 };
 
-export const LABEL_QUANTAS_VEZES = "Quantas vezes essa missão deve se repetir?";
+export const LABEL_QUANTAS_VEZES = "Repetir quantas vezes?";
