@@ -49,10 +49,6 @@ export function legendaFogo(contagemHoje: number): string {
   return contagemHoje >= 3 ? "3+ realizações hoje" : "2 realizações hoje";
 }
 
-/** Selo do cartão quando a última atividade caiu no dia de hoje
- * (fuso de Brasília). Abrir a sala já conta como atividade. */
-export const LABEL_ATIVO_HOJE = "ativo hoje";
-
 /** Rótulo da lista dos outros participantes no cabeçalho da sala. É
  * diário/aproximado (quem abriu ou registrou hoje), não presença ao vivo. */
 export const LABEL_ATIVOS_HOJE = "Ativos hoje";

@@ -224,7 +224,12 @@ export function AreaDoDesafio({
   }
 
   if (dados.estado === "ativo") {
-    const outros = dados.participantes.filter((p) => p.id !== dados.meuId);
+    // "Ativos hoje": quem teve atividade hoje, a própria pessoa primeiro
+    // (abrir a sala já conta, então ela sempre está).
+    const ativosHoje = [
+      ...dados.participantes.filter((p) => p.id === dados.meuId),
+      ...dados.participantes.filter((p) => p.id !== dados.meuId && p.ativoHoje),
+    ];
     return (
       <main className="mx-auto flex min-h-dvh max-w-sm flex-col gap-4 px-4 pb-8 pt-4">
         <CabecalhoSala
@@ -232,7 +237,7 @@ export function AreaDoDesafio({
           duracaoDias={dados.duracaoDias}
           diaAtual={dados.diaAtual}
           hoje={dados.hoje}
-          outros={outros}
+          ativosHoje={ativosHoje}
         />
 
         {/* Suas Missões: fixo no topo ao rolar, compacto. Ação rápida
