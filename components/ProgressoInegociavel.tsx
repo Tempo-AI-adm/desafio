@@ -1,7 +1,14 @@
+import { Estrela } from "@/components/Estrela";
+
+// Quantas bolinhas de bônus desenhar no máximo; passou disso, vira "+N".
+const MAX_BOLINHAS_BONUS = 5;
+
 /**
- * Progresso de um inegociável: bolinhas (●●○) se tem alvo, com "+N
- * extra" quando estourou; check "cumpri" se não tem alvo.
- * `sobreAmbar`: bolinhas cor de tinta, senão somem no fundo âmbar.
+ * Progresso de um inegociável: bolinhas (●●○) se tem alvo; check
+ * "cumpri" se não tem alvo. Passou do alvo: continua enchendo bolinhas
+ * em coral (bônus, âmbar = combinado) + a estrelinha de bônus ao lado.
+ * `sobreAmbar`: bolinhas do combinado cor de tinta, senão somem no
+ * fundo âmbar (botão na janela de desfazer).
  */
 export function ProgressoInegociavel({
   alvo,
@@ -13,12 +20,17 @@ export function ProgressoInegociavel({
   sobreAmbar?: boolean;
 }) {
   if (alvo) {
+    const bonus = Math.max(0, progresso - alvo);
     return (
       <span className="flex shrink-0 items-center gap-1">
-        <span aria-hidden className={`tracking-widest ${sobreAmbar ? "text-ink" : "text-amber"}`}>
-          {Array.from({ length: alvo }, (_, idx) => (idx < Math.min(progresso, alvo) ? "●" : "○")).join("")}
+        <span aria-hidden className="tracking-widest">
+          <span className={sobreAmbar ? "text-ink" : "text-amber"}>
+            {Array.from({ length: alvo }, (_, idx) => (idx < Math.min(progresso, alvo) ? "●" : "○")).join("")}
+          </span>
+          {bonus > 0 ? <span className="text-coral">{"●".repeat(Math.min(bonus, MAX_BOLINHAS_BONUS))}</span> : null}
         </span>
-        {progresso > alvo ? <span className="text-xs text-ink/60">+{progresso - alvo} extra</span> : null}
+        {bonus > MAX_BOLINHAS_BONUS ? <span className="text-[10px] font-bold text-coral">+{bonus - MAX_BOLINHAS_BONUS}</span> : null}
+        {bonus > 0 ? <Estrela tamanho={14} /> : null}
       </span>
     );
   }

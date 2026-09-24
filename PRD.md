@@ -41,7 +41,7 @@ O "mínimo que me propus". Cada pessoa define **pelo menos 1** no lobby. Cada in
 - **título** (ex: "malhar", "acabar o livro X")
 - **assunto** (chip, lista fixa abaixo)
 - **alvo (opcional):** um número de vezes no desafio inteiro (ex: 2).
-  - **Com alvo:** vira bolinhas de progresso (`●●○`). Marcar além do alvo conta como **extra** ("estourou").
+  - **Com alvo:** vira bolinhas de progresso (`●●○`). Marcar além do alvo conta como **bônus** ("estourou"): bolinhas a mais em outra cor + uma estrelinha (insígnia) ao lado.
   - **Sem alvo:** é um item de "cumpri / não cumpri" (marca uma vez).
 
 O norte é a âncora visível do compromisso. **Não é nota, não é denominador de ranking.**

@@ -61,3 +61,15 @@ body {
     transform: scaleX(0);
   }
 }
+
+/* Foguinho "respirando": pulsação leve de escala pra sinalizar que dá
+   pra tocar, sem distrair. Só pra quem não pediu menos movimento. */
+@keyframes respirar {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}

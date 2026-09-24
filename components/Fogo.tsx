@@ -6,11 +6,12 @@ import {
   legendaFogo,
   nivelFogoPorContagemDoDia,
 } from "@/lib/copy";
+import { pixelsComContorno } from "@/lib/pixel-art";
 
 // Foguinho pixel art (grade 7x9). "#" = chama, "o" = miolo.
 // Nível 1 (2ª realização do dia): só âmbar. Nível 2 (3ª ou mais):
-// maior, chama coral com miolo âmbar. Em volta ganha um contorno de
-// 1 pixel cor de tinta (calculado abaixo), senão o âmbar some no creme.
+// maior, chama coral com miolo âmbar. Contorno de tinta em volta (ver
+// lib/pixel-art.ts).
 const DESENHO = [
   "...#...",
   "..##...",
@@ -23,21 +24,7 @@ const DESENHO = [
   ".#####.",
 ];
 
-const LARGURA = DESENHO[0].length + 2;
-const ALTURA = DESENHO.length + 2;
-
-// Grade com 1 pixel de folga em volta: chama, miolo e contorno.
-const GRADE: string[][] = Array.from({ length: ALTURA }, (_, y) =>
-  Array.from({ length: LARGURA }, (_, x) => DESENHO[y - 1]?.[x - 1] ?? "."),
-);
-const cheio = (x: number, y: number) => GRADE[y]?.[x] !== undefined && GRADE[y][x] !== ".";
-const PIXELS = GRADE.flatMap((linha, y) =>
-  linha.map((c, x) => {
-    if (c !== ".") return { x, y, tipo: c };
-    const vizinho = cheio(x - 1, y) || cheio(x + 1, y) || cheio(x, y - 1) || cheio(x, y + 1);
-    return vizinho ? { x, y, tipo: "contorno" } : null;
-  }),
-).filter((p) => p !== null);
+const { largura: LARGURA, altura: ALTURA, pixels: PIXELS } = pixelsComContorno(DESENHO);
 
 // Alturas em px. "compacto" é pra linha do feed, onde o normal pesa.
 const ALTURAS = {
@@ -83,6 +70,7 @@ export function Fogo({
           height={altura}
           shapeRendering="crispEdges"
           aria-hidden
+          className="origin-bottom motion-safe:animate-[respirar_2.4s_ease-in-out_infinite]"
         >
           {PIXELS.map((p) => (
             <rect key={`${p.x}-${p.y}`} x={p.x} y={p.y} width={1} height={1} fill={cores[p.tipo]} />

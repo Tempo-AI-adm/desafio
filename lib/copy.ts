@@ -92,3 +92,6 @@ export function mensagemCompartilharSala(nomeSala: string, link: string): string
 export function labelMissaoCriada(titulo: string): string {
   return `criou a missão: ${titulo}`;
 }
+
+/** Insígnia (estrelinha) de quem passou do alvo de uma missão. */
+export const LABEL_BONUS = "Bateu e passou do combinado";
