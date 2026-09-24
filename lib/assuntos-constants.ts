@@ -1,13 +1,17 @@
 // Constantes puras (sem lógica de servidor), lista fixa de assuntos
-// (PRD.md "Assuntos (chips)"), usada tanto em inegociáveis quanto,
-// numa fatia futura, em realizações. Seguras pra importar em Server
-// e Client Components.
+// (PRD.md "Assuntos (chips)"), usada em missões e realizações. Seguras
+// pra importar em Server e Client Components.
+//
+// `valor` é o que fica gravado no banco e NÃO muda (tem check no
+// supabase/schema.sql). O que a tela mostra é `rotulo` + `emoji`: por
+// isso "treino" aparece como Saúde, "estudo" como Aprendizado e
+// "comida" como Lar, inclusive em registros antigos, sem migrar nada.
 
 export const ASSUNTOS = [
-  { valor: "treino", emoji: "💪", rotulo: "Treino" },
-  { valor: "estudo", emoji: "📚", rotulo: "Estudo" },
+  { valor: "treino", emoji: "💪", rotulo: "Saúde" },
+  { valor: "estudo", emoji: "📚", rotulo: "Aprendizado" },
   { valor: "trabalho", emoji: "💼", rotulo: "Trabalho" },
-  { valor: "comida", emoji: "🍳", rotulo: "Comida" },
+  { valor: "comida", emoji: "🏠", rotulo: "Lar" },
   { valor: "tarefa", emoji: "✅", rotulo: "Tarefa" },
   { valor: "outro", emoji: "✨", rotulo: "Outro" },
 ] as const;

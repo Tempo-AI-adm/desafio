@@ -47,6 +47,8 @@ create table if not exists public.inegociaveis (
   id              uuid primary key default gen_random_uuid(),
   participante_id uuid not null references public.participantes(id) on delete cascade,
   titulo          text not null,
+  -- Valores internos fixos; na tela: treino = Saúde, estudo = Aprendizado,
+  -- comida = Lar (ver lib/assuntos-constants.ts).
   assunto         text not null
                     check (assunto in ('treino', 'estudo', 'trabalho', 'comida', 'tarefa', 'outro')),
   alvo            integer check (alvo is null or alvo > 0),
