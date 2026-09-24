@@ -9,6 +9,7 @@ Espírito: retrô-terminal com "janelas" de borda dura (ex: typesafe.ai). **Nada
 - **Marca 2 - ciano:** `#00B4D8`
 - **Status "cumpriu" (verde):** `#2FBF71`, só sinal, não é cor de marca
 - **Bolinha/quadrado vazio:** `#E6D9C8`
+- **Cinza-painel:** `#DEDEDE`, fundo do **corpo** de janelas secundárias (cabeçalho da sala e "Suas Missões"). Barra de título continua tinta, borda e sombra continuam pretas. O feed fica creme e, sendo a única janela clara, se destaca.
 - **Alerta suave (coral), opcional:** `#F1665A`, com muita parcimônia
 
 Fundo claro; **a tinta preta faz a cara** (bordas grossas, barras de título pretas). Âmbar e ciano brilham chapados sobre o creme.

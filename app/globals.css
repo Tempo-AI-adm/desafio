@@ -11,6 +11,8 @@
   --color-green: #2fbf71;
   --color-empty: #e6d9c8;
   --color-coral: #f1665a;
+  /* corpo de janelas secundárias (cabeçalho da sala, Suas Missões) */
+  --color-cinza-painel: #dedede;
 
   --font-mono: var(--font-jetbrains-mono), "JetBrains Mono", monospace;
   --font-press: var(--font-press-start-2p), "Press Start 2P", monospace;

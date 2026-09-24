@@ -34,7 +34,7 @@ export function CabecalhoSala({
   ativosHoje?: ParticipanteSala[];
 }) {
   return (
-    <Janela titulo="Sala">
+    <Janela titulo="Sala" painel>
       <h1 className="break-words font-press text-sm leading-[1.7] sm:text-base">{salaNome}</h1>
       <div className="mt-3 flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest">
         <span className="border-2 border-ink bg-amber px-2 py-0.5">
@@ -44,7 +44,7 @@ export function CabecalhoSala({
       </div>
 
       {ativosHoje ? (
-        <div className="mt-3 flex flex-col gap-1.5 border-t-2 border-empty pt-2">
+        <div className="mt-3 flex flex-col gap-1.5 border-t-2 border-ink/15 pt-2">
           <span className="flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-widest text-ink/60">
             <span aria-hidden className="inline-block h-2 w-2 bg-green" />
             {LABEL_ATIVOS_HOJE}

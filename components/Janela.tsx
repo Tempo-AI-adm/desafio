@@ -11,11 +11,14 @@ export function Janela({
   children,
   className = "",
   compacto = false,
+  painel = false,
 }: {
   titulo: ReactNode;
   children: ReactNode;
   className?: string;
   compacto?: boolean;
+  /** corpo em cinza-painel (janelas secundárias; o feed fica creme) */
+  painel?: boolean;
 }) {
   return (
     <div className={`border-2 border-ink bg-cream shadow-hard ${className}`}>
@@ -24,7 +27,7 @@ export function Janela({
       >
         {titulo}
       </div>
-      <div className={compacto ? "p-2" : "p-4 sm:p-5"}>{children}</div>
+      <div className={`${compacto ? "p-2" : "p-4 sm:p-5"} ${painel ? "bg-cinza-painel" : ""}`}>{children}</div>
     </div>
   );
 }

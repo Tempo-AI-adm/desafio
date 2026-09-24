@@ -245,6 +245,7 @@ export function AreaDoDesafio({
         <div className="sticky top-0 z-20 -mx-4 bg-cream px-4 pb-2 pt-2">
           <Janela
             compacto
+            painel
             titulo={
               <>
                 <span>Suas Missões</span>
@@ -345,7 +346,7 @@ export function AreaDoDesafio({
                   error={inegociavelState.error}
                   rotuloTitulo="Nova missão"
                   rotuloBotao="Adicionar missão"
-                  className="border-t-2 border-empty pt-2"
+                  className="border-t-2 border-ink/15 pt-2"
                 />
               ) : null}
             </div>
