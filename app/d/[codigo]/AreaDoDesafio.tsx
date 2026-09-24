@@ -3,7 +3,6 @@
 import { useActionState, useEffect, useState } from "react";
 import { AcoesDoDesafio } from "@/components/AcoesDoDesafio";
 import { CabecalhoSala } from "@/components/CabecalhoSala";
-import { FaixaParticipantes } from "@/components/FaixaParticipantes";
 import { FeedDaSala } from "@/components/FeedDaSala";
 import { FormMissao } from "@/components/FormMissao";
 import { Fogo } from "@/components/Fogo";
@@ -234,6 +233,7 @@ export function AreaDoDesafio({
           duracaoDias={dados.duracaoDias}
           diaAtual={dados.diaAtual}
           hoje={dados.hoje}
+          outros={outros}
         />
 
         {/* Suas Missões: fixo no topo ao rolar, compacto. Ação rápida
@@ -356,11 +356,6 @@ export function AreaDoDesafio({
             </div>
           </Janela>
         </div>
-
-        <section className="flex flex-col gap-1.5">
-          <h2 className="font-mono text-[10px] font-bold uppercase tracking-widest text-ink/60">Na sala</h2>
-          <FaixaParticipantes outros={outros} />
-        </section>
 
         <FeedDaSala
           feed={dados.feed}

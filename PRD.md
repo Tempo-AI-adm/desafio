@@ -70,7 +70,7 @@ Tela da sala rolando, de cima pra baixo (ação rápida sempre à mão, feed com
 
 **2. Suas Missões (fixo no topo ao rolar, compacto):** a barra do painel é a identidade da própria pessoa (emoji + nome + **foguinho**) e o botão pequeno **"+ Nova missão"** (abre ali mesmo o mesmo formulário do lobby). Dentro: as missões como botões pequenos de 1 toque, com progresso (bolinhas `●●○` se tem alvo; check "cumpri" se não tem). Registros antigos de "vitória extra" aparecem listados embaixo, sem tag.
 
-**3. Faixa "Na sala":** só os **outros** participantes, numa faixa fina que rola na horizontal: emoji + nome + bolinha verde de **"ativo hoje"** (última atividade no dia de hoje, fuso de Brasília) + **foguinho** se aplicável. Sem progresso detalhado dos outros aqui (é secundário). Tocar no foguinho mostra uma legenda curta ("3+ realizações hoje") que some sozinha.
+**Ativos hoje (dentro da janela do cabeçalho, sala rolando):** só os **outros** participantes, em itens compactos numa linha (emoji + nome curto + bolinha verde se a última atividade caiu hoje, fuso de Brasília). É diário/aproximado, não presença ao vivo. Sozinho na sala: "Só você por aqui hoje". Sem progresso detalhado dos outros aqui (é secundário); o foguinho de cada um aparece no feed, na realização mais recente de hoje.
 
 **Última atividade:** atualizada em toda visita reconhecida à sala (abrir a página ou focar a aba), ao registrar e ao reagir. Quem só entrou pra acompanhar os amigos também conta como "ativo hoje".
 

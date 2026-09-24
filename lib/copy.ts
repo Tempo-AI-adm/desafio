@@ -53,6 +53,13 @@ export function legendaFogo(contagemHoje: number): string {
  * (fuso de Brasília). Abrir a sala já conta como atividade. */
 export const LABEL_ATIVO_HOJE = "ativo hoje";
 
+/** Rótulo da lista dos outros participantes no cabeçalho da sala. É
+ * diário/aproximado (quem abriu ou registrou hoje), não presença ao vivo. */
+export const LABEL_ATIVOS_HOJE = "Ativos hoje";
+
+/** Quando não tem mais ninguém na sala além da própria pessoa. */
+export const LABEL_SO_VOCE_HOJE = "Só você por aqui hoje";
+
 /** "visto há X" do cartão, a partir de quantos minutos faz desde a
  * última atividade (STYLE.md: "ativo agora" / "visto há 2h"). */
 export function labelVistoHa(minutos: number): string {
