@@ -47,17 +47,15 @@ function Chip({ children }: { children: ReactNode }) {
 export function ResultadoFinal({
   titulo,
   mascote = false,
-  sala,
-  resumo,
+  cabecalho,
   pessoas,
   meuId,
 }: {
   titulo: ReactNode;
-  /** mascote ao lado do resumo (sala encerrada de verdade) */
+  /** mascote ao lado de "Todo mundo" (sala encerrada de verdade) */
   mascote?: boolean;
-  /** nome da sala; a sala real não passa (já está no cabeçalho "SALA") */
-  sala?: string;
-  resumo: string;
+  /** topo do exemplo da Home, que não tem o cabeçalho "SALA" da sala real */
+  cabecalho?: ReactNode;
   pessoas: Pessoa[];
   /** a própria pessoa: vem primeiro, com realce e "(você)" */
   meuId?: string;
@@ -70,12 +68,11 @@ export function ResultadoFinal({
   return (
     <Janela titulo={titulo}>
       <div className="flex flex-col gap-2 text-left font-mono">
-        {sala ? <p className="font-press text-xs uppercase leading-[1.6]">{sala}</p> : null}
-        <p className="flex items-center gap-2 text-xs text-ink/60">
+        {cabecalho}
+        <p className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-ink/60">
           {mascote ? <Mascote altura={18} /> : null}
-          {resumo}
+          {LABEL_TODO_MUNDO}
         </p>
-        <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-ink/60">{LABEL_TODO_MUNDO}</p>
         <ul className="flex flex-col gap-2">
           {ordenadas.map((p) => {
             const souEu = p.id === meuId;

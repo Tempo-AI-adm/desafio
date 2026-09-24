@@ -1,12 +1,11 @@
 import { Fogo } from "@/components/Fogo";
 import { Janela } from "@/components/Janela";
+import { LinhaEncerrado } from "@/components/LinhaEncerrado";
 import {
   LABEL_ATIVOS_HOJE,
-  LABEL_SELO_ENCERRADO,
   LABEL_SO_VOCE_HOJE,
   labelDiaDoDesafio,
   labelDuracao,
-  labelPeriodo,
   labelVistoHa,
 } from "@/lib/copy";
 import { diaCurto, horaCurta } from "@/lib/tempo";
@@ -18,7 +17,7 @@ import type { ParticipanteSala } from "@/lib/tipos-sala";
  * escura fininha. Dentro, o nome da sala em destaque (fonte pixel) e
  * "DIA X/Y" (ou só a duração antes de largar) + data e hora de hoje
  * (fuso de Brasília, hora da última busca; sem relógio rodando).
- * Encerrada: selo neutro "ENCERRADO" + período real ("16/09 — 22/09").
+ * Encerrada: selo neutro "ENCERRADO" + "16/09 — 22/09 · 7 dias · 2 amigos".
  * Com a sala rolando, também "Ativos hoje": quem teve atividade hoje
  * (a própria pessoa primeiro), cada um com a insígnia do dia se tiver
  * (o foguinho). Uma bolinha verde só, ao lado do rótulo.
@@ -31,6 +30,7 @@ export function CabecalhoSala({
   agora,
   ativosHoje,
   periodoEncerrado,
+  quantidadePessoas,
 }: {
   salaNome: string;
   duracaoDias: number;
@@ -43,6 +43,8 @@ export function CabecalhoSala({
   ativosHoje?: ParticipanteSala[];
   /** só na sala encerrada: troca "Dia X/Y" + hoje por "Encerrado" + período */
   periodoEncerrado?: { inicio: string; fim: string } | null;
+  /** só na sala encerrada, pro "· 2 amigos" */
+  quantidadePessoas?: number;
 }) {
   return (
     <Janela titulo="Sala" painel>
@@ -52,9 +54,12 @@ export function CabecalhoSala({
       {periodoEncerrado ? (
         // Encerrada: selo neutro (status, não conquista) + período real
         // do desafio; a hora de agora não importa mais.
-        <div className="mt-3 flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest">
-          <span className="border-2 border-ink/50 px-2 py-0.5 text-ink/70">{LABEL_SELO_ENCERRADO}</span>
-          <span className="text-ink/60">{labelPeriodo(periodoEncerrado.inicio, periodoEncerrado.fim)}</span>
+        <div className="mt-3">
+          <LinhaEncerrado
+            periodo={periodoEncerrado}
+            duracaoDias={duracaoDias}
+            pessoas={quantidadePessoas ?? 0}
+          />
         </div>
       ) : (
         <div className="mt-3 flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest">

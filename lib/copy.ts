@@ -149,7 +149,8 @@ export const HOME_EXEMPLO = {
   rotulo: "exemplo",
   titulo: "Resultado final",
   sala: "Desafio maromba",
-  resumo: "7 dias · 3 amigos",
+  duracaoDias: 7,
+  periodo: { inicio: "2026-09-01", fim: "2026-09-07" },
   voce: "Ana",
   // Ordem de entrada na sala (a tela põe "você" primeiro).
   pessoas: [
@@ -179,7 +180,7 @@ export function labelMissoesDeDefinidas(cumpridas: number, definidas: number): s
 /** Marca a própria pessoa em listas de participantes. */
 export const LABEL_VOCE = "(você)";
 
-/** "7 dias · 3 amigos", embaixo do nome da sala no resultado. */
+/** "7 dias · 3 amigos", no cabeçalho da sala encerrada (e no exemplo). */
 export function labelResumoResultado(duracaoDias: number, pessoas: number): string {
   return `${labelDuracao(duracaoDias)} · ${pessoas === 1 ? "1 amigo" : `${pessoas} amigos`}`;
 }

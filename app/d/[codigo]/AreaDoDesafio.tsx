@@ -12,7 +12,6 @@ import { ASSUNTOS, emojiDoAssunto } from "@/lib/assuntos-constants";
 import { resultadoDaSala } from "@/lib/resultado";
 import {
   TITULO_RESULTADO_FINAL,
-  labelResumoResultado,
   LABEL_AVISO_DESFAZER,
   LABEL_DESFEITO,
   LABEL_REGISTRO_FEITO,
@@ -230,11 +229,11 @@ export function AreaDoDesafio({
           hoje={dados.hoje}
           agora={dados.agora}
           periodoEncerrado={dados.periodo}
+          quantidadePessoas={dados.participantes.length}
         />
         <ResultadoFinal
           titulo={TITULO_RESULTADO_FINAL}
           mascote
-          resumo={labelResumoResultado(dados.duracaoDias, dados.participantes.length)}
           pessoas={resultadoDaSala(dados)}
           meuId={dados.meuId}
         />
