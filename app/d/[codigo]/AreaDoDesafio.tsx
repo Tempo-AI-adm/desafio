@@ -253,7 +253,7 @@ export function AreaDoDesafio({
                       setMostrarFormMissao(true);
                     }
                   }}
-                  className="shrink-0 bg-cyan px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-ink transition-transform active:translate-x-[1px] active:translate-y-[1px]"
+                  className="shrink-0 bg-cyan px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-ink transition-transform active:translate-x-[1px] active:translate-y-[1px]"
                 >
                   {formMissaoAberto ? "Fechar" : "+ Nova missão"}
                 </button>

@@ -18,7 +18,7 @@ Fundo claro; **a tinta preta faz a cara** (bordas grossas, barras de título pre
 - **Títulos grandes / logo:** Press Start 2P (pesada, só títulos curtos).
 
 ## Componente: "janela"
-Todo bloco é uma janelinha estilo sistema antigo: **barra de título** tinta com texto claro; **corpo** creme com **borda dura preta** (~2px) e **sombra sólida deslocada** (`4px 4px 0 #1E1E1E`); canto reto; **zero gradiente, zero sombra difusa.**
+Todo bloco é uma janelinha estilo sistema antigo: **barra de título** tinta, **fina** (texto pequeno, pouco respiro vertical, pra não pesar), com texto claro; **corpo** creme com **borda dura preta** (~2px) e **sombra sólida deslocada** (`4px 4px 0 #1E1E1E`); canto reto; **zero gradiente, zero sombra difusa.**
 
 ## Componente: cartão da pessoa (topo do dash)
 Uma janela por pessoa: nome + emoji na barra de título; corpo com a lista **"Meu inegociável"** (cada item = título + assunto + progresso em **bolinhas** `●●○` se tem alvo, ou um check "cumpri" se não tem); linha **"+N além do combinado"** (extras); rodapé discreto **"visto há X"**.
