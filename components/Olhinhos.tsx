@@ -4,7 +4,9 @@
  * olhofechado.svg); só as cores viram tokens do STYLE.md (preto = tinta
  * via currentColor, #DEDEDE = cinza-painel). Os filtros de sombra do
  * Figma ficaram de fora: eram deslocamento zero sem desfoque (não
- * apareciam) e o STYLE.md proíbe sombra difusa.
+ * apareciam) e o STYLE.md proíbe sombra difusa. Do olho fechado também
+ * saíram três sobras do Figma (um quadradinho preto dentro do olho
+ * esquerdo, que o direito não tem).
  *
  * `animado` (decoração): pisca (troca seca aberto→fechado, ~150ms, a
  * cada ~4,5s e ~5,5s alternados) e sobe e desce de leve. Só pra quem não
@@ -47,21 +49,19 @@ export function Olhinhos({ altura = 10, animado = false }: { altura?: number; an
         {animado ? (
           <g className="opacity-0 motion-safe:animate-[olhinhos-fechado_10s_linear_infinite]">
             <path
-              d="M2.40343 7.03899V5.8312H1V2.20782H2.40343V1.00003H9.42059V2.20782H10.824V5.8312H9.42059V7.03899H2.40343ZM5.76407 5.59418H5.9595V5.47081H5.76407V5.59418Z"
+              d="M2.40343 7.03899V5.8312H1V2.20782H2.40343V1.00003H9.42059V2.20782H10.824V5.8312H9.42059V7.03899H2.40343Z"
               fill="var(--color-cinza-painel)"
             />
-            <path d="M5.76407 5.59418H5.9595V5.47081H5.76407V5.59418Z" fill="currentColor" />
             <path
               d="M9.9209 0.500031V1.70804H11.3242V6.33109H9.9209V7.53909H1.90332V6.33109H0.5V1.70804H1.90332V0.500031H9.9209Z"
               stroke="currentColor"
             />
             <path
-              d="M12.5663 7.03896V6.16667V5.29437H12.048H11.6837L11.6837 2.61039H12.048H12.5663V1.8085V1H19.8448V2.20779H21.2483V5.83117H19.8448V7.03896H12.5663ZM5.4595 5.59419H5.66979V5.47081H5.4595V5.59419Z"
+              d="M12.5663 7.03896V6.16667V5.29437H12.048H11.6837L11.6837 2.61039H12.048H12.5663V1.8085V1H19.8448V2.20779H21.2483V5.83117H19.8448V7.03896H12.5663Z"
               fill="var(--color-cinza-painel)"
             />
-            <path d="M5.4595 5.59419H5.66979V5.47081H5.4595V5.59419Z" fill="currentColor" />
             <path
-              d="M20.3452 0.5V1.70801H21.7486V6.33105H20.3452V7.53906H12.0659V5.79395H11.1841V2.11035H12.0659V0.5H20.3452ZM6.16946 4.9707V6.09375H4.9595V4.9707H6.16946Z"
+              d="M20.3452 0.5V1.70801H21.7486V6.33105H20.3452V7.53906H12.0659V5.79395H11.1841V2.11035H12.0659V0.5H20.3452Z"
               stroke="currentColor"
             />
             <path
