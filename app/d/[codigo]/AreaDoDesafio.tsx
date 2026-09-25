@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useState } from "react";
 import { AcoesDoDesafio } from "@/components/AcoesDoDesafio";
 import { CabecalhoSala } from "@/components/CabecalhoSala";
+import { Expansivel } from "@/components/Expansivel";
 import { FeedDaSala } from "@/components/FeedDaSala";
 import { FormMissao } from "@/components/FormMissao";
 import { Janela } from "@/components/Janela";
@@ -12,6 +13,7 @@ import { ASSUNTOS, emojiDoAssunto } from "@/lib/assuntos-constants";
 import { resultadoDaSala } from "@/lib/resultado";
 import {
   TITULO_RESULTADO_FINAL,
+  LABEL_VER_TUDO_QUE_ROLOU,
   LABEL_AVISO_DESFAZER,
   LABEL_DESFEITO,
   LABEL_REGISTRO_FEITO,
@@ -237,14 +239,18 @@ export function AreaDoDesafio({
           pessoas={resultadoDaSala(dados)}
           meuId={dados.meuId}
         />
-        <FeedDaSala
-          feed={dados.feed}
-          participantes={dados.participantes}
-          hoje={dados.hoje}
-          codigo={codigo}
-          token={token}
-          somenteLeitura
-        />
+        {/* Feed escondido por padrão: a tela de resultado fica enxuta,
+            o histórico continua a um toque. */}
+        <Expansivel rotulo={LABEL_VER_TUDO_QUE_ROLOU}>
+          <FeedDaSala
+            feed={dados.feed}
+            participantes={dados.participantes}
+            hoje={dados.hoje}
+            codigo={codigo}
+            token={token}
+            somenteLeitura
+          />
+        </Expansivel>
         <AcoesDoDesafio codigo={codigo} nomeSala={nomeDesafio} />
       </main>
     );

@@ -1,15 +1,9 @@
 import { BotaoGrande } from "@/components/BotaoGrande";
 import { ExemploResultado } from "@/components/ExemploResultado";
+import { RESUMO_LINK, RESUMO_TEXTO } from "@/components/Expansivel";
 import { Logo } from "@/components/Logo";
 import { SeusDesafios } from "@/components/SeusDesafios";
 import { HOME_COMO_FUNCIONA, HOME_COMO_FUNCIONA_TEXTO, HOME_FRASE, HOME_VER_EXEMPLO } from "@/lib/copy";
-
-// Link pequeno e discreto que abre/fecha um bloco (accordion com
-// <details>: sem JS, sem navegar). A seta gira quando está aberto.
-const RESUMO_LINK =
-  "flex cursor-pointer list-none items-center justify-center gap-1.5 font-mono text-xs font-bold text-ink/70 [&::-webkit-details-marker]:hidden";
-// Sublinhado só no texto: na seta ele giraria junto.
-const RESUMO_TEXTO = "underline decoration-ink/30 underline-offset-4";
 
 export default function Home() {
   return (

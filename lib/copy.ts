@@ -168,6 +168,9 @@ export const SELO_NO_RITMO = "SEGUIU NO PRÓPRIO RITMO.";
 
 export const TITULO_RESULTADO_FINAL = "Resultado final";
 
+/** Bloco expansível com o feed, na sala encerrada (a seta vem junto). */
+export const LABEL_VER_TUDO_QUE_ROLOU = "Ver tudo que rolou";
+
 /** Rótulo em cima da lista de participantes do resultado. */
 export const LABEL_TODO_MUNDO = "Todo mundo";
 
