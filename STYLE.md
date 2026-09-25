@@ -33,6 +33,9 @@ Lista vertical **compacta**, uma linha por realização, não um cartão inflado
 
 A densidade dessa lista se inspira em feeds compactos (ex: Hugging Face), **só a compactação**, não o visual limpo/arredondado dessas referências. A linha continua na mesma linguagem dura do resto: borda preta (~2px), fundo creme, zero gradiente, zero canto arredondado.
 
+## Insígnias tocáveis (legenda)
+Toda insígnia que, ao tocar, revela uma legenda (foguinho, estrela de bônus, chip "dias em chamas") tem a mesma pista de "dá pra tocar": **cursor de mão** no desktop e **contorno tracejado** (visível no celular). Ícone sozinho = contorno tracejado fino em volta; chip = borda tracejada no lugar da cheia. **Tracejado = tocável**; borda cheia = só informação. A legenda aparece ao lado e some sozinha. Estrela dentro do botão de uma missão (Suas Missões) não é tocável à parte (o toque marca a missão).
+
 ## Bolinhas / progresso
 Cada unidade do alvo = um quadradinho/bolinha pixel. Preenchido (âmbar) = feito; vazio (`#E6D9C8`) = falta. Além do alvo, continua enchendo bolinhas em **coral** (bônus; âmbar = combinado, até 5 bolinhas de bônus e depois "+N") e aparece a **estrelinha** pixel art (âmbar, contorno de tinta, mesma linguagem do foguinho) ao lado: "bateu e passou do combinado".
 

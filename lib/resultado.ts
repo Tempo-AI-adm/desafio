@@ -16,6 +16,9 @@ export type PessoaResultado = {
   definidas: number;
   bonus: number;
   reacoes: number;
+  /** quantos DIAS diferentes a pessoa teve 2+ realizações (um dia com 4
+   * ainda é 1 dia) */
+  diasEmChamas: number;
 };
 
 /** Missão cumprida: sem alvo = marcou pelo menos 1 vez; com alvo =
@@ -34,6 +37,17 @@ export function resumoDoGrupo(dados: DadosSala): { realizacoes: number; reacoes:
   };
 }
 
+/** Dias (fuso de Brasília, coluna `dia`) em que a pessoa teve 2 ou mais
+ * realizações: os dias em que o foguinho acendeu. Conta dias, não toques. */
+function diasEmChamasDe(dados: DadosSala, participanteId: string): number {
+  const porDia = new Map<string, number>();
+  for (const f of dados.feed) {
+    if (f.tipoItem !== "realizacao" || f.autorId !== participanteId) continue;
+    porDia.set(f.dia, (porDia.get(f.dia) ?? 0) + 1);
+  }
+  return [...porDia.values()].filter((n) => n >= 2).length;
+}
+
 export function resultadoDaSala(dados: DadosSala): PessoaResultado[] {
   // dados.participantes já vem na ordem de entrada (criado_em).
   return dados.participantes.map((p) => {
@@ -49,6 +63,7 @@ export function resultadoDaSala(dados: DadosSala): PessoaResultado[] {
       reacoes: dados.feed
         .filter((f) => f.autorId === p.id)
         .reduce((soma, f) => soma + f.reacoes, 0),
+      diasEmChamas: diasEmChamasDe(dados, p.id),
     };
   });
 }

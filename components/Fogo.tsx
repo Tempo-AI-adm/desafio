@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { ComLegenda } from "@/components/ComLegenda";
 import {
-  labelComemoracaoPorContagemDoDia,
   LEGENDA_FOGO,
+  labelComemoracaoPorContagemDoDia,
   nivelFogoPorContagemDoDia,
 } from "@/lib/copy";
 import { pixelsComContorno } from "@/lib/pixel-art";
@@ -32,10 +32,41 @@ const ALTURAS = {
   compacto: { 1: 18, 2: 24 },
 } as const;
 
+/** Só o desenho do foguinho (sem toque), também usado no chip "dias em
+ * chamas" do resultado. `respirar`: pulsação leve em loop. */
+export function FogoIcone({
+  nivel,
+  altura,
+  respirar = false,
+}: {
+  nivel: 1 | 2;
+  altura: number;
+  respirar?: boolean;
+}) {
+  const cores: Record<string, string> = {
+    contorno: "var(--color-ink)",
+    "#": nivel === 2 ? "var(--color-coral)" : "var(--color-amber)",
+    o: "var(--color-amber)",
+  };
+  return (
+    <svg
+      viewBox={`0 0 ${LARGURA} ${ALTURA}`}
+      width={(altura * LARGURA) / ALTURA}
+      height={altura}
+      shapeRendering="crispEdges"
+      aria-hidden
+      className={`shrink-0 ${respirar ? "origin-bottom motion-safe:animate-[respirar_1.1s_ease-in-out_infinite]" : ""}`}
+    >
+      {PIXELS.map((p) => (
+        <rect key={`${p.x}-${p.y}`} x={p.x} y={p.y} width={1} height={1} fill={cores[p.tipo]} />
+      ))}
+    </svg>
+  );
+}
+
 /**
- * Tocar no foguinho mostra uma legenda curta ("2 ou mais no mesmo dia = dia em chamas.")
- * ao lado, que some sozinha (mesma animação do selo de comemoração).
- * Sem modal, sem navegar.
+ * Foguinho ao lado do nome, pela contagem do dia. Tocar mostra a
+ * legenda ("2 ou mais no mesmo dia = dia em chamas."), que some sozinha.
  */
 export function Fogo({
   contagemHoje,
@@ -44,48 +75,12 @@ export function Fogo({
   contagemHoje: number;
   tamanho?: keyof typeof ALTURAS;
 }) {
-  const [legendaCarimbo, setLegendaCarimbo] = useState<number | null>(null);
   const nivel = nivelFogoPorContagemDoDia(contagemHoje);
   if (nivel === 0) return null;
 
-  const cores: Record<string, string> = {
-    contorno: "var(--color-ink)",
-    "#": nivel === 2 ? "var(--color-coral)" : "var(--color-amber)",
-    o: "var(--color-amber)",
-  };
-  const altura = ALTURAS[tamanho][nivel];
-  const texto = labelComemoracaoPorContagemDoDia(contagemHoje);
-
   return (
-    <span className="relative inline-flex shrink-0 items-center gap-1">
-      <button
-        type="button"
-        onClick={() => setLegendaCarimbo(Date.now())}
-        aria-label={`${texto} ${LEGENDA_FOGO}`}
-        className="inline-flex shrink-0 p-0.5"
-      >
-        <svg
-          viewBox={`0 0 ${LARGURA} ${ALTURA}`}
-          width={(altura * LARGURA) / ALTURA}
-          height={altura}
-          shapeRendering="crispEdges"
-          aria-hidden
-          className="origin-bottom motion-safe:animate-[respirar_1.1s_ease-in-out_infinite]"
-        >
-          {PIXELS.map((p) => (
-            <rect key={`${p.x}-${p.y}`} x={p.x} y={p.y} width={1} height={1} fill={cores[p.tipo]} />
-          ))}
-        </svg>
-      </button>
-      {legendaCarimbo ? (
-        <span
-          key={legendaCarimbo}
-          onAnimationEnd={() => setLegendaCarimbo(null)}
-          className="w-max max-w-[11rem] animate-[comemoracao-sumir_2.2s_ease-out_forwards] border-2 border-ink bg-amber px-1.5 py-0.5 font-mono text-[10px] font-bold normal-case tracking-normal text-ink"
-        >
-          {LEGENDA_FOGO}
-        </span>
-      ) : null}
-    </span>
+    <ComLegenda legenda={LEGENDA_FOGO} rotulo={labelComemoracaoPorContagemDoDia(contagemHoje)}>
+      <FogoIcone nivel={nivel} altura={ALTURAS[tamanho][nivel]} respirar />
+    </ComLegenda>
   );
 }

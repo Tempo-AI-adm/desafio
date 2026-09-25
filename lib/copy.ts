@@ -103,6 +103,9 @@ export function labelMissaoCriada(titulo: string): string {
   return `criou a missão: ${titulo}`;
 }
 
+/** Legenda ao tocar na estrela de bônus (resultado final). */
+export const LEGENDA_ESTRELA = "Você foi além do que tinha combinado nessa missão.";
+
 /** Insígnia (estrelinha) de quem passou do alvo de uma missão. */
 export const LABEL_BONUS = "Bateu e passou do combinado";
 
@@ -156,9 +159,9 @@ export const HOME_EXEMPLO = {
   voce: "Ana",
   // Ordem de entrada na sala (a tela põe "você" primeiro).
   pessoas: [
-    { emoji: "🐼", nome: "Beto", fechouTudo: false, missoes: 2, definidas: 3, bonus: 0, reacoes: 3 },
-    { emoji: "🦊", nome: "Ana", fechouTudo: true, missoes: 3, definidas: 3, bonus: 2, reacoes: 5 },
-    { emoji: "🦉", nome: "Cacá", fechouTudo: true, missoes: 1, definidas: 1, bonus: 0, reacoes: 2 },
+    { emoji: "🐼", nome: "Beto", fechouTudo: false, missoes: 2, definidas: 3, bonus: 0, reacoes: 3, diasEmChamas: 1 },
+    { emoji: "🦊", nome: "Ana", fechouTudo: true, missoes: 3, definidas: 3, bonus: 2, reacoes: 5, diasEmChamas: 3 },
+    { emoji: "🦉", nome: "Cacá", fechouTudo: true, missoes: 1, definidas: 1, bonus: 0, reacoes: 2, diasEmChamas: 0 },
   ],
 };
 
@@ -200,6 +203,11 @@ export function labelResumoResultado(duracaoDias: number, pessoas: number): stri
 
 export function labelMissoesCumpridas(n: number): string {
   return n === 1 ? "1 missão cumprida" : `${n} missões cumpridas`;
+}
+
+/** Chip do resultado: dias em que a pessoa teve 2+ realizações. */
+export function labelDiasEmChamas(n: number): string {
+  return n === 1 ? "1 dia em chamas" : `${n} dias em chamas`;
 }
 
 export function labelBonus(n: number): string {

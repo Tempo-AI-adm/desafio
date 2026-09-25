@@ -1,13 +1,18 @@
 import type { ReactNode } from "react";
+import { ComLegenda } from "@/components/ComLegenda";
 import { Estrela } from "@/components/Estrela";
+import { FogoIcone } from "@/components/Fogo";
 import { Janela } from "@/components/Janela";
 import { Olhinhos } from "@/components/Olhinhos";
 import {
   LABEL_TODO_MUNDO,
+  LEGENDA_ESTRELA,
+  LEGENDA_FOGO,
   LABEL_VOCE,
   SELO_FECHOU_TUDO,
   SELO_NO_RITMO,
   labelBonus,
+  labelDiasEmChamas,
   labelMissoesCumpridas,
   labelMissoesDeDefinidas,
   labelReacoes,
@@ -23,6 +28,7 @@ type Pessoa = {
   definidas: number;
   bonus: number;
   reacoes: number;
+  diasEmChamas: number;
 };
 
 /** Mesma peça dos chips de assunto do formulário de missão (borda dura,
@@ -41,7 +47,8 @@ function Chip({ children }: { children: ReactNode }) {
  * ordem de entrada, com a própria pessoa primeiro (só pra achar a linha
  * rápido, não é ranking). Cada linha: emoji + nome; o selo (fechou tudo
  * que se propôs ou seguiu no ritmo) numa linha própria; os números em
- * chips, só se forem maiores que zero. A linha da própria pessoa tem um
+ * chips, só se forem maiores que zero. Chips de insígnia (dias em
+ * chamas, bônus) são tocáveis e mostram a legenda (borda tracejada). A linha da própria pessoa tem um
  * realce leve e, no lugar de "N missões cumpridas", "X de Y missões"
  * (compara consigo mesma; os outros não têm essa comparação).
  */
@@ -111,11 +118,18 @@ export function ResultadoFinal({
                       {labelMissoesCumpridas(p.missoes)}
                     </Chip>
                   ) : null}
+                  {/* Chips que revelam legenda: tracejados (dá pra tocar). */}
+                  {p.diasEmChamas > 0 ? (
+                    <ComLegenda chip legenda={LEGENDA_FOGO}>
+                      <FogoIcone nivel={1} altura={13} />
+                      {labelDiasEmChamas(p.diasEmChamas)}
+                    </ComLegenda>
+                  ) : null}
                   {p.bonus > 0 ? (
-                    <Chip>
+                    <ComLegenda chip legenda={LEGENDA_ESTRELA}>
                       <Estrela tamanho={13} />
                       {labelBonus(p.bonus)}
-                    </Chip>
+                    </ComLegenda>
                   ) : null}
                   {p.reacoes > 0 ? (
                     <Chip>
