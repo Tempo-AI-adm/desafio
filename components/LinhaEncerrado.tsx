@@ -15,8 +15,8 @@ export function LinhaEncerrado({
   pessoas: number;
 }) {
   return (
-    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs font-bold uppercase tracking-widest">
-      <span className="border-2 border-ink/50 px-2 py-0.5 text-ink/70">{LABEL_SELO_ENCERRADO}</span>
+    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[10px] font-bold uppercase tracking-widest">
+      <span className="border-2 border-ink/50 px-1.5 text-ink/70">{LABEL_SELO_ENCERRADO}</span>
       <span className="text-ink/60">
         {labelPeriodo(periodo.inicio, periodo.fim)} · {labelResumoResultado(duracaoDias, pessoas)}
       </span>

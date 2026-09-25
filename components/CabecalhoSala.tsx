@@ -47,33 +47,35 @@ export function CabecalhoSala({
   quantidadePessoas?: number;
 }) {
   return (
-    <Janela titulo="Sala" painel>
-      {/* Em maiúsculas (só no CSS; o nome salvo não muda): as minúsculas
-          da Press Start 2P são baixinhas e o nome parecia "espremido". */}
-      <h1 className="break-words font-press text-sm uppercase leading-[1.6] sm:text-base">{salaNome}</h1>
-      {periodoEncerrado ? (
-        // Encerrada: selo neutro (status, não conquista) + período real
-        // do desafio; a hora de agora não importa mais.
-        <div className="mt-3">
+    <Janela titulo="Sala" painel compacto>
+      {/* Compacto: nome + status numa linha só (quebra se não couber),
+          pra sobrar destaque pro que vem embaixo. */}
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+        {/* Em maiúsculas (só no CSS; o nome salvo não muda): as minúsculas
+            da Press Start 2P são baixinhas e o nome parecia "espremido". */}
+        <h1 className="break-words font-press text-xs uppercase leading-[1.6]">{salaNome}</h1>
+        {periodoEncerrado ? (
+          // Encerrada: selo neutro (status, não conquista) + período real
+          // do desafio; a hora de agora não importa mais.
           <LinhaEncerrado
             periodo={periodoEncerrado}
             duracaoDias={duracaoDias}
             pessoas={quantidadePessoas ?? 0}
           />
-        </div>
-      ) : (
-        <div className="mt-3 flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest">
-          <span className="border-2 border-ink bg-amber px-2 py-0.5">
-            {diaAtual !== null ? labelDiaDoDesafio(diaAtual, duracaoDias) : labelDuracao(duracaoDias)}
-          </span>
-          <span className="text-ink/60">
-            {diaCurto(hoje)} · {horaCurta(agora)}
-          </span>
-        </div>
-      )}
+        ) : (
+          <div className="flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-widest">
+            <span className="border-2 border-ink bg-amber px-1.5">
+              {diaAtual !== null ? labelDiaDoDesafio(diaAtual, duracaoDias) : labelDuracao(duracaoDias)}
+            </span>
+            <span className="text-ink/60">
+              {diaCurto(hoje)} · {horaCurta(agora)}
+            </span>
+          </div>
+        )}
+      </div>
 
       {ativosHoje ? (
-        <div className="mt-3 flex flex-col gap-1.5 border-t-2 border-ink/15 pt-2">
+        <div className="mt-2 flex flex-col gap-1 border-t-2 border-ink/15 pt-1.5">
           <span className="flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-widest text-ink/60">
             <span aria-hidden className="inline-block h-2 w-2 bg-green" />
             {LABEL_ATIVOS_HOJE}
