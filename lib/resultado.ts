@@ -24,6 +24,16 @@ export function missaoCumprida(i: InegociavelResumo): boolean {
   return i.progresso >= (i.alvo ?? 1);
 }
 
+/** Estatística do GRUPO todo (nunca por pessoa): quantas realizações
+ * todo mundo somou e quantas reações foram trocadas. */
+export function resumoDoGrupo(dados: DadosSala): { realizacoes: number; reacoes: number } {
+  const realizacoes = dados.feed.filter((f) => f.tipoItem === "realizacao");
+  return {
+    realizacoes: realizacoes.length,
+    reacoes: realizacoes.reduce((soma, f) => soma + f.reacoes, 0),
+  };
+}
+
 export function resultadoDaSala(dados: DadosSala): PessoaResultado[] {
   // dados.participantes já vem na ordem de entrada (criado_em).
   return dados.participantes.map((p) => {

@@ -11,6 +11,7 @@ import {
   labelMissoesCumpridas,
   labelMissoesDeDefinidas,
   labelReacoes,
+  labelResumoGrupo,
 } from "@/lib/copy";
 
 type Pessoa = {
@@ -48,6 +49,7 @@ export function ResultadoFinal({
   titulo,
   mascote = false,
   cabecalho,
+  grupo,
   pessoas,
   meuId,
 }: {
@@ -56,6 +58,8 @@ export function ResultadoFinal({
   mascote?: boolean;
   /** topo do exemplo da Home, que não tem o cabeçalho "SALA" da sala real */
   cabecalho?: ReactNode;
+  /** estatística do grupo todo, acima de "Todo mundo" */
+  grupo: { realizacoes: number; reacoes: number };
   pessoas: Pessoa[];
   /** a própria pessoa: vem primeiro, com realce e "(você)" */
   meuId?: string;
@@ -69,6 +73,7 @@ export function ResultadoFinal({
     <Janela titulo={titulo}>
       <div className="flex flex-col gap-2 text-left font-mono">
         {cabecalho}
+        <p className="text-xs font-bold">{labelResumoGrupo(grupo.realizacoes, grupo.reacoes)}</p>
         <p className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-ink/60">
           {mascote ? <Olhinhos altura={10} animado /> : null}
           {LABEL_TODO_MUNDO}

@@ -10,7 +10,7 @@ import { Janela } from "@/components/Janela";
 import { ProgressoInegociavel } from "@/components/ProgressoInegociavel";
 import { ResultadoFinal } from "@/components/ResultadoFinal";
 import { ASSUNTOS, emojiDoAssunto } from "@/lib/assuntos-constants";
-import { resultadoDaSala } from "@/lib/resultado";
+import { resultadoDaSala, resumoDoGrupo } from "@/lib/resultado";
 import {
   TITULO_RESULTADO_FINAL,
   LABEL_VER_TUDO_QUE_ROLOU,
@@ -236,6 +236,7 @@ export function AreaDoDesafio({
         <ResultadoFinal
           titulo={TITULO_RESULTADO_FINAL}
           mascote
+          grupo={resumoDoGrupo(dados)}
           pessoas={resultadoDaSala(dados)}
           meuId={dados.meuId}
         />

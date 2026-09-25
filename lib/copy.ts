@@ -151,6 +151,8 @@ export const HOME_EXEMPLO = {
   sala: "Desafio maromba",
   duracaoDias: 7,
   periodo: { inicio: "2026-09-01", fim: "2026-09-07" },
+  // Resumo do grupo: reações trocadas = soma das reações de cada um (3+5+2).
+  grupo: { realizacoes: 20, reacoes: 10 },
   voce: "Ana",
   // Ordem de entrada na sala (a tela põe "você" primeiro).
   pessoas: [
@@ -170,6 +172,14 @@ export const TITULO_RESULTADO_FINAL = "Resultado final";
 
 /** Bloco expansível com o feed, na sala encerrada (a seta vem junto). */
 export const LABEL_VER_TUDO_QUE_ROLOU = "Ver tudo que rolou";
+
+/** Resumo do grupo todo, acima de "Todo mundo": "12 realizações · 8
+ * reações trocadas". Estatística coletiva, nunca por pessoa. */
+export function labelResumoGrupo(realizacoes: number, reacoes: number): string {
+  const r = realizacoes === 1 ? "1 realização" : `${realizacoes} realizações`;
+  const x = reacoes === 1 ? "1 reação trocada" : `${reacoes} reações trocadas`;
+  return `${r} · ${x}`;
+}
 
 /** Rótulo em cima da lista de participantes do resultado. */
 export const LABEL_TODO_MUNDO = "Todo mundo";
