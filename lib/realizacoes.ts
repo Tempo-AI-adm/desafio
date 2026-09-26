@@ -69,6 +69,32 @@ export async function criarRealizacao(dados: {
   return paraRealizacao(data as LinhaRealizacao);
 }
 
+/** Missão nova que já nasce feita ("já fiz isso X vezes"): grava as X
+ * marcações de uma vez, todas no dia de hoje, ligadas à missão. */
+export async function criarMarcacoesDaMissao(dados: {
+  participanteId: string;
+  inegociavelId: string;
+  assunto: string;
+  texto: string;
+  dia: string;
+  quantidade: number;
+}): Promise<void> {
+  if (dados.quantidade <= 0) return;
+  const linha = {
+    participante_id: dados.participanteId,
+    tipo: "inegociavel" as const,
+    inegociavel_id: dados.inegociavelId,
+    assunto: dados.assunto,
+    texto: dados.texto,
+    dia: dados.dia,
+  };
+  const { error } = await supabase
+    .from("realizacoes")
+    .insert(Array.from({ length: dados.quantidade }, () => linha));
+
+  if (error) throw new Error(`Erro ao marcar a missão nova: ${error.message}`);
+}
+
 /** Quantas realizações esse participante já tem num dia, usada pra
  * decidir o selo/copy de comemoração (ver lib/copy.ts). Chamar DEPOIS
  * de criar a realização, pra contar ela também. */

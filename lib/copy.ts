@@ -120,9 +120,78 @@ export const TIPO_MISSAO_LABEL: Record<TipoMissao, string> = {
 
 export const LABEL_QUANTAS_VEZES = "Repetir quantas vezes?";
 
-/** Texto do lobby, na janela "Seu inegociável" (STYLE.md "Criar o norte"). */
+// ---- Missões: textos com o sentimento de "se propor" ----
+// Regra de tom: frase completa que explica o PORQUÊ da ação, nunca
+// rótulo curto e vago. Sem infantilizar; quem nunca usou nada parecido
+// tem que entender só lendo.
+
+/** Janela do lobby onde a pessoa escolhe as missões dela. */
+export const TITULO_LOBBY_MISSOES = "Suas missões";
+
+/** Texto do lobby, na janela "Suas missões": a primeira missão é o
+ * compromisso da pessoa pra frente, por isso nasce sem nada marcado. */
 export const TEXTO_LOBBY_NORTE =
-  "Para começar, defina uma ou mais missões que você queira realizar no período do desafio. Depois você poderá adicionar novas missões.";
+  "Antes da largada, escolha pelo menos uma missão: algo que você vai fazer nesses dias porque decidiu ser a sua melhor versão durante o desafio. É um compromisso seu com você mesmo, então ela começa sem nada marcado e vai se enchendo conforme você cumpre. Depois da largada, dá pra somar missões novas sempre que quiser.";
+
+/** Rótulo do campo de título no lobby: a 1ª missão e as seguintes. */
+export function rotuloTituloMissaoLobby(quantasJaTem: number): string {
+  return quantasJaTem === 0 ? "A que você se propõe nesse desafio?" : "A que mais você quer se propor?";
+}
+
+export const BOTAO_ASSUMIR_MISSAO = "Assumir esta missão";
+
+/** Apoio no lobby, depois da 1ª missão, antes do PRONTO. */
+export const TEXTO_LOBBY_ANTES_DO_PRONTO =
+  "Se quiser se propor a mais alguma coisa, é só preencher de novo aqui em cima. Quando sentir que a sua lista está do jeito que você quer, aperte PRONTO pra avisar o grupo que você está dentro.";
+
+export const PLACEHOLDER_TITULO_MISSAO = "Ex: malhar, ler 20 páginas, ligar pra minha avó";
+
+export const ROTULO_ASSUNTO_MISSAO = "Sobre o que é essa missão?";
+
+export const ROTULO_TIPO_MISSAO = "Com que frequência?";
+
+/** Explica cada tipo, logo abaixo da escolha. */
+export const EXPLICA_TIPO_MISSAO: Record<TipoMissao, string> = {
+  unica: "Uma vez só: quando você fizer, marca e ela fica cumprida.",
+  repetir: "Algo pra fazer várias vezes ao longo do desafio: cada vez que você fizer, marca uma.",
+};
+
+export const EXPLICA_QUANTAS_VEZES = "Quantas vezes, somando o desafio inteiro, você quer fazer isso.";
+
+/** Apoio fixo em "Suas Missões", com a sala rolando. */
+export const TEXTO_SUAS_MISSOES =
+  "Sempre que você fizer uma das suas missões, toque nela pra registrar. Cada registro aparece no feed, e o grupo inteiro comemora com você.";
+
+/** Topo do formulário "+ Nova missão", com a sala rolando. */
+export const TEXTO_NOVA_MISSAO =
+  "Fez algo que te deixou orgulhoso, ou decidiu se propor a mais alguma coisa? Crie uma missão nova: ela vale o mesmo que as outras e entra na sua lista.";
+
+export const ROTULO_TITULO_NOVA_MISSAO = "Qual é a missão nova?";
+
+/** "+ Nova missão" pra quem entrou com a sala já rolando e ainda não tem
+ * missão: essa é a primeira, o compromisso dela, então nunca nasce feita. */
+export const TEXTO_PRIMEIRA_MISSAO_RODANDO =
+  "Você chegou com o desafio já rolando. Pra fazer parte, escolha a sua primeira missão: algo que você vai fazer nesses dias porque decidiu ser a sua melhor versão. Ela começa sem nada marcado e vai se enchendo conforme você cumpre.";
+
+export const BOTAO_ADICIONAR_NOVA_MISSAO = "Adicionar à minha lista";
+
+/** "Já fiz" na missão nova (nunca na primeira missão da pessoa). */
+export const ROTULO_JA_CUMPRI = "Eu já fiz isso";
+export const EXPLICA_JA_CUMPRI =
+  "Marque se você já fez: a missão entra cumprida e aparece no feed pro grupo comemorar com você.";
+export const ROTULO_JA_FEITOS = "Você já fez isso alguma vez? Quantas?";
+export const EXPLICA_JA_FEITOS =
+  "Se já fez, diga quantas vezes: elas entram marcadas agora mesmo. Se ainda não fez, deixe em branco e marque depois, a cada vez.";
+
+// ---- Erros das missões ----
+export const ERRO_MISSAO_SEM_TITULO =
+  "Escreva qual é a missão, pra você e o grupo saberem a que você está se propondo.";
+export const ERRO_PRONTO_SEM_MISSAO =
+  "Pra ficar pronto, primeiro se proponha a pelo menos uma missão: é ela que marca a sua entrada no desafio.";
+export const ERRO_MISSAO_DE_OUTRA_PESSOA =
+  "Essa missão é de outra pessoa. Cada um marca só as próprias missões.";
+export const ERRO_JA_FEITOS =
+  "Aqui dá pra registrar até o número de vezes que você definiu pra essa missão. Se fez mais, é só tocar nela depois pra somar.";
 
 /** Leitor de tela do "✓" nos registros antigos de "vitória extra". */
 export const LABEL_REGISTRO_FEITO = "feito";

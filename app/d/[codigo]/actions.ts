@@ -17,6 +17,7 @@ import {
   apagarMarcacaoRecente,
   buscarRealizacaoPorId,
   contarRealizacoesNoDia,
+  criarMarcacoesDaMissao,
   criarRealizacao,
   hojeISO,
 } from "@/lib/realizacoes";
@@ -24,6 +25,12 @@ import { criarReacao } from "@/lib/reacoes";
 import { LIMITE_DESFAZER_SERVIDOR_MS } from "@/lib/tempo";
 import { EMOJIS_IDENTIDADE } from "@/lib/identidade-constants";
 import { ASSUNTOS } from "@/lib/assuntos-constants";
+import {
+  ERRO_JA_FEITOS,
+  ERRO_MISSAO_DE_OUTRA_PESSOA,
+  ERRO_MISSAO_SEM_TITULO,
+  ERRO_PRONTO_SEM_MISSAO,
+} from "@/lib/copy";
 
 const VALORES_ASSUNTO: readonly string[] = ASSUNTOS.map((a) => a.valor);
 
@@ -81,6 +88,8 @@ export type AdicionarInegociavelState = {
   error?: string;
   ok?: boolean;
   carimbo?: number;
+  /** só quando a missão nova já nasceu feita: contagem do dia, pro selo */
+  contagemHoje?: number;
 };
 
 export async function adicionarInegociavelAction(
@@ -92,6 +101,9 @@ export async function adicionarInegociavelAction(
   const titulo = String(formData.get("titulo") ?? "").trim();
   const assunto = String(formData.get("assunto") ?? "");
   const alvoRaw = String(formData.get("alvo") ?? "").trim();
+  // "Já fiz isso X vezes" / "Já cumpri": só na missão nova, com a sala
+  // rolando e depois da primeira missão da pessoa (ver abaixo).
+  const jaFeitosRaw = String(formData.get("jaFeitos") ?? "").trim();
 
   const desafio = await buscarDesafioPorCodigo(codigo);
   if (!desafio) {
@@ -110,7 +122,7 @@ export async function adicionarInegociavelAction(
   }
 
   if (!titulo) {
-    return { error: "Dá um título pro inegociável." };
+    return { error: ERRO_MISSAO_SEM_TITULO };
   }
   if (titulo.length > 60) {
     return { error: "Título muito grande, até 60 letras." };
@@ -128,10 +140,39 @@ export async function adicionarInegociavelAction(
     alvo = numero;
   }
 
-  await criarInegociavel({ participanteId: participante.id, titulo, assunto, alvo });
+  // A primeira missão de cada pessoa é o compromisso dela pra frente:
+  // nunca nasce feita (no lobby, nem pra quem entra depois da largada).
+  // Missões seguintes, com a sala rolando, podem nascer já marcadas:
+  // é a pessoa reconhecendo algo que já fez e deixou ela orgulhosa.
+  let jaFeitos = 0;
+  if (jaFeitosRaw && desafio.estado === "ativo") {
+    const jaTemMissao = (await contarInegociaveisPorParticipante(participante.id)) > 0;
+    if (jaTemMissao) {
+      const numero = Number(jaFeitosRaw);
+      const maximo = alvo ?? 1;
+      if (!Number.isInteger(numero) || numero < 0 || numero > maximo) {
+        return { error: ERRO_JA_FEITOS };
+      }
+      jaFeitos = numero;
+    }
+  }
+
+  const missao = await criarInegociavel({ participanteId: participante.id, titulo, assunto, alvo });
   await tocarUltimaAtividade(participante.id);
 
-  return { ok: true, carimbo: Date.now() };
+  if (jaFeitos === 0) return { ok: true, carimbo: Date.now() };
+
+  const dia = hojeISO();
+  await criarMarcacoesDaMissao({
+    participanteId: participante.id,
+    inegociavelId: missao.id,
+    assunto,
+    texto: titulo,
+    dia,
+    quantidade: jaFeitos,
+  });
+  const contagemHoje = await contarRealizacoesNoDia(participante.id, dia);
+  return { ok: true, carimbo: Date.now(), contagemHoje };
 }
 
 export type AlternarProntoState = {
@@ -162,7 +203,7 @@ export async function alternarProntoAction(
 
   const querFicarPronto = !participante.pronto;
   if (querFicarPronto && (await contarInegociaveisPorParticipante(participante.id)) === 0) {
-    return { error: "Adiciona pelo menos 1 inegociável antes de marcar PRONTO." };
+    return { error: ERRO_PRONTO_SEM_MISSAO };
   }
 
   await marcarPronto(participante.id, querFicarPronto);
@@ -246,7 +287,7 @@ export async function registrarInegociavelAction(
 
   const inegociavel = await buscarInegociavelPorId(inegociavelId);
   if (!inegociavel || inegociavel.participanteId !== participante.id) {
-    return { error: "Esse inegociável não é seu." };
+    return { error: ERRO_MISSAO_DE_OUTRA_PESSOA };
   }
 
   const dia = hojeISO();

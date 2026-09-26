@@ -17,7 +17,16 @@ import {
   LABEL_AVISO_DESFAZER,
   LABEL_DESFEITO,
   LABEL_REGISTRO_FEITO,
+  BOTAO_ADICIONAR_NOVA_MISSAO,
+  BOTAO_ASSUMIR_MISSAO,
+  ROTULO_TITULO_NOVA_MISSAO,
+  TEXTO_LOBBY_ANTES_DO_PRONTO,
   TEXTO_LOBBY_NORTE,
+  TEXTO_NOVA_MISSAO,
+  TEXTO_PRIMEIRA_MISSAO_RODANDO,
+  TEXTO_SUAS_MISSOES,
+  TITULO_LOBBY_MISSOES,
+  rotuloTituloMissaoLobby,
   labelComemoracaoPorContagemDoDia,
   labelPronto,
 } from "@/lib/copy";
@@ -49,18 +58,19 @@ const ESTADO_INICIAL_DESFAZER: DesfazerState = {};
 // Deriva o selo a mostrar (SHOW./TÁ ON FIRE./AURA MÁXIMA. ou
 // "Desfeito.") sem useEffect + setState: pega a ação mais recente pelo
 // carimbo de tempo. `key` no elemento reinicia a animação de sumir.
+// `novaMissao`: missão nova que já nasceu feita também comemora.
 function seloMaisRecente(
   inegociavel: { contagemHoje?: number; carimbo?: number },
   desfazer: { ok?: boolean; carimbo?: number },
+  novaMissao: { contagemHoje?: number; carimbo?: number },
 ): { texto: string; carimbo: number } | null {
+  const comemoracao = (s: { contagemHoje?: number; carimbo?: number }) => ({
+    carimbo: s.carimbo ?? 0,
+    texto: s.contagemHoje !== undefined ? labelComemoracaoPorContagemDoDia(s.contagemHoje) : null,
+  });
   const candidatos = [
-    {
-      carimbo: inegociavel.carimbo ?? 0,
-      texto:
-        inegociavel.contagemHoje !== undefined
-          ? labelComemoracaoPorContagemDoDia(inegociavel.contagemHoje)
-          : null,
-    },
+    comemoracao(inegociavel),
+    comemoracao(novaMissao),
     { carimbo: desfazer.carimbo ?? 0, texto: desfazer.ok ? LABEL_DESFEITO : null },
   ];
   const maisRecente = candidatos.reduce((a, b) => (b.carimbo > a.carimbo ? b : a));
@@ -107,7 +117,7 @@ export function AreaDoDesafio({
     ESTADO_INICIAL_DESFAZER,
   );
 
-  const selo = seloMaisRecente(registrarInegociavelState, desfazerState);
+  const selo = seloMaisRecente(registrarInegociavelState, desfazerState, inegociavelState);
 
   // Janela de desfazer: aberta por JANELA_DESFAZER_MS depois de marcar
   // um inegociável. O timer só fecha a janela (setState no callback do
@@ -260,6 +270,9 @@ export function AreaDoDesafio({
   if (dados.estado === "ativo") {
     // "Ativos hoje": quem teve atividade hoje, a própria pessoa primeiro
     // (abrir a sala já conta, então ela sempre está).
+    // Extras antigos (legado) não contam: a 1ª missão "de verdade" é a
+    // que nunca nasce feita (o servidor usa a mesma regra).
+    const temMissaoPropria = dados.meusInegociaveis.some((i) => !i.legado);
     const ativosHoje = [
       ...dados.participantes.filter((p) => p.id === dados.meuId),
       ...dados.participantes.filter((p) => p.id !== dados.meuId && p.ativoHoje),
@@ -363,7 +376,7 @@ export function AreaDoDesafio({
                   />
                 </div>
               ) : (
-                <p className="font-mono text-[11px] text-ink/60">Toca numa missão pra marcar +1.</p>
+                <p className="font-mono text-[11px] text-ink/60">{TEXTO_SUAS_MISSOES}</p>
               )}
 
               {registrarInegociavelState.error || desfazerState.error ? (
@@ -379,8 +392,21 @@ export function AreaDoDesafio({
                   action={inegociavelAction}
                   pending={inegociavelPending}
                   error={inegociavelState.error}
-                  rotuloTitulo="Nova missão"
-                  rotuloBotao="Adicionar missão"
+                  // A 1ª missão de quem entrou com a sala rolando é o
+                  // compromisso dela: nunca nasce feita. Da 2ª em diante,
+                  // pode nascer já marcada ("já fiz").
+                  {...(temMissaoPropria
+                    ? {
+                        introducao: TEXTO_NOVA_MISSAO,
+                        rotuloTitulo: ROTULO_TITULO_NOVA_MISSAO,
+                        rotuloBotao: BOTAO_ADICIONAR_NOVA_MISSAO,
+                        permitirJaFeito: true,
+                      }
+                    : {
+                        introducao: TEXTO_PRIMEIRA_MISSAO_RODANDO,
+                        rotuloTitulo: rotuloTituloMissaoLobby(0),
+                        rotuloBotao: BOTAO_ASSUMIR_MISSAO,
+                      })}
                   className="border-t-2 border-ink/15 pt-2"
                 />
               ) : null}
@@ -425,7 +451,7 @@ export function AreaDoDesafio({
         agora={dados.agora}
       />
 
-      <Janela titulo="Seu inegociável">
+      <Janela titulo={TITULO_LOBBY_MISSOES}>
         <div className="flex flex-col gap-4">
           <p className="font-mono text-sm text-ink/70">{TEXTO_LOBBY_NORTE}</p>
 
@@ -458,17 +484,15 @@ export function AreaDoDesafio({
               action={inegociavelAction}
               pending={inegociavelPending}
               error={inegociavelState.error}
-              rotuloTitulo={`Título do inegociável ${dados.meusInegociaveis.length + 1}`}
-              rotuloBotao="Adicionar inegociável"
+              rotuloTitulo={rotuloTituloMissaoLobby(dados.meusInegociaveis.length)}
+              rotuloBotao={BOTAO_ASSUMIR_MISSAO}
               className="border-t-2 border-empty pt-4"
             />
           ) : null}
 
           {temInegociavel && !dados.meuPronto ? (
             <p className="border-2 border-ink bg-empty/40 px-3 py-2 font-mono text-xs text-ink/70">
-              Quer adicionar outro inegociável? Adicione acima.
-              <br />
-              Pronto pra começar? Aperte <span className="font-bold text-ink">PRONTO</span>.
+              {TEXTO_LOBBY_ANTES_DO_PRONTO}
             </p>
           ) : null}
 
