@@ -8,13 +8,11 @@ export type InegociavelResumo = {
   titulo: string;
   assunto: string;
   alvo: number | null;
+  /** quantas marcações a missão tem (não é fração; ver lib/progresso.ts) */
   progresso: number;
-};
-
-export type ExtraResumo = {
-  id: string;
-  assunto: string;
-  texto: string;
+  /** registro antigo de "vitória extra": na leitura vira missão única já
+   * cumprida (id = o da realização). Não dá pra marcar de novo. */
+  legado?: true;
 };
 
 export type ParticipanteSala = {
@@ -23,9 +21,10 @@ export type ParticipanteSala = {
   emoji: string;
   pronto: boolean;
   quantidadeInegociaveis: number;
+  /** missões da pessoa, incluindo os extras antigos (legado) */
   inegociaveis: InegociavelResumo[];
-  /** vitórias extras + marcações além do alvo */
-  extras: number;
+  /** marcações além do alvo (bônus): celebração pessoal, fora do número do grupo */
+  bonus: number;
   contagemHoje: number;
   minutosDesdeAtividade: number;
   ativoHoje: boolean;
@@ -62,8 +61,11 @@ export type DadosSala = {
   souCriador: boolean;
   meuPronto: boolean;
   minhaContagemHoje: number;
+  /** minhas missões; as `legado` (extras antigos) vêm por último */
   meusInegociaveis: InegociavelResumo[];
-  meusExtras: ExtraResumo[];
+  /** número do grupo, 0 a 1 (lib/progresso.ts); nulo = sala sem missão.
+   * Só coletivo, nunca por pessoa. Ainda não aparece na tela. */
+  progressoGrupo: number | null;
   participantes: ParticipanteSala[];
   feed: ItemFeed[];
 };

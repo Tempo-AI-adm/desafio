@@ -7,6 +7,7 @@ import {
 } from "@/lib/participantes";
 import { listarInegociaveisPorParticipantes } from "@/lib/inegociaveis";
 import { listarRealizacoesDaSala } from "@/lib/realizacoes";
+import { progressoDoGrupo } from "@/lib/progresso";
 import { ESCONDER_DOS_OUTROS_MS, diaDoDesafio, hojeISO, periodoDoDesafio } from "@/lib/tempo";
 import type { DadosSala, InegociavelResumo, ItemFeed, ParticipanteSala } from "@/lib/tipos-sala";
 
@@ -55,8 +56,11 @@ export async function GET(request: Request) {
   );
   const hoje = hojeISO();
 
+  // Tudo é missão: as missões da pessoa + cada registro antigo de
+  // "vitória extra" como uma missão única já cumprida (só na leitura, o
+  // banco não muda), no fim da lista.
   function inegociaveisDe(participanteId: string): InegociavelResumo[] {
-    return inegociaveis
+    const missoes: InegociavelResumo[] = inegociaveis
       .filter((i) => i.participanteId === participanteId)
       .map((i) => ({
         id: i.id,
@@ -65,12 +69,16 @@ export async function GET(request: Request) {
         alvo: i.alvo,
         progresso: realizacoes.filter((r) => r.inegociavelId === i.id).length,
       }));
+    const legadas: InegociavelResumo[] = realizacoes
+      .filter((r) => r.participanteId === participanteId && r.tipo === "extra")
+      .map((r) => ({ id: r.id, titulo: r.texto, assunto: r.assunto, alvo: null, progresso: 1, legado: true }));
+    return [...missoes, ...legadas];
   }
 
   const participantes: ParticipanteSala[] = listaParticipantes.map((p) => {
     const dele = realizacoes.filter((r) => r.participanteId === p.id);
     const inegociaveisDele = inegociaveisDe(p.id);
-    // PRD: marcar além do alvo conta como extra ("estourou").
+    // Marcar além do alvo é bônus ("estourou"): celebração pessoal.
     const estouros = inegociaveisDele.reduce(
       (soma, i) => soma + (i.alvo !== null ? Math.max(0, i.progresso - i.alvo) : 0),
       0,
@@ -82,7 +90,7 @@ export async function GET(request: Request) {
       pronto: p.pronto,
       quantidadeInegociaveis: inegociaveisDele.length,
       inegociaveis: inegociaveisDele,
-      extras: dele.filter((r) => r.tipo === "extra").length + estouros,
+      bonus: estouros,
       contagemHoje: dele.filter((r) => r.dia === hoje).length,
       minutosDesdeAtividade: Math.max(0, Math.floor((agora - Date.parse(p.ultimaAtividade)) / 60000)),
       ativoHoje: hojeISO(new Date(p.ultimaAtividade)) === hoje,
@@ -136,9 +144,11 @@ export async function GET(request: Request) {
     meuPronto: eu.pronto,
     minhaContagemHoje: euNaSala?.contagemHoje ?? 0,
     meusInegociaveis: euNaSala?.inegociaveis ?? [],
-    meusExtras: realizacoes
-      .filter((r) => r.participanteId === eu.id && r.tipo === "extra")
-      .map((r) => ({ id: r.id, assunto: r.assunto, texto: r.texto })),
+    // Os extras antigos já estão nas missões (legado), então aqui não
+    // entram de novo.
+    progressoGrupo: progressoDoGrupo(
+      participantes.flatMap((p) => p.inegociaveis.map((i) => ({ alvo: i.alvo, feitos: i.progresso }))),
+    ),
     participantes,
     feed,
   };

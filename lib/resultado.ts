@@ -3,6 +3,7 @@
 // pra importar no navegador. Segue o PRD "Resultado final - princípio
 // de apresentação": ordem de entrada, selo binário, números só detalhe.
 
+import { progressoDaMissao } from "./progresso";
 import type { DadosSala, InegociavelResumo } from "./tipos-sala";
 
 export type PessoaResultado = {
@@ -21,10 +22,11 @@ export type PessoaResultado = {
   diasEmChamas: number;
 };
 
-/** Missão cumprida: sem alvo = marcou pelo menos 1 vez; com alvo =
- * chegou no alvo. Missões criadas no meio do desafio contam igual. */
+/** Missão cumprida = progresso 100% (lib/progresso.ts): sem alvo =
+ * marcou pelo menos 1 vez; com alvo = chegou no alvo. Missões criadas no
+ * meio do desafio e extras antigos (legado) contam igual. */
 export function missaoCumprida(i: InegociavelResumo): boolean {
-  return i.progresso >= (i.alvo ?? 1);
+  return progressoDaMissao({ alvo: i.alvo, feitos: i.progresso }) === 1;
 }
 
 /** Estatística do GRUPO todo (nunca por pessoa): quantas realizações
@@ -59,7 +61,7 @@ export function resultadoDaSala(dados: DadosSala): PessoaResultado[] {
       fechouTudo: p.inegociaveis.length > 0 && cumpridas === p.inegociaveis.length,
       missoes: cumpridas,
       definidas: p.inegociaveis.length,
-      bonus: p.extras,
+      bonus: p.bonus,
       reacoes: dados.feed
         .filter((f) => f.autorId === p.id)
         .reduce((soma, f) => soma + f.reacoes, 0),

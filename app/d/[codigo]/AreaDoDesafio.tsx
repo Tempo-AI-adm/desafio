@@ -303,7 +303,7 @@ export function AreaDoDesafio({
           >
             <div className="flex flex-col gap-2">
               <ul className="flex flex-wrap gap-2">
-                {dados.meusInegociaveis.map((i) => {
+                {dados.meusInegociaveis.filter((i) => !i.legado).map((i) => {
                   const naJanela = janelaDesfazer?.inegociavelId === i.id;
                   return (
                     <li key={i.id}>
@@ -331,16 +331,17 @@ export function AreaDoDesafio({
                   );
                 })}
                 {/* Registros antigos do tempo da "vitória extra" (antes de
-                    virar "+ Nova missão"): no mesmo fluxo das missões, com
-                    a largura do conteúdo e "✓" (já são coisas feitas). Sem
-                    sombra: não são botões, não dá pra marcar. */}
-                {dados.meusExtras.map((r) => (
+                    virar "+ Nova missão"): contam como missões únicas já
+                    cumpridas (legado), no mesmo fluxo, com a largura do
+                    conteúdo e "✓". Sem sombra: não são botões, não dá pra
+                    marcar de novo. */}
+                {dados.meusInegociaveis.filter((i) => i.legado).map((r) => (
                   <li
                     key={r.id}
                     className="flex max-w-full items-center gap-1.5 border-2 border-ink bg-cream px-2 py-1.5 font-mono text-xs"
                   >
                     <span className="min-w-0 break-words">
-                      {emojiDoAssunto(r.assunto)} {r.texto}
+                      {emojiDoAssunto(r.assunto)} {r.titulo}
                     </span>
                     <span aria-label={LABEL_REGISTRO_FEITO} className="shrink-0 font-bold text-green">
                       ✓
