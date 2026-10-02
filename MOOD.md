@@ -20,7 +20,7 @@ A ideia nasceu num grupo que gosta de **trabalhar e estudar junto em call**, pra
 ## O sentimento de se propor
 Ao entrar numa sala, a pessoa **se propõe a algo**, nunca preenche um formulário. Ela decide quantas coisas boas quer realizar por semana e, se quiser, qual é o seu foco nesse período. É um compromisso genuíno pra frente: "vou fazer isso porque me propus a ser minha melhor versão nesse desafio."
 
-Depois disso, cada registro é um reconhecimento: "fiz algo que me fez bem, e quero que isso conte." A pessoa não precisa planejar o dia nem se justificar toda manhã. Ela vive a semana, e quando realiza algo, registra e é celebrada.
+Depois disso, cada registro é um reconhecimento: "fiz algo que me fez bem, e quero que isso conte." Registrar é **um toque**: escrever o que fez é um convite que fica ali, discreto, nunca uma exigência nem uma pergunta empurrando. Quem só toca está celebrado igual a quem escreve. A pessoa não precisa planejar o dia nem se justificar toda manhã. Ela vive a semana, e quando realiza algo, registra e é celebrada.
 
 ## O peso de realizar algo que te faz bem
 Quando a pessoa faz algo satisfatório, algo que dá a sensação de estar avançando na vida, isso precisa ter **peso forte** no app. O exemplo que resume tudo: acordar e **pintar a parede que estava há dois meses olhando**. Não é tarefa riscada de uma lista, é uma pequena vitória, e o app celebra o **alívio, o orgulho, o "consegui"**, não a métrica seca. Malhar, ler, resolver uma pendência, tomar uma decisão adiada, ligar pra família, cozinhar pra semana: tudo que te fez bem conta.

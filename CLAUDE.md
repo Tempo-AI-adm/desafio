@@ -26,7 +26,7 @@ Você é o executor técnico. O dono decide produto e testa; você escreve o có
 
 ## Segurança (permanente)
 O app não tem login: o token do dispositivo É a identidade. Proteger o banco é proteger as pessoas.
-- **Banco só pelo servidor.** O cliente do Supabase (`lib/supabase.ts`, marcado `server-only`) usa a chave de serviço e só roda em Server Actions, Route Handlers e Server Components. Nenhum componente do navegador acessa o banco. A chave anon não lê nem escreve nada (RLS sem política pra anon).
+- **Banco só pelo servidor.** O cliente do Supabase (`lib/supabase.ts`, marcado `server-only`) usa a chave secreta (`SUPABASE_SECRET_KEY`) + a URL (`NEXT_PUBLIC_SUPABASE_URL`, que não é segredo) e só roda em Server Actions, Route Handlers e Server Components. Nenhum componente do navegador acessa o banco. O código não usa a chave anon; ela não lê nem escreve nada (RLS sem política pra anon).
 - **Nunca montar SQL por concatenação de texto.** Só o cliente do banco com parâmetros (`.eq`, `.insert`, etc.).
 - **Segredos só em variáveis de ambiente**, nunca no código versionado, e **nunca com o prefixo `NEXT_PUBLIC_`** (esse prefixo manda o valor pro navegador).
 - **Nunca logar tokens nem chaves** (nem em `console.log`, nem em mensagens de erro). Token nunca vai na URL (vai no cabeçalho `x-desafio-token`), porque URLs ficam nos registros de acesso.

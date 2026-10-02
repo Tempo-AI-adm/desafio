@@ -10,8 +10,8 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 // precisa de coluna nova no banco e não dá pra fabricar sem o segredo.
 
 function segredo(): string {
-  const s = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!s) throw new Error("Falta SUPABASE_SERVICE_ROLE_KEY nas variáveis de ambiente.");
+  const s = process.env.SUPABASE_SECRET_KEY;
+  if (!s) throw new Error("Falta SUPABASE_SECRET_KEY nas variáveis de ambiente.");
   return s;
 }
 

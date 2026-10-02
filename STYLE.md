@@ -25,13 +25,13 @@ Fundo claro; **a tinta preta faz a cara** (bordas grossas, barras de título pre
 Todo bloco é uma janelinha estilo sistema antigo: **barra de título** tinta, **fina** (texto pequeno, pouco respiro vertical, pra não pesar), com texto claro; **corpo** creme com **borda dura preta** (~2px) e **sombra sólida deslocada** (`4px 4px 0 #1E1E1E`); canto reto; **zero gradiente, zero sombra difusa.**
 
 ## Componente: bloco "Seu desafio"
-Uma janela (corpo cinza-painel) com "Seu desafio" na barra de título; corpo com a meta da semana em **bolinhas** (`●●●○○`, "3 de 5 essa semana"), o foco da pessoa ("foco: ...") e o botão grande **"+ Registrar"** (âmbar, borda dura, sombra sólida).
+Uma janela (corpo cinza-painel) com "Seu desafio" na barra de título; corpo com a meta da semana em **bolinhas** (`●●●○○`, "3 de 5 essa semana"), o foco da pessoa ("foco: ...") e o botão grande **"+ Registrar"** (âmbar, borda dura, sombra sólida). Ao lado do botão, controles **discretos e sempre visíveis** (pequenos, borda fina, sem cor de destaque): "+ frase", "+ foto" (quando existir) e "no meu foco" (liga/desliga, âmbar quando ligado). Nada de popup.
 
 ## Componente: foguinho ("em chamas")
 Ícone de fogo em pixel art (poucos blocos, `shape-rendering: crispEdges`), ao lado do nome da pessoa. Segue a contagem do dia: **2ª realização** = pequeno, só âmbar; **3ª ou mais** = maior, chama coral com miolo âmbar. Some quando o dia vira. Não é streak. **Respira**: pulsação leve de escala (100% → 110% → 100%, ~1,1s, em loop) pra sinalizar que dá pra tocar; desligada pra quem pede menos movimento no sistema.
 
 ## Componente: feed
-Lista vertical **compacta**, uma linha por realização, não um cartão inflado, mais recente no topo. Cada linha: autor + frase + marquinha de foco (só quando o registro foi no foco; nunca existe marca de "fora do foco") + horário + botão de reação (os olhinhos, sempre o mesmo símbolo, sem paleta de emoji) com a contagem ao lado. Sem filtro: sempre tudo; item de outro dia mostra a data junto da hora ("22/09 · 15:31"). Ao registrar, o mascote aparece pequeno comemorando.
+Lista vertical **compacta**, uma linha por realização, não um cartão inflado, mais recente no topo. Cada linha: autor + frase (registro sem frase: "[nome] registrou", mesma celebração) + marquinha de foco (só quando o registro foi no foco; nunca existe marca de "fora do foco") + horário + botão de reação (os olhinhos, sempre o mesmo símbolo, sem paleta de emoji) com a contagem ao lado. Sem filtro: sempre tudo; item de outro dia mostra a data junto da hora ("22/09 · 15:31"). Ao registrar, o mascote aparece pequeno comemorando.
 
 A densidade dessa lista se inspira em feeds compactos (ex: Hugging Face), **só a compactação**, não o visual limpo/arredondado dessas referências. A linha continua na mesma linguagem dura do resto: borda preta (~2px), fundo creme, zero gradiente, zero canto arredondado.
 

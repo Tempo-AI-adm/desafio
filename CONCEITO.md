@@ -2,8 +2,13 @@
 
 Fonte de verdade das regras do produto. Onde o PRD.md antigo contradisser este documento, este vence. O sentimento por trás de cada regra está em MOOD.md.
 
+## O ritual
+> Você combina com amigos quantas coisas boas quer realizar por semana. Quando fizer uma, registra com um toque, e o grupo comemora junto.
+
+Essa frase é a base da Home e da tela 1 do onboarding.
+
 ## Em uma frase
-Alguém chama "bora um desafio?". Cada pessoa se propõe a realizar um número de coisas boas por semana, com um foco opcional. Durante o período, registra o que fez (uma frase curta, foto opcional), pelo app ou pelo WhatsApp, e o grupo celebra junto. No fim, todos veem o resultado e podem começar a próxima rodada.
+Alguém chama "bora um desafio?". Cada pessoa se propõe a realizar um número de coisas boas por semana, com um foco opcional. Durante o período, registra o que fez com um toque (frase e foto opcionais), pelo app ou pelo WhatsApp, e o grupo celebra junto. No fim, todos veem o resultado e podem começar a próxima rodada.
 
 ## A sala
 - Qualquer pessoa cria: nome da sala + período.
@@ -24,7 +29,8 @@ O compromisso congela no LARGAR, como hoje. Cada pessoa tem **um** compromisso p
 
 ## Registrar uma realização
 - Botão grande **"+ Registrar"** sempre visível na sala, no estilo do "+" do GymRats.
-- Um registro é: uma frase curta obrigatória (o que você fez) + "isso foi no seu foco?" (só aparece pra quem definiu foco) + foto opcional (bloco próprio, depois).
+- **Registrar é um toque.** Ao lado do botão há controles discretos, sempre visíveis: um pra **adicionar uma frase** (opcional, até 200 letras), outro pra **adicionar foto** (opcional, quando fotos existirem, bloco próprio) e, pra quem definiu foco, **"no meu foco"** (um toque). Nada de popup, convite ou pergunta empurrando a pessoa a escrever.
+- No feed, registro sem frase aparece como **"[nome] registrou"**, com celebração, reação e foguinho normais.
 - O assunto (chips) deixa de ser pedido, pra registrar rápido, inclusive pelo WhatsApp. O banco recebe um valor padrão.
 - O dia do registro é sempre hoje (sem backfill). O desfazer de 5 segundos continua.
 - Todo registro conta. Não existe "extra que não vale".
@@ -40,7 +46,7 @@ O compromisso congela no LARGAR, como hoje. Cada pessoa tem **um** compromisso p
 - Barra de título do primeiro bloco com o **nome da sala** (sai o título grande em fonte pixel). Dia X/Y, data e hora compactos. "Ativos hoje" como hoje.
 - Bloco **"Seu desafio"**: sua meta da semana em bolinhas, seu foco, e o botão "+ Registrar".
 - O número do grupo.
-- Feed de todos: frase, marcação de foco, horário (data quando não for hoje), reação com os olhinhos, foguinho.
+- Feed de todos: frase (ou "[nome] registrou"), marcação de foco, horário (data quando não for hoje), reação com os olhinhos, foguinho.
 - **Retomada:** se a pessoa abre a sala depois de dias sem registrar, uma frase acolhedora no lugar de silêncio (ex: o desafio ainda está rolando, e ainda dá). Nunca cobrança.
 
 ## O resultado
