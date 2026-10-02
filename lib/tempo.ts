@@ -82,3 +82,39 @@ export function diaDoDesafio(dataInicioISO: string, duracaoDias: number, agora: 
 export function desafioVenceu(dataInicioISO: string, duracaoDias: number, agora: Date = new Date()): boolean {
   return diaCorrido(dataInicioISO, agora) > duracaoDias;
 }
+
+// ---- Aritmética de dias (YYYY-MM-DD, sem fuso: o dia já vem em Brasília) ----
+
+function paraUTCms(dia: string): number {
+  const [a, m, d] = dia.split("-").map(Number);
+  return Date.UTC(a, m - 1, d);
+}
+
+/** "2026-10-05" + 3 = "2026-10-08". */
+export function somarDias(dia: string, n: number): string {
+  return new Date(paraUTCms(dia) + n * 86_400_000).toISOString().slice(0, 10);
+}
+
+/** Quantos dias de `de` até `ate` (ate - de). Mesmo dia = 0. */
+export function diasEntre(de: string, ate: string): number {
+  return Math.round((paraUTCms(ate) - paraUTCms(de)) / 86_400_000);
+}
+
+/** Mesmo dia do mês seguinte ("2026-01-31" -> "2026-02-28", ajusta pro
+ * último dia quando o mês seguinte é menor). */
+export function mesmoDiaDoMesSeguinte(dia: string): string {
+  const [a, m, d] = dia.split("-").map(Number);
+  const ultimoDiaDoMes = new Date(Date.UTC(a, m + 1, 0)).getUTCDate();
+  return new Date(Date.UTC(a, m, Math.min(d, ultimoDiaDoMes))).toISOString().slice(0, 10);
+}
+
+/** Dia da semana (0 = domingo) de um dia YYYY-MM-DD. */
+export function diaDaSemana(dia: string): number {
+  return new Date(paraUTCms(dia)).getUTCDay();
+}
+
+/** Meia-noite de Brasília de um dia, como instante ISO. Brasília é UTC-3
+ * o ano todo (sem horário de verão desde 2019). */
+export function meiaNoiteDeBrasilia(dia: string): string {
+  return new Date(paraUTCms(dia) + 3 * 3_600_000).toISOString();
+}
