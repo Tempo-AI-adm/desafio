@@ -32,7 +32,7 @@ export function ExemploResultado() {
         </div>
       }
       grupo={HOME_EXEMPLO.grupo}
-      pessoas={HOME_EXEMPLO.pessoas.map((p) => ({ ...p, id: p.nome }))}
+      pessoas={HOME_EXEMPLO.pessoas}
       meuId={HOME_EXEMPLO.voce}
     />
   );

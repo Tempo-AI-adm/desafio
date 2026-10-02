@@ -162,6 +162,86 @@ export const LOBBY_FECHAR_AJUSTE = "Fechar";
 export const LOBBY_SALVAR_AJUSTE = "Salvar compromisso";
 export const LOBBY_QUEM_CHEGOU = "Quem já chegou";
 
+// ---- Sala rolando: registrar (um toque) e "Seu desafio" ----
+
+export const SEU_DESAFIO_TITULO = "Seu desafio";
+export const BOTAO_REGISTRAR = "+ Registrar";
+export const TEXTO_REGISTRAR =
+  "Fez algo que te fez bem? Toque em Registrar: conta pro seu número da semana e o grupo comemora com você. Contar o que foi é opcional.";
+export const CONTROLE_FRASE = "+ frase";
+export const CONTROLE_FRASE_FECHAR = "sem frase";
+export const PLACEHOLDER_FRASE = "O que você fez? (se quiser contar)";
+export const CONTROLE_FOCO = "no meu foco";
+export const EXPLICA_CONTROLE_FOCO = "Ligado, o próximo registro conta como avanço no seu foco.";
+
+export const ERRO_FRASE_GRANDE = "A frase ficou grande, tenta resumir em até 200 letras.";
+export const ERRO_SEM_COMPROMISSO =
+  "Pra registrar, primeiro se proponha: quantas coisas boas por semana você quer realizar.";
+
+/** Comemoração ao registrar: fechar a semana e estourar a meta vencem a
+ * contagem do dia (SHOW. / TÁ ON FIRE. / AURA MÁXIMA.). */
+export function labelComemoracaoRegistro(contagemHoje: number, semana?: { feitos: number; meta: number }): string {
+  if (semana && semana.feitos === semana.meta) return "FECHOU A SEMANA.";
+  if (semana && semana.feitos > semana.meta) return `ESTOUROU. (+${semana.feitos - semana.meta})`;
+  return labelComemoracaoPorContagemDoDia(contagemHoje);
+}
+
+/** "3 de 5 essa semana". */
+export function labelSemana(feitos: number, meta: number): string {
+  return `${feitos} de ${meta} essa semana`;
+}
+
+/** "2 no seu foco" (privado, só a própria pessoa vê). */
+export function labelNoSeuFoco(n: number): string {
+  return `${n} no seu foco`;
+}
+
+export const EXPLICA_NO_SEU_FOCO = "Só você vê esse número.";
+
+/** Feed: registro sem frase. */
+export function labelRegistrou(nome: string): string {
+  return `${nome} registrou`;
+}
+
+/** Feed ainda vazio. */
+export const FEED_VAZIO = "O feed enche conforme o grupo registra. A primeira coisa boa de alguém aparece aqui.";
+
+/** Marquinha celebrada de registro no foco (no feed, pra todos). */
+export const LABEL_MARCA_FOCO = "no foco";
+
+// ---- Número do grupo ----
+
+export const NUMERO_GRUPO_TITULO = "O grupo";
+
+/** Linha de contexto, sempre visível, ligada ao tempo: "dia 8 de 30, o
+ * número vai enchendo até o fim do desafio". */
+export function labelContextoNumero(dia: number, total: number): string {
+  return `dia ${dia} de ${total}, o número vai enchendo até o fim do desafio`;
+}
+
+export const EXPLICA_NUMERO_GRUPO =
+  "É o quanto o grupo já realizou de tudo que se propôs pro desafio inteiro. Cada registro de qualquer pessoa faz ele subir, e ele nunca desce.";
+
+// ---- Resumo do dia e retomada ----
+
+/** "hoje 2 de 4 já registraram" (sem nomes de quem não registrou). */
+export function labelResumoDoDia(registraram: number, total: number): string {
+  if (registraram === 0) return "hoje ninguém registrou ainda";
+  return registraram === 1 ? `hoje 1 de ${total} já registrou` : `hoje ${registraram} de ${total} já registraram`;
+}
+
+/** "2 reações novas nos seus registros". */
+export function labelReacoesNovas(n: number): string {
+  return n === 1 ? "1 reação nova nos seus registros" : `${n} reações novas nos seus registros`;
+}
+
+/** A partir de quantos dias sem registrar a frase de retomada aparece. */
+export const DIAS_PRA_RETOMADA = 3;
+
+/** Frase acolhedora pra quem volta depois de dias sem registrar. Nunca cobrança. */
+export const TEXTO_RETOMADA =
+  "Que bom te ver por aqui. O desafio ainda está rolando e ainda dá: a próxima coisa boa que você fizer já conta, e o grupo comemora junto.";
+
 // ---- Sala criada ----
 
 export const SUCESSO_TITULO = "SALA CRIADA.";
@@ -214,7 +294,7 @@ export function labelVistoHa(minutos: number): string {
 
 
 /** Aviso logo depois de marcar um inegociável (janela de desfazer). */
-export const LABEL_AVISO_DESFAZER = "Feito. Toque de novo para desfazer.";
+export const LABEL_AVISO_DESFAZER = "Feito. Toque aqui pra desfazer.";
 
 /** Selo quando o desfazer deu certo. */
 export const LABEL_DESFEITO = "Desfeito.";
@@ -250,7 +330,8 @@ export function labelMissaoCriada(titulo: string): string {
 }
 
 /** Legenda ao tocar na estrela de bônus (resultado final). */
-export const LEGENDA_ESTRELA = "Você foi além do que tinha combinado nessa missão.";
+export const LEGENDA_ESTRELA =
+  "Passou da meta em alguma semana: cada coisa boa a mais vira bônus. É festa, não conta a mais em nenhum número.";
 
 /** Insígnia (estrelinha) de quem passou do alvo de uma missão. */
 export const LABEL_BONUS = "Bateu e passou do combinado";
@@ -358,14 +439,17 @@ export const HOME_EXEMPLO = {
   sala: "Desafio maromba",
   duracaoDias: 7,
   periodo: { inicio: "2026-09-01", fim: "2026-09-07" },
-  // Resumo do grupo: reações trocadas = soma das reações de cada um (3+5+2).
-  grupo: { realizacoes: 20, reacoes: 10 },
+  // Resumo do grupo: 2 + 7 + 3 realizações; reações trocadas = 3 + 5 + 2.
+  grupo: { realizacoes: 12, reacoes: 10 },
   voce: "Ana",
-  // Ordem de entrada na sala (a tela põe "você" primeiro).
+  // Ordem de entrada na sala (a tela põe "você" primeiro). 1 semana:
+  // Beto se propôs a 3 e fez 2 (seguiu no ritmo), Ana a 5 e fez 7
+  // (fechou, 2 de bônus), Cacá a 3 e fez 3 (fechou). "No foco" só
+  // aparece na linha de quem faz o papel de "você".
   pessoas: [
-    { emoji: "🐼", nome: "Beto", fechouTudo: false, missoes: 2, definidas: 3, bonus: 0, reacoes: 3, diasEmChamas: 1 },
-    { emoji: "🦊", nome: "Ana", fechouTudo: true, missoes: 3, definidas: 3, bonus: 2, reacoes: 5, diasEmChamas: 3 },
-    { emoji: "🦉", nome: "Cacá", fechouTudo: true, missoes: 1, definidas: 1, bonus: 0, reacoes: 2, diasEmChamas: 0 },
+    { id: "Beto", emoji: "🐼", nome: "Beto", foco: null, fechouTudo: false, realizacoes: 2, bonus: 0, reacoes: 3, diasEmChamas: 1, noFoco: null },
+    { id: "Ana", emoji: "🦊", nome: "Ana", foco: "voltar a treinar", fechouTudo: true, realizacoes: 7, bonus: 2, reacoes: 5, diasEmChamas: 3, noFoco: 4 },
+    { id: "Cacá", emoji: "🦉", nome: "Cacá", foco: "estudar pro concurso", fechouTudo: true, realizacoes: 3, bonus: 0, reacoes: 2, diasEmChamas: 0, noFoco: null },
   ],
 };
 
@@ -393,8 +477,9 @@ export const LABEL_TODO_MUNDO = "Todo mundo";
 
 /** Só na linha da própria pessoa: "2 de 3 missões" (definiu vs. cumpriu,
  * comparação consigo mesma, nunca com os outros). */
-export function labelMissoesDeDefinidas(cumpridas: number, definidas: number): string {
-  return `${cumpridas} de ${definidas} ${definidas === 1 ? "missão" : "missões"}`;
+/** "7 realizações" (chip do resultado). */
+export function labelRealizacoes(n: number): string {
+  return n === 1 ? "1 realização" : `${n} realizações`;
 }
 
 /** Marca a própria pessoa em listas de participantes. */
@@ -405,9 +490,7 @@ export function labelResumoResultado(duracaoDias: number, pessoas: number): stri
   return `${labelDuracao(duracaoDias)} · ${pessoas === 1 ? "1 amigo" : `${pessoas} amigos`}`;
 }
 
-export function labelMissoesCumpridas(n: number): string {
-  return n === 1 ? "1 missão cumprida" : `${n} missões cumpridas`;
-}
+
 
 /** Chip do resultado: dias em que a pessoa teve 2+ realizações. */
 export function labelDiasEmChamas(n: number): string {

@@ -4,15 +4,15 @@ import { useState } from "react";
 import { Fogo } from "@/components/Fogo";
 import { Janela } from "@/components/Janela";
 import { Olhinhos } from "@/components/Olhinhos";
-import { emojiDoAssunto } from "@/lib/assuntos-constants";
-import { labelMissaoCriada } from "@/lib/copy";
+import { FEED_VAZIO, LABEL_MARCA_FOCO, labelRegistrou } from "@/lib/copy";
 import { diaCurto, horaCurta } from "@/lib/tempo";
 import type { ItemFeed, ParticipanteSala } from "@/lib/tipos-sala";
 
 /**
  * Feed da sala (STYLE.md "feed"): todas as realizações de todo mundo,
  * mais recente no topo, uma linha compacta por item, com reação de um
- * toque (o mascote). Sem filtro: sempre tudo; item de outro dia
+ * toque (os olhinhos). Registro sem frase: "[nome] registrou", mesma
+ * celebração. Registro no foco ganha a marquinha (nunca "fora do foco"). Sem filtro: sempre tudo; item de outro dia
  * mostra a data junto da hora ("22/09 · 15:31").
  */
 export function FeedDaSala({
@@ -46,7 +46,7 @@ export function FeedDaSala({
   const comFogo = new Set<string>();
   const autoresVistos = new Set<string>();
   for (const r of feed) {
-    if (r.tipoItem !== "realizacao" || r.dia !== hoje || autoresVistos.has(r.autorId)) continue;
+    if (r.dia !== hoje || autoresVistos.has(r.autorId)) continue;
     autoresVistos.add(r.autorId);
     comFogo.add(r.id);
   }
@@ -59,7 +59,7 @@ export function FeedDaSala({
         ) : null}
 
         {feed.length === 0 ? (
-          <p className="font-mono text-xs text-ink/60">Ninguém registrou nada ainda.</p>
+          <p className="font-mono text-xs text-ink/60">{FEED_VAZIO}</p>
         ) : (
           <ul className="border-2 border-ink">
             {feed.map((r) => {
@@ -73,24 +73,24 @@ export function FeedDaSala({
                   key={r.id}
                   className="flex items-center gap-2 border-b-2 border-ink px-2 py-2 font-mono last:border-b-0"
                 >
-                  <span className="shrink-0 text-lg" aria-hidden>
-                    {emojiDoAssunto(r.assunto)}
-                  </span>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1 text-xs text-ink/60">
                       <span className="truncate font-bold text-ink">
-                        {autor ? `${autor.emoji} ${autor.nome}` : "?"}
+                        {autor
+                          ? `${autor.emoji} ${r.texto ? autor.nome : labelRegistrou(autor.nome)}`
+                          : "?"}
                       </span>
                       {autor && comFogo.has(r.id) ? <Fogo contagemHoje={autor.contagemHoje} tamanho="compacto" /> : null}
                       <span className="shrink-0">· {quando}</span>
                     </div>
-                    {r.tipoItem === "missao_criada" ? (
-                      <p className="break-words text-sm italic leading-snug text-ink/70">{labelMissaoCriada(r.texto)}</p>
-                    ) : (
-                      <p className="break-words text-sm leading-snug">{r.texto}</p>
-                    )}
+                    {r.texto ? <p className="break-words text-sm leading-snug">{r.texto}</p> : null}
+                    {r.noFoco ? (
+                      <span className="mt-1 inline-block bg-amber px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-ink">
+                        {LABEL_MARCA_FOCO}
+                      </span>
+                    ) : null}
                   </div>
-                  {r.tipoItem === "missao_criada" ? null : somenteLeitura || !reagirAction ? (
+                  {somenteLeitura || !reagirAction ? (
                     <span
                       aria-label={`${r.reacoes} reações`}
                       className="flex shrink-0 items-center gap-1 border-2 border-ink/30 px-1.5 py-1 text-xs font-bold text-ink/60"

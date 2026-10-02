@@ -10,7 +10,8 @@ import { supabase } from "./supabase";
 export async function criarReacao(realizacaoId: string, participanteId: string): Promise<void> {
   const { error } = await supabase
     .from("reacoes")
-    .insert({ realizacao_id: realizacaoId, participante_id: participanteId });
+    // Hora do servidor do app, igual aos registros (ver lib/realizacoes.ts).
+    .insert({ realizacao_id: realizacaoId, participante_id: participanteId, criado_em: new Date().toISOString() });
 
   // 23505 = unique_violation no Postgres: já tinha reagido, tudo certo.
   if (error && error.code !== "23505") {

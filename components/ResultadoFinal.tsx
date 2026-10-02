@@ -6,33 +6,22 @@ import { Janela } from "@/components/Janela";
 import { Olhinhos } from "@/components/Olhinhos";
 import {
   LABEL_TODO_MUNDO,
+  LABEL_VOCE,
   LEGENDA_ESTRELA,
   LEGENDA_FOGO,
-  LABEL_VOCE,
   SELO_FECHOU_TUDO,
   SELO_NO_RITMO,
   labelBonus,
   labelDiasEmChamas,
-  labelMissoesCumpridas,
-  labelMissoesDeDefinidas,
+  labelFoco,
+  labelNoSeuFoco,
   labelReacoes,
+  labelRealizacoes,
   labelResumoGrupo,
 } from "@/lib/copy";
+import type { PessoaResultado } from "@/lib/tipos-sala";
 
-type Pessoa = {
-  id: string;
-  emoji: string;
-  nome: string;
-  fechouTudo: boolean;
-  missoes: number;
-  definidas: number;
-  bonus: number;
-  reacoes: number;
-  diasEmChamas: number;
-};
-
-/** Mesma peça dos chips de assunto do formulário de missão (borda dura,
- * ícone + texto), sem ser botão. */
+/** Chip só de informação (borda cheia; tracejado = tocável). */
 function Chip({ children }: { children: ReactNode }) {
   return (
     <span className="flex items-center gap-1 border-2 border-ink bg-cream px-2 py-1 font-mono text-xs font-bold">
@@ -42,20 +31,18 @@ function Chip({ children }: { children: ReactNode }) {
 }
 
 /**
- * Resultado final (PRD "Resultado final - princípio de apresentação"),
- * usado no exemplo da Home e na sala encerrada. Lista "Todo mundo" na
- * ordem de entrada, com a própria pessoa primeiro (só pra achar a linha
- * rápido, não é ranking). Cada linha: emoji + nome; o selo (fechou tudo
- * que se propôs ou seguiu no ritmo) numa linha própria; os números em
- * chips, só se forem maiores que zero. Chips de insígnia (dias em
- * chamas, bônus) são tocáveis e mostram a legenda (borda tracejada). A linha da própria pessoa tem um
- * realce leve e, no lugar de "N missões cumpridas", "X de Y missões"
- * (compara consigo mesma; os outros não têm essa comparação).
+ * Resultado final, usado no exemplo da Home e na sala encerrada.
+ * Lista "Todo mundo" na ordem de entrada, com a própria pessoa primeiro
+ * (só pra achar a linha rápido, não é ranking). Cada linha: emoji +
+ * nome, o foco (público, é o que a pessoa se propôs), o selo binário
+ * numa linha própria e os números em chips, só se forem maiores que
+ * zero. "Y no foco" só aparece na linha da própria pessoa (privado).
  */
 export function ResultadoFinal({
   titulo,
   mascote = false,
   cabecalho,
+  numeroGrupo,
   grupo,
   pessoas,
   meuId,
@@ -65,21 +52,21 @@ export function ResultadoFinal({
   mascote?: boolean;
   /** topo do exemplo da Home, que não tem o cabeçalho "SALA" da sala real */
   cabecalho?: ReactNode;
+  /** o número final do grupo (bloco no topo do resultado) */
+  numeroGrupo?: ReactNode;
   /** estatística do grupo todo, acima de "Todo mundo" */
   grupo: { realizacoes: number; reacoes: number };
-  pessoas: Pessoa[];
+  pessoas: PessoaResultado[];
   /** a própria pessoa: vem primeiro, com realce e "(você)" */
   meuId?: string;
 }) {
-  const ordenadas = [
-    ...pessoas.filter((p) => p.id === meuId),
-    ...pessoas.filter((p) => p.id !== meuId),
-  ];
+  const ordenadas = [...pessoas.filter((p) => p.id === meuId), ...pessoas.filter((p) => p.id !== meuId)];
 
   return (
     <Janela titulo={titulo}>
       <div className="flex flex-col gap-2 text-left font-mono">
         {cabecalho}
+        {numeroGrupo}
         <p className="text-xs font-bold">{labelResumoGrupo(grupo.realizacoes, grupo.reacoes)}</p>
         <p className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-ink/60">
           {mascote ? <Olhinhos altura={10} animado /> : null}
@@ -95,10 +82,13 @@ export function ResultadoFinal({
                   souEu ? "border-2 border-amber bg-amber/10 p-2" : "border-t-2 border-empty pt-2"
                 }`}
               >
-                <p className="text-sm font-bold">
-                  {p.emoji} {p.nome}
-                  {souEu ? <span className="font-normal text-ink/60"> {LABEL_VOCE}</span> : null}
-                </p>
+                <div>
+                  <p className="text-sm font-bold">
+                    {p.emoji} {p.nome}
+                    {souEu ? <span className="font-normal text-ink/60"> {LABEL_VOCE}</span> : null}
+                  </p>
+                  {p.foco ? <p className="break-words text-xs text-ink/60">{labelFoco(p.foco)}</p> : null}
+                </div>
                 {p.fechouTudo ? (
                   <p className="bg-amber px-1.5 py-0.5 text-[10px] font-bold tracking-wide">{SELO_FECHOU_TUDO}</p>
                 ) : (
@@ -107,17 +97,14 @@ export function ResultadoFinal({
                   </p>
                 )}
                 <div className="flex flex-wrap gap-2">
-                  {souEu ? (
+                  {p.realizacoes > 0 ? (
                     <Chip>
                       <span className="text-green">✓</span>
-                      {labelMissoesDeDefinidas(p.missoes, p.definidas)}
-                    </Chip>
-                  ) : p.missoes > 0 ? (
-                    <Chip>
-                      <span className="text-green">✓</span>
-                      {labelMissoesCumpridas(p.missoes)}
+                      {labelRealizacoes(p.realizacoes)}
                     </Chip>
                   ) : null}
+                  {/* Privado: só vem preenchido na linha da própria pessoa. */}
+                  {souEu && p.noFoco !== null ? <Chip>{labelNoSeuFoco(p.noFoco)}</Chip> : null}
                   {/* Chips que revelam legenda: tracejados (dá pra tocar). */}
                   {p.diasEmChamas > 0 ? (
                     <ComLegenda chip legenda={LEGENDA_FOGO}>

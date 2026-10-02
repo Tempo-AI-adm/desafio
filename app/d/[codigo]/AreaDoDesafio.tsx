@@ -6,20 +6,13 @@ import { CabecalhoSala } from "@/components/CabecalhoSala";
 import { CamposCompromisso } from "@/components/CamposCompromisso";
 import { Expansivel } from "@/components/Expansivel";
 import { FeedDaSala } from "@/components/FeedDaSala";
-import { FormMissao } from "@/components/FormMissao";
 import { Janela } from "@/components/Janela";
-import { ProgressoInegociavel } from "@/components/ProgressoInegociavel";
 import { ResultadoFinal } from "@/components/ResultadoFinal";
-import { emojiDoAssunto } from "@/lib/assuntos-constants";
-import { resultadoDaSala, resumoDoGrupo } from "@/lib/resultado";
+import { SeuDesafio } from "@/components/SeuDesafio";
 import {
-  TITULO_RESULTADO_FINAL,
-  LABEL_VER_TUDO_QUE_ROLOU,
-  LABEL_AVISO_DESFAZER,
-  LABEL_DESFEITO,
-  LABEL_REGISTRO_FEITO,
-  BOTAO_ADICIONAR_NOVA_MISSAO,
   BOTAO_LARGAR_AGORA,
+  LABEL_DESFEITO,
+  LABEL_VER_TUDO_QUE_ROLOU,
   LABEL_VOCE,
   LOBBY_AJUSTAR,
   LOBBY_EXPLICA_COMPROMISSO,
@@ -28,60 +21,50 @@ import {
   LOBBY_QUEM_CHEGOU,
   LOBBY_SALVAR_AJUSTE,
   LOBBY_SEM_FOCO,
+  TITULO_RESULTADO_FINAL,
+  labelComemoracaoRegistro,
   labelFoco,
   labelMetaCurta,
   labelMetaSemanal,
   textoLobbyCriador,
-  BOTAO_ASSUMIR_MISSAO,
-  ROTULO_TITULO_NOVA_MISSAO,
-  TEXTO_NOVA_MISSAO,
-  TEXTO_PRIMEIRA_MISSAO_RODANDO,
-  TEXTO_SUAS_MISSOES,
-  rotuloTituloMissaoLobby,
-  labelComemoracaoPorContagemDoDia,
 } from "@/lib/copy";
+import { CABECALHO_TOKEN } from "@/lib/identidade-local";
 import { JANELA_DESFAZER_MS } from "@/lib/tempo";
+import type { DadosSala } from "@/lib/tipos-sala";
 import {
-  adicionarInegociavelAction,
   ajustarCompromissoAction,
   desfazerRegistroAction,
   largarAction,
   reagirAction,
-  registrarInegociavelAction,
-  type AdicionarInegociavelState,
+  registrarAction,
   type AjustarCompromissoState,
   type DesfazerState,
   type LargarState,
   type ReagirState,
-  type RegistrarInegociavelState,
+  type RegistrarState,
 } from "./actions";
-import { CABECALHO_TOKEN } from "@/lib/identidade-local";
-import type { DadosSala } from "@/lib/tipos-sala";
 
-
-const ESTADO_INICIAL_INEGOCIAVEL: AdicionarInegociavelState = {};
 const ESTADO_INICIAL_AJUSTE: AjustarCompromissoState = {};
 const ESTADO_INICIAL_LARGAR: LargarState = {};
-const ESTADO_INICIAL_REGISTRAR_INEGOCIAVEL: RegistrarInegociavelState = {};
+const ESTADO_INICIAL_REGISTRAR: RegistrarState = {};
 const ESTADO_INICIAL_REAGIR: ReagirState = {};
 const ESTADO_INICIAL_DESFAZER: DesfazerState = {};
 
-// Deriva o selo a mostrar (SHOW./TÁ ON FIRE./AURA MÁXIMA. ou
+// Deriva o selo a mostrar (SHOW. / FECHOU A SEMANA. / ... ou
 // "Desfeito.") sem useEffect + setState: pega a ação mais recente pelo
 // carimbo de tempo. `key` no elemento reinicia a animação de sumir.
-// `novaMissao`: missão nova que já nasceu feita também comemora.
 function seloMaisRecente(
-  inegociavel: { contagemHoje?: number; carimbo?: number },
-  desfazer: { ok?: boolean; carimbo?: number },
-  novaMissao: { contagemHoje?: number; carimbo?: number },
+  registrar: RegistrarState,
+  desfazer: DesfazerState,
 ): { texto: string; carimbo: number } | null {
-  const comemoracao = (s: { contagemHoje?: number; carimbo?: number }) => ({
-    carimbo: s.carimbo ?? 0,
-    texto: s.contagemHoje !== undefined ? labelComemoracaoPorContagemDoDia(s.contagemHoje) : null,
-  });
   const candidatos = [
-    comemoracao(inegociavel),
-    comemoracao(novaMissao),
+    {
+      carimbo: registrar.carimbo ?? 0,
+      texto:
+        registrar.contagemHoje !== undefined
+          ? labelComemoracaoRegistro(registrar.contagemHoje, registrar.semana)
+          : null,
+    },
     { carimbo: desfazer.carimbo ?? 0, texto: desfazer.ok ? LABEL_DESFEITO : null },
   ];
   const maisRecente = candidatos.reduce((a, b) => (b.carimbo > a.carimbo ? b : a));
@@ -102,12 +85,7 @@ export function AreaDoDesafio({
   const [dados, setDados] = useState<DadosSala | null>(null);
   const [carregando, setCarregando] = useState(true);
   const [erroCarregar, setErroCarregar] = useState(false);
-  const [mostrarFormMissao, setMostrarFormMissao] = useState(false);
 
-  const [inegociavelState, inegociavelAction, inegociavelPending] = useActionState(
-    adicionarInegociavelAction,
-    ESTADO_INICIAL_INEGOCIAVEL,
-  );
   const [ajusteState, ajusteActionFn, ajustePending] = useActionState(
     ajustarCompromissoAction,
     ESTADO_INICIAL_AJUSTE,
@@ -116,64 +94,42 @@ export function AreaDoDesafio({
   const [mostrarAjuste, setMostrarAjuste] = useState(false);
   const [carimboAoAbrirAjuste, setCarimboAoAbrirAjuste] = useState(0);
   const ajusteAberto = mostrarAjuste && (ajusteState.carimbo ?? 0) === carimboAoAbrirAjuste;
-  const [largarState, largarActionFn, largarPending] = useActionState(
-    largarAction,
-    ESTADO_INICIAL_LARGAR,
+  const [largarState, largarActionFn, largarPending] = useActionState(largarAction, ESTADO_INICIAL_LARGAR);
+  const [registrarState, registrarActionFn, registrarPending] = useActionState(
+    registrarAction,
+    ESTADO_INICIAL_REGISTRAR,
   );
-  const [registrarInegociavelState, registrarInegociavelActionFn, registrarInegociavelPending] =
-    useActionState(registrarInegociavelAction, ESTADO_INICIAL_REGISTRAR_INEGOCIAVEL);
-
-  const [reagirState, reagirActionFn] = useActionState(
-    reagirAction,
-    ESTADO_INICIAL_REAGIR,
-  );
-
+  const [reagirState, reagirActionFn] = useActionState(reagirAction, ESTADO_INICIAL_REAGIR);
   const [desfazerState, desfazerActionFn, desfazerPending] = useActionState(
     desfazerRegistroAction,
     ESTADO_INICIAL_DESFAZER,
   );
 
-  const selo = seloMaisRecente(registrarInegociavelState, desfazerState, inegociavelState);
+  const selo = seloMaisRecente(registrarState, desfazerState);
 
-  // Janela de desfazer: aberta por JANELA_DESFAZER_MS depois de marcar
-  // um inegociável. O timer só fecha a janela (setState no callback do
-  // setTimeout, não no corpo do efeito). Passou o tempo, o próximo
-  // toque é sempre um registro novo.
+  // Janela de desfazer: aberta por JANELA_DESFAZER_MS depois de
+  // registrar. O timer só fecha a janela (setState no callback do
+  // setTimeout, não no corpo do efeito).
   const [janelaFechadaCarimbo, setJanelaFechadaCarimbo] = useState<number | null>(null);
   useEffect(() => {
-    const carimbo = registrarInegociavelState.carimbo;
+    const carimbo = registrarState.carimbo;
     if (!carimbo) return;
     const timer = setTimeout(() => setJanelaFechadaCarimbo(carimbo), JANELA_DESFAZER_MS);
     return () => clearTimeout(timer);
-  }, [registrarInegociavelState.carimbo]);
+  }, [registrarState.carimbo]);
 
   const janelaDesfazer =
-    registrarInegociavelState.ok &&
-    registrarInegociavelState.carimbo &&
-    registrarInegociavelState.realizacaoId &&
-    registrarInegociavelState.inegociavelId &&
-    janelaFechadaCarimbo !== registrarInegociavelState.carimbo &&
-    desfazerState.desfeitoId !== registrarInegociavelState.realizacaoId
-      ? {
-          carimbo: registrarInegociavelState.carimbo,
-          realizacaoId: registrarInegociavelState.realizacaoId,
-          inegociavelId: registrarInegociavelState.inegociavelId,
-        }
+    registrarState.ok &&
+    registrarState.carimbo &&
+    registrarState.realizacaoId &&
+    janelaFechadaCarimbo !== registrarState.carimbo &&
+    desfazerState.desfeitoId !== registrarState.realizacaoId
+      ? { carimbo: registrarState.carimbo, realizacaoId: registrarState.realizacaoId }
       : null;
 
-  // Form de "+ Nova missão": fecha sozinho depois de criar com sucesso
-  // (o carimbo da action muda), sem setState em efeito.
-  const [carimboAoAbrirMissao, setCarimboAoAbrirMissao] = useState(0);
-  const formMissaoAberto =
-    mostrarFormMissao && (inegociavelState.carimbo ?? 0) === carimboAoAbrirMissao;
-
-  // Busca os dados do lobby: ao montar, ao focar a aba (sem realtime,
-  // regra do PRD) e de novo sempre que uma ação (adicionar
-  // inegociável, PRONTO, LARGAR, registrar realização) terminar. Tudo
-  // num único efeito, com a função assíncrona definida por dentro,
-  // evita o problema de "setState dentro de efeito" que dá quando
-  // essa função é compartilhada entre vários efeitos via referência
-  // externa.
+  // Busca os dados da sala: ao montar, ao focar a aba (sem realtime,
+  // regra do PRD) e de novo sempre que uma ação terminar. Tudo num
+  // único efeito, com a função assíncrona definida por dentro.
   useEffect(() => {
     let cancelado = false;
 
@@ -216,16 +172,7 @@ export function AreaDoDesafio({
       cancelado = true;
       window.removeEventListener("focus", aoFocar);
     };
-  }, [
-    codigo,
-    token,
-    inegociavelState,
-    ajusteState,
-    largarState,
-    registrarInegociavelState,
-    reagirState,
-    desfazerState,
-  ]);
+  }, [codigo, token, ajusteState, largarState, registrarState, reagirState, desfazerState]);
 
   if (carregando) {
     return (
@@ -262,8 +209,8 @@ export function AreaDoDesafio({
         <ResultadoFinal
           titulo={TITULO_RESULTADO_FINAL}
           mascote
-          grupo={resumoDoGrupo(dados)}
-          pessoas={resultadoDaSala(dados)}
+          grupo={dados.totaisGrupo}
+          pessoas={dados.resultado ?? []}
           meuId={dados.meuId ?? undefined}
         />
         {/* Feed escondido por padrão: a tela de resultado fica enxuta,
@@ -286,9 +233,6 @@ export function AreaDoDesafio({
   if (dados.estado === "ativo") {
     // "Ativos hoje": quem teve atividade hoje, a própria pessoa primeiro
     // (abrir a sala já conta, então ela sempre está).
-    // Extras antigos (legado) não contam: a 1ª missão "de verdade" é a
-    // que nunca nasce feita (o servidor usa a mesma regra).
-    const temMissaoPropria = dados.meusInegociaveis.some((i) => !i.legado);
     const ativosHoje = [
       ...dados.participantes.filter((p) => p.id === dados.meuId),
       ...dados.participantes.filter((p) => p.id !== dados.meuId && p.ativoHoje),
@@ -304,130 +248,22 @@ export function AreaDoDesafio({
           ativosHoje={ativosHoje}
         />
 
-        {/* Suas Missões: fixo no topo ao rolar, compacto. Ação rápida
-            sempre à mão; o feed embaixo é o conteúdo principal. */}
+        {/* Seu desafio: fixo no topo ao rolar, ação rápida sempre à mão;
+            o feed embaixo é o conteúdo principal. */}
         <div className="sticky top-0 z-20 -mx-4 bg-cream px-4 pb-2 pt-2">
-          <Janela
-            compacto
-            painel
-            titulo={
-              <>
-                <span>Suas Missões</span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (formMissaoAberto) {
-                      setMostrarFormMissao(false);
-                    } else {
-                      setCarimboAoAbrirMissao(inegociavelState.carimbo ?? 0);
-                      setMostrarFormMissao(true);
-                    }
-                  }}
-                  className="shrink-0 bg-cyan px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-ink transition-transform active:translate-x-[1px] active:translate-y-[1px]"
-                >
-                  {formMissaoAberto ? "Fechar" : "+ Nova missão"}
-                </button>
-              </>
-            }
-          >
-            <div className="flex flex-col gap-2">
-              <ul className="flex flex-wrap gap-2">
-                {dados.meusInegociaveis.filter((i) => !i.legado).map((i) => {
-                  const naJanela = janelaDesfazer?.inegociavelId === i.id;
-                  return (
-                    <li key={i.id}>
-                      <form action={naJanela ? desfazerActionFn : registrarInegociavelActionFn}>
-                        <input type="hidden" name="codigo" value={codigo} />
-                        <input type="hidden" name="token" value={token ?? ""} />
-                        <input type="hidden" name="inegociavelId" value={i.id} />
-                        {naJanela ? (
-                          <input type="hidden" name="realizacaoId" value={janelaDesfazer.realizacaoId} />
-                        ) : null}
-                        <button
-                          type="submit"
-                          disabled={registrarInegociavelPending || desfazerPending}
-                          className={`flex items-center gap-1.5 border-2 border-ink px-2 py-1.5 font-mono text-xs shadow-hard-sm transition-transform active:translate-x-[1px] active:translate-y-[1px] active:shadow-none disabled:opacity-60 ${
-                            naJanela ? "bg-amber" : "bg-cream"
-                          }`}
-                        >
-                          <span className="text-left">
-                            {emojiDoAssunto(i.assunto)} {i.titulo}
-                          </span>
-                          <ProgressoInegociavel alvo={i.alvo} progresso={i.progresso} sobreAmbar={naJanela} />
-                        </button>
-                      </form>
-                    </li>
-                  );
-                })}
-                {/* Registros antigos do tempo da "vitória extra" (antes de
-                    virar "+ Nova missão"): contam como missões únicas já
-                    cumpridas (legado), no mesmo fluxo, com a largura do
-                    conteúdo e "✓". Sem sombra: não são botões, não dá pra
-                    marcar de novo. */}
-                {dados.meusInegociaveis.filter((i) => i.legado).map((r) => (
-                  <li
-                    key={r.id}
-                    className="flex max-w-full items-center gap-1.5 border-2 border-ink bg-cream px-2 py-1.5 font-mono text-xs"
-                  >
-                    <span className="min-w-0 break-words">
-                      {emojiDoAssunto(r.assunto)} {r.titulo}
-                    </span>
-                    <span aria-label={LABEL_REGISTRO_FEITO} className="shrink-0 font-bold text-green">
-                      ✓
-                    </span>
-                  </li>
-                ))}
-              </ul>
-
-              {janelaDesfazer ? (
-                <div
-                  key={janelaDesfazer.carimbo}
-                  className="relative overflow-hidden border-2 border-ink bg-amber px-2 py-1 font-mono text-xs font-bold"
-                >
-                  {LABEL_AVISO_DESFAZER}
-                  <span
-                    aria-hidden
-                    className="absolute bottom-0 left-0 h-1 w-full origin-left bg-ink"
-                    style={{ animation: `janela-desfazer ${JANELA_DESFAZER_MS}ms linear forwards` }}
-                  />
-                </div>
-              ) : (
-                <p className="font-mono text-[11px] text-ink/60">{TEXTO_SUAS_MISSOES}</p>
-              )}
-
-              {registrarInegociavelState.error || desfazerState.error ? (
-                <p className="border-2 border-coral bg-cream px-2 py-1 font-mono text-xs text-coral">
-                  {desfazerState.error ?? registrarInegociavelState.error}
-                </p>
-              ) : null}
-
-              {formMissaoAberto ? (
-                <FormMissao
-                  codigo={codigo}
-                  token={token ?? ""}
-                  action={inegociavelAction}
-                  pending={inegociavelPending}
-                  error={inegociavelState.error}
-                  // A 1ª missão de quem entrou com a sala rolando é o
-                  // compromisso dela: nunca nasce feita. Da 2ª em diante,
-                  // pode nascer já marcada ("já fiz").
-                  {...(temMissaoPropria
-                    ? {
-                        introducao: TEXTO_NOVA_MISSAO,
-                        rotuloTitulo: ROTULO_TITULO_NOVA_MISSAO,
-                        rotuloBotao: BOTAO_ADICIONAR_NOVA_MISSAO,
-                        permitirJaFeito: true,
-                      }
-                    : {
-                        introducao: TEXTO_PRIMEIRA_MISSAO_RODANDO,
-                        rotuloTitulo: rotuloTituloMissaoLobby(0),
-                        rotuloBotao: BOTAO_ASSUMIR_MISSAO,
-                      })}
-                  className="border-t-2 border-ink/15 pt-2"
-                />
-              ) : null}
-            </div>
-          </Janela>
+          <SeuDesafio
+            codigo={codigo}
+            token={token ?? ""}
+            foco={dados.meuCompromisso?.foco ?? null}
+            registrarAction={registrarActionFn}
+            registrarPending={registrarPending}
+            registrarCarimbo={registrarState.carimbo ?? 0}
+            registrarErro={registrarState.error}
+            janelaDesfazer={janelaDesfazer}
+            desfazerAction={desfazerActionFn}
+            desfazerPending={desfazerPending}
+            desfazerErro={desfazerState.error}
+          />
         </div>
 
         <FeedDaSala
