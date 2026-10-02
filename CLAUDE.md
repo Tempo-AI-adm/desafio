@@ -1,6 +1,6 @@
 # CLAUDE.md - regras para o Claude Code
 
-Você é o executor técnico. O dono decide produto e testa; você escreve o código. **Leia sempre `PRD.md` (o quê) e `STYLE.md` (visual e copy) antes de agir.** Em dúvida ou pra inventar algo fora do PRD, **pare e pergunte.**
+Você é o executor técnico. O dono decide produto e testa; você escreve o código. **Leia sempre, antes de agir: `CONCEITO.md` (as regras do produto), `MOOD.md` (o sentimento, filtro de toda copy e decisão de UX), `PRD.md` (o quê, tela a tela) e `STYLE.md` (visual).** Ordem de precedência quando divergirem: CONCEITO e MOOD > PRD > STYLE. Em dúvida ou pra inventar algo fora deles, **pare e pergunte.** Se algo contradisser o MOOD, pare e pergunte antes de seguir.
 
 ## Stack (não trocar)
 - **Next.js** (App Router), mobile-first.
@@ -9,18 +9,18 @@ Você é o executor técnico. O dono decide produto e testa; você escreve o có
 - Priorize simplicidade e clareza. Nada de abstração desnecessária.
 
 ## Modelo do produto (guarda-corpos)
-- Dois conceitos, só: **inegociáveis** (o norte, com alvo opcional) e **realizações** (feed: cumprir um inegociável OU uma vitória extra). NÃO inventar outros tipos.
-- **Sem ranking, sem % de aderência, sem "atrasado/adiantado".** O resumo é contagem/progresso que só sobe.
-- Planejado e extra têm o mesmo peso e a mesma comemoração.
-- **Todos veem tudo.** Cada dispositivo só edita o que criou.
+- Dois conceitos, só: o **compromisso** de cada pessoa (meta de coisas boas por semana + foco opcional, um por sala) e as **realizações** (registro de uma frase; todo registro conta). NÃO inventar outros tipos (nada de missões, "única/repetir", vitória extra).
+- **Sem ranking, sem "atrasado/devendo/falhou", sem comparar pessoas.** O único número percentual é o **do grupo** (média das pessoas, denominador = desafio inteiro, só sobe). Nunca mostrar % de uma pessoa, nem números de pessoas lado a lado pra comparar.
+- **Todos veem tudo**, exceto o placar privado do foco ("N no seu foco", só a própria pessoa). Cada dispositivo só edita o que criou.
+- Palavras banidas e tom: seguir `MOOD.md` à risca (inclui: sem travessão na copy).
 
 ## Regras duras
 - **SEM login/senha/email.** Identidade por dispositivo (token no navegador).
-- **SEM fotos/upload/storage** na v1.
+- **SEM fotos/upload/storage** até o bloco de Fotos (aí: uma foto opcional por registro, Supabase Storage).
 - **SEM realtime** na v1. Buscar dados ao carregar a página e ao focar a aba.
-- **SEM notificação/integração automática com WhatsApp.**
+- **WhatsApp só no bloco próprio**, só pela **plataforma oficial da Meta** (nunca bibliotecas não oficiais), e só respondendo dentro da janela de 24h aberta pela pessoa. **Nenhum lembrete, notificação ou mensagem proativa**, em canal nenhum.
 - **NÃO instalar bibliotecas novas sem perguntar antes.**
-- **NÃO adicionar features fora do "Escopo v1" do PRD.** Se parecer útil, sugira e espere o OK.
+- **NÃO adicionar features fora do CONCEITO/PRD.** Se parecer útil, sugira e espere o OK.
 - Sem gradiente, canto arredondado ou sombra difusa (ver `STYLE.md`).
 - **Nunca exibir na UI o valor cru de um campo do banco (estado, permiteBackfill, tipo, etc.).** Toda tradução valor-interno → texto-humano passa por `lib/copy.ts`. Se um valor novo não tiver tradução lá, adicione antes de usar.
 

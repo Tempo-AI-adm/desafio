@@ -1,129 +1,134 @@
-# desafio - PRD (fonte de verdade do produto)
+# desafioo - PRD (v2)
 
-Descreve **o que** o app é. Quando o código divergir, este documento vence. Leia junto com `STYLE.md` (visual e copy) e `CLAUDE.md` (regras de execução).
+Descreve **o que** o app faz, tela a tela, a partir das regras do `CONCEITO.md` (fonte de verdade das regras) e do sentimento do `MOOD.md` (fonte de verdade do tom). Onde este documento divergir dos dois, eles vencem. Visual e copy-base em `STYLE.md`; regras de execução em `CLAUDE.md`.
 
 ## O que é
-App web mobile-first onde um grupo pequeno (3+ amigos) roda um "desafio" de constância por um número fixo de dias. Cada pessoa define seu **mínimo inegociável** (o norte) e, durante o desafio, registra **realizações** marcando suas **missões**; no meio do desafio pode criar **missões novas** (algo que surgiu e deixou a pessoa orgulhosa). Todos veem tudo, num **feed compartilhado** com um **cartão-resumo de cada pessoa no topo**. É estilo "Twitter de feitos do desafio", sem fotos. Sério no fundo, leve/gameficado na forma. Ciclo curto: começa, roda, acaba.
+Alguém chama "bora um desafio?". Cada pessoa se propõe a realizar **um número de coisas boas por semana**, com um **foco opcional**. Durante o período, registra o que fez (uma frase curta) e o grupo celebra junto, num feed compartilhado. No fim, todos veem o resultado e podem começar a próxima rodada. Sério no fundo, leve e gameficado na forma.
 
 ## Princípios (não violar)
-- **Simplicidade acima de tudo.** Onboarding autoexplicativo por link único. A única coisa que se manda no grupo é "entra nesse link".
-- **Determinístico:** a pessoa escolhe em menu e preenche campos. Sem IA interpretando texto livre nesta versão.
-- **Tudo no próprio app.** Sem relatório enviado automaticamente.
+- **O ritmo é só seu, mas a satisfação é compartilhada.** O compromisso é individual; a experiência é coletiva.
+- **Não é competição.** Sem ranking, sem vencedor, sem comparar pessoas por quantidade. O número que aparece é do **grupo**, nunca de uma pessoa ao lado de outra.
+- **Não é cobrança.** Nunca "atrasado", "devendo", "falhou". O app não persegue quem sumiu: sem lembrete, sem insistência.
+- **Todo registro conta.** Qualquer coisa que fez bem à pessoa vale. Não existe "extra que não vale".
+- **Explicações generosas.** Todo momento-chave tem uma frase que explica o sentimento, não só a mecânica (o teste: "minha mãe precisa conseguir usar").
+- **Simplicidade.** Onboarding por link único; a única coisa que se manda no grupo é "entra nesse link".
 - **Sem login.** Identidade por dispositivo.
-- **Não é competição.** Todos veem tudo. O app **celebra o realizado**; nunca ranqueia, nunca mostra "atrasado/adiantado". Contagens só sobem.
-- **Planejado e espontâneo valem igual.** Missão definida no lobby e missão criada no meio do desafio têm o mesmo peso e a mesma comemoração.
 
 ## Vocabulário na tela
-- **"Desafio"** é o nome do app (título/logo) e da atividade em si ("o desafio começou", "durante o desafio").
-- **"Sala"** é o que a pessoa cria e compartilha com o grupo (criar sala, entrar em uma sala, suas salas, link da sala). Só muda o texto visível: código, banco e rotas (`/d/[codigo]`, `/criar`, `/entrar`) continuam como estão.
-- **"Missão"** é o nome na tela pra inegociável. **"Suas Missões"** é o bloco da própria pessoa na sala rolando, com todas as missões dela, sem distinção entre as do lobby e as criadas depois.
+- **"desafioo"** é o nome do app (logo); **"desafio"** é a atividade ("o desafio começou").
+- **"Sala"** é o que se cria e compartilha (criar sala, entrar numa sala, suas salas). Rotas e banco continuam como estão (`/d/[codigo]`, `/criar`, `/entrar`).
+- **"Realização"** / **"registro"**: uma coisa boa que a pessoa fez e registrou.
+- **"Meta da semana"**: quantas coisas boas a pessoa se propôs a realizar por semana.
+- **"Foco"**: o que a pessoa quer priorizar nesse período (opcional).
+- Não existem mais "missão", "inegociável", "vitória extra", "única/repetir" nem chips de assunto no registro.
 
 ## Identidade (sem login)
-- Um desafio = **um link único** (ex: `/d/PEGA42`). Esse link vai no grupo. É o único que existe.
-- Na 1ª vez que um dispositivo abre o link, a pessoa reivindica identidade: **nome + emoji**.
-- O dispositivo guarda um **token secreto** no navegador; nas próximas visitas é reconhecido.
-- **Edição:** todos veem tudo; cada dispositivo só edita o que criou.
-- **Limitação aceita:** limpar cookies / trocar de celular = perde a identidade. OK para ciclos curtos.
-- **Lista local de desafios:** além do token de cada desafio, o navegador guarda uma lista dos desafios em que a pessoa entrou (código + nome do desafio + emoji dela nesse desafio), limitada aos **3 mais recentes** (o mais novo entra no topo; se passar de 3, o mais antigo sai da lista). Sair da lista ou cair fora dela **não apaga nada no banco** e não mexe no token: dá pra voltar pelo código e continuar com a mesma identidade.
-- **Home (central):** sempre visível, nesta ordem: logo "desafioo" → uma frase ("Um incentivo pra sua melhor versão (ou o Twitter de aura farmada)") → **"Suas salas"** (só se a lista local tiver alguma: cartão por sala com nome + seu emoji + estado, ex: "rolando" / "esperando", levando direto pra `/d/[codigo]`) → botões **"Criar sala"** e **"Entrar em uma sala"** (código, pra salas fora da lista, ex: outro aparelho ou a 4ª sala). Embaixo, dois links pequenos que abrem no lugar (fechados por padrão, sem navegar): **"Como funciona ↓"** (o texto explicativo) e **"Ver um exemplo do resultado final →"** (card decorativo com dados FIXOS de exemplo, com rótulo "exemplo"; não usa dados reais. Mostra 3 pessoas fictícias na ordem de entrada (a "Ana" faz o papel de "você": vem primeiro, com realce), com o selo binário de cada uma, seguindo "Resultado final - princípio de apresentação").
-- **Dentro de um desafio:** "Criar novo desafio" (ao criar, entra na lista local) e **"Sair deste desafio"** (tira só esse item da lista local e volta pra Home).
+- Uma sala = **um link único** (`/d/PEGA42`).
+- Na 1ª vez que um dispositivo abre o link, a pessoa escolhe **nome + emoji** e faz o seu compromisso (ver abaixo).
+- O dispositivo guarda um **token secreto** no navegador; nas próximas visitas é reconhecido. Limpar dados / trocar de celular = perde a identidade (aceito).
+- **Todos veem tudo** (exceto o placar privado do foco, ver "Os números"). Cada dispositivo só edita o que é seu.
+- **Lista local de salas:** o navegador guarda as **3 mais recentes** (código + nome + emoji da pessoa). Sair da lista não apaga nada no banco. Sala que não existe mais no banco sai da lista sozinha.
 
-## Ciclo do desafio (estados)
-`LOBBY → ATIVO → ENCERRADO`
-- **LOBBY:** entra pelo link, reivindica identidade, define seu norte (≥ 1 inegociável). Cada um aperta **PRONTO**. O criador vê o lobby encher e aperta **LARGAR** quando quiser (não declara quantos são).
-- **ATIVO:** contagem começa (dia 1..N). As missões que já existem **não mudam** (não dá pra editar nem apagar), mas dá pra **criar missões novas** ("+ Nova missão"). A pessoa registra realizações.
-- **ENCERRADO:** no fim dos N dias, tela final que **celebra todo mundo que se dedicou** (não há vencedor). Para rodar outro, cria-se um novo (link novo). **Encerramento automático, sem job agendado:** vale do dia da largada até o fim do N-ésimo dia (meia-noite de Brasília); na primeira vez que alguém busca a sala depois disso (abrir a página, focar a aba, Home, qualquer ação), o estado vira "encerrado" no banco. Daí em diante o servidor recusa marcar, desfazer, criar missão e reagir; o feed fica como histórico, só leitura.
+## Home
+Nesta ordem:
+1. Logo **desafioo** (os olhinhos piscando).
+2. A frase-âncora: **"Um incentivo pra sua melhor versão."**
+3. Data e hora de agora, compactas ("qui, 1 out · 15:39", fuso de Brasília).
+4. **Suas salas** (só se a lista local tiver alguma): cartão por sala com nome + seu emoji + estado ("esperando" / "rolando" / "encerrada"), levando pra `/d/[codigo]`.
+5. Botões **"Criar sala"** e **"Entrar numa sala"** (por código).
+6. Links pequenos que abrem no lugar: **"Como funciona"** (reabre o onboarding) e **"Ver um exemplo do resultado final"** (card decorativo com dados FIXOS, rótulo "exemplo", janela com fundo cinza, no modelo novo).
 
-## Os dois conceitos (não inventar outros)
+**Onboarding:** na primeira visita (marcado no navegador), um modal com **3 telas curtas** e botão "pular", reabrível em "Como funciona". O sentido de cada tela (o texto final segue o MOOD):
+1. Você se propõe a realizar coisas boas por semana, no seu ritmo.
+2. Qualquer coisa que te faz bem conta, e você registra quando fizer.
+3. O grupo acompanha e comemora junto. Ninguém compete.
 
-### 1. Inegociáveis (o norte)
-O "mínimo que me propus". Cada pessoa define **pelo menos 1** no lobby. Cada inegociável tem:
-- **título** (ex: "malhar", "acabar o livro X")
-- **assunto** (chip, lista fixa abaixo)
-- **alvo (opcional):** um número de vezes no desafio inteiro (ex: 2). No formulário a pessoa escolhe **"Única"** (sem alvo) ou **"Repetir"** (aparece "Repetir quantas vezes?"; cada toque conta 1 vez feita).
-  - **Com alvo:** vira bolinhas de progresso (`●●○`). Marcar além do alvo conta como **bônus** ("estourou"): bolinhas a mais em outra cor + uma estrelinha (insígnia) ao lado.
-  - **Sem alvo:** é um item de "cumpri / não cumpri" (marca uma vez).
+## Criar sala
+- **Nome da sala** + **período**: atalhos **1 semana**, **2 semanas**, **1 mês**, ou **até uma data**.
+- **Data de início**: o criador escolhe. A tela **sugere** a próxima segunda-feira ou o próximo dia 1 (recomeços em marcos de tempo aumentam a disposição), sem obrigar.
+- Não existe mais a opção de registrar em dias anteriores (backfill): o registro é sempre de hoje.
+- Ao criar: tela de "sala criada" com o link pra mandar no grupo (sem "VALENDO.", que é da largada).
 
-O norte é a âncora visível do compromisso. **Não é nota, não é denominador de ranking.**
+## Ciclo da sala
+`LOBBY → ROLANDO → ENCERRADA`
+- **Lobby:** as pessoas entram e se propõem. O criador vê quem chegou.
+- **Largada:** automática **na data de início marcada** (sem job agendado: na primeira busca da sala a partir desse dia, a sala vira "rolando", e o início conta da meia-noite de Brasília desse dia). O criador pode **largar antes** (botão LARGAR); aí o início é o momento do toque.
+- **Rolando:** dá pra registrar. Quem chega agora ainda pode entrar, se propor e participar a partir dali (as semanas anteriores não contam pra essa pessoa).
+- **Encerrada:** automático ao fim do período (meia-noite de Brasília depois do último dia), na primeira busca. Daí em diante o servidor recusa registrar, desfazer e reagir. **Ninguém novo vira participante:** quem abre o link sem ser participante vê o resultado só em leitura.
 
-### 2. Realizações (o feed)
-Durante o desafio, a pessoa registra uma realização sempre que fez algo que vale marcar: **tocar numa missão** (inegociável) marca progresso nela.
+## Semanas
+- As semanas contam em **blocos de 7 dias a partir do início** (dia da largada).
+- Se a última semana for parcial, a meta dela é **proporcional aos dias**, arredondando pra cima, mínimo 1 (ex: meta 5, semana de 3 dias = 3).
+- Quem entra com a sala rolando conta a partir da semana em que entrou; a semana da entrada segue a mesma regra proporcional pelos dias que restam nela.
 
-**Nova missão (substitui a antiga "vitória extra"):** fez ou quer fazer algo fora do que definiu no lobby? Cria uma **missão nova** com o mesmo formulário do lobby (título + assunto + alvo opcional). Ela entra em "Suas Missões" como uma missão normal, ainda não marcada; se já fez, cria e marca em seguida. Sem tag, sem distinção. No feed aparece uma linha de novidade ("criou a missão: Meditar"), sem reação; a realização aparece quando ela marca.
+## O compromisso de cada pessoa
+Ao entrar na sala, a pessoa:
+1. Escolhe **nome e emoji**.
+2. Responde **"quantas coisas boas você quer realizar por semana?"**: atalhos 3, 5 e 7, ou outro número. **Obrigatório.**
+3. Responde, se quiser, **"tem algum foco nesse período?"**: texto curto (ex: "estudar pro concurso", "voltar a treinar"). **Opcional.**
+4. Vê exemplos do que vale como realização: malhar, ler 20 páginas, tomar uma decisão que vinha adiando, resolver uma pendência, ligar pra família, cozinhar pra semana, organizar algo da casa, estudar.
 
-*Legado:* registros antigos do tipo `extra` (do tempo da "vitória extra") continuam no banco e na tela, só sem a tag "extra". Não há mais como criar um novo.
+Cada pessoa tem **um** compromisso por sala. Dá pra ajustar no lobby; **congela na largada**. Quem entra com a sala rolando se propõe na entrada e o compromisso já nasce congelado.
 
-Toda realização tem: **assunto** (chip) + **texto curto** + dia + autor. Aparece no feed de todos; o app comemora (mascote + copy).
+## Registrar uma realização
+- Botão grande **"+ Registrar"** sempre visível na sala rolando.
+- O registro: **uma frase curta obrigatória** (o que você fez) + **"isso foi no seu foco?"** (só aparece pra quem definiu foco; resposta de um toque, padrão "não").
+- O **dia é sempre hoje** (fuso de Brasília).
+- **Desfazer (janela curta):** depois de registrar, aparece por ~5s "Feito. Toque de novo para desfazer.". Passou a janela, não desfaz mais (o servidor recusa com mais de 10s). Pra ninguém ver um registro desfeito a tempo, o registro de outra pessoa só aparece pros outros depois de ~7s.
+- **Comemoração por contagem do dia** (zera à meia-noite de Brasília, não é streak): 1º do dia "SHOW.", 2º "TÁ ON FIRE.", 3º ou mais "AURA MÁXIMA.".
+- (Foto opcional: bloco próprio, depois. WhatsApp: bloco próprio, depois.)
 
-**Contagem do dia:** o dash/feed conta quantas realizações a pessoa já fez **nesse dia**, é só exibição sobre o dado que já existe (dia + autor na realização), não cria tabela nova. Essa contagem decide qual selo/copy de comemoração aparece ao registrar (ver `STYLE.md`). É "escalar dentro do dia": a conta zera a cada dia novo (o dia vira à **meia-noite de Brasília**, fuso `America/Sao_Paulo`, não pelo relógio do servidor) e **não é streak entre dias** (streak continua fora de escopo, ver "Fora de escopo"). A mesma contagem acende um **foguinho** pixel art ao lado do nome: pequeno na 2ª realização do dia, maior e com duas cores na 3ª ou mais.
+## Os números
+- **Da pessoa, na semana:** "3 de 5 essa semana", com bolinhas. Passar da meta vira **bônus** (estrela e bolinhas coral), celebrado, mas não conta a mais em nenhum número.
+- **Da pessoa, no desafio (só pro cálculo, ninguém vê):** soma, semana a semana, de `min(realizações da semana, meta da semana)`, dividida pela soma das metas de **todas as semanas do desafio** que contam pra ela.
+- **Do grupo:** média do progresso das pessoas (cada pessoa pesa igual, quem tem meta maior não pesa mais). Pessoa sem compromisso ainda não entra na média. Como o denominador é o desafio inteiro, **o número só sobe**: começa em 0% e cresce a cada registro. É o único número coletivo, mostrado como **um número só da sala**, nunca por pessoa.
+- **Contexto do número baixo:** no começo do desafio o número do grupo é naturalmente pequeno. A tela mostra uma frase curta explicando que ele vai enchendo com cada registro de todo mundo até o fim (tom do MOOD, nunca cobrança).
+- **Foguinho:** 2 ou mais realizações no mesmo dia (pequeno na 2ª, maior na 3ª+). Não é streak.
+- **Foco:** o texto do foco é **público** ("foco: voltar a treinar", no bloco da pessoa e na linha dela no resultado). Registro no foco ganha uma **marquinha celebrada no feed**, visível pra todos. Nunca aparece "fora do foco". O placar **"N no seu foco" é privado**, só a própria pessoa vê.
 
-## Assuntos (chips) - lista fixa, não configurável
-💪 saúde · 📚 aprendizado · 💼 trabalho · 🏠 lar · ✅ tarefa · ✨ outro. Seleção única. Usado em missões e realizações; dá cor/organização.
-
-*No banco* os valores gravados continuam os antigos (`treino`, `estudo`, `trabalho`, `comida`, `tarefa`, `outro`, com check no `supabase/schema.sql`); a tela traduz pra nome + emoji (`lib/assuntos-constants.ts`), então registros antigos já aparecem com os nomes novos, sem migração.
+## A sala rolando (tela)
+De cima pra baixo:
+1. **Cabeçalho:** janela cuja **barra de título é o nome da sala** (sai o título grande em fonte pixel). No corpo, compacto: "Dia X/Y", data e hora da última busca. **Ativos hoje**: quem teve atividade hoje (a própria pessoa primeiro), com o foguinho de quem tiver; "Só você por aqui hoje" se for só ela.
+2. **Seu desafio:** sua meta da semana em bolinhas ("3 de 5 essa semana"), seu foco, "N no seu foco" (privado) e o botão **"+ Registrar"**.
+3. **Número do grupo** (com a frase de contexto quando baixo).
+4. **Feed de todos:** frase, marquinha de foco (quando no foco), autor, horário (com data quando não for hoje: "22/09 · 15:31"), reação com os olhinhos e contagem, foguinho do autor na realização mais recente de hoje dele. Sempre tudo, mais recente no topo, sem filtro.
+- **Retomada:** se a pessoa abre a sala depois de dias sem registrar, uma frase acolhedora no lugar do silêncio (o desafio ainda está rolando e ainda dá). Só pra ela, nunca cobrança.
+- **Atualização:** busca ao abrir e ao focar a aba. Sem realtime.
+- **Última atividade:** atualizada em toda visita reconhecida, ao registrar e ao reagir (alimenta "Ativos hoje").
 
 ## Reações
-Qualquer realização no feed pode receber uma reação de **um toque** de quem também está no desafio (inclusive de si mesmo). A reação é sempre a mesma, **reagir com os olhinhos** (o mascote), **sem paleta de emoji pra escolher**. Mostra a contagem de reações ao lado do item no feed. Um toque = um participante por realização (não acumula clique); sem comentário associado (comentário continua fora de escopo, ver "Fora de escopo").
+Um toque, sempre o mesmo símbolo (**os olhinhos**), sem paleta de emoji. Qualquer participante reage a qualquer realização, inclusive a própria. Um toque = um participante por realização (não acumula). Mostra a contagem.
 
-## O que o dash mostra
-Tela da sala rolando, de cima pra baixo (ação rápida sempre à mão, feed com o espaço principal):
+## O resultado (sala encerrada)
+- Cabeçalho: nome da sala, selo neutro "ENCERRADO", período real, duração e número de pessoas.
+- Janela **"Resultado final"**: o **número final do grupo**, o resumo do grupo (total de realizações e de reações trocadas) e a lista **"Todo mundo"**.
+- Lista: **você primeiro** (com realce leve), depois **ordem de entrada**. Nunca ordenada por quantidade.
+- Por pessoa: emoji + nome, foco (se tiver), **selo binário** e chips: realizações, bônus, reações recebidas, dias em chamas. **"Y no foco" só na sua própria linha.**
+- **Selo:** "FECHOU TUDO QUE SE PROPÔS." (âmbar) = bateu a meta em todas as semanas que contam pra ela. Senão, "SEGUIU NO PRÓPRIO RITMO." (neutro, sem cor de alerta).
+- Feed escondido em **"Ver tudo que rolou ↓"** (fechado por padrão), só leitura.
+- **Renovação:** botão **"Bora mais uma rodada?"** cria uma sala nova com o mesmo nome + "#2" (ou o próximo número) e o mesmo tipo de período, e oferece compartilhar o link no grupo.
 
-**1. Cabeçalho da sala (lobby, rolando e encerrada):** uma janela igual às outras (fundo creme, barra de título escura fininha, ver `STYLE.md` "janela"), **compacta** (nome e status numa linha só, quebrando se não couber), só com a identidade da sala: nome (fonte pixel) + **"DIA X/Y"** depois de largar (dias de calendário em Brasília desde a data de início; antes de largar mostra só a duração, ex: "7 DIAS") + data e hora de hoje ("23/09 · 18:46", fuso de Brasília). A hora é a da última busca da sala (ao abrir, ao voltar pra aba, depois de cada ação), não um relógio rodando. **Sala encerrada:** no lugar de "DIA X/Y" + data/hora, selo neutro "ENCERRADO" + período real + duração + pessoas ("16/09 — 22/09 · 7 dias · 2 amigos").
+## Medição
+Registrar eventos básicos pra saber depois se o app funciona: **entrou na sala**, **se propôs**, **registrou**, **voltou num dia diferente**. Sem dado pessoal além do que o app já guarda.
 
-**2. Suas Missões (fixo no topo ao rolar, compacto):** a barra do painel tem só o título "Suas Missões" e o botão pequeno **"+ Nova missão"** (abre ali mesmo o mesmo formulário do lobby). Dentro: as missões como botões pequenos de 1 toque, com progresso (bolinhas `●●○` se tem alvo; check "cumpri" se não tem). Registros antigos de "vitória extra" aparecem listados embaixo, sem tag.
+## WhatsApp (bloco próprio, depois do app web pronto)
+- Canal **opcional** de registro. O app web continua sendo onde se vê o feed, reage e vê o resultado.
+- Ativação: botão "Registrar pelo WhatsApp" abre a conversa com o número do desafioo e uma mensagem pronta com o código da sala. Ao enviar, o número fica ligado à pessoa. Ninguém digita telefone.
+- Cada mensagem é uma realização. O bot responde celebrando, mostra "3 de 5 essa semana" e o andamento do grupo (sem nomes de quem não registrou), e pergunta com botões "foi no seu foco?" quando a pessoa tem foco.
+- Sem IA. Só mensagens dentro da janela de 24h aberta pela própria pessoa; nenhum lembrete pago, ninguém é perseguido. **Só a plataforma oficial da Meta**, nunca bibliotecas não oficiais.
 
-**Ativos hoje (dentro da janela do cabeçalho, sala rolando):** quem teve atividade hoje (última atividade no dia de hoje, fuso de Brasília), a própria pessoa primeiro, numa lista simples (sem caixa por pessoa, separada por espaço): emoji + nome curto + a insígnia do dia se tiver (o **foguinho**; sem insígnia, nada no lugar). Uma bolinha verde só, ao lado do rótulo "Ativos hoje". É diário/aproximado, não presença ao vivo. Se só a própria pessoa estiver ativa: "Só você por aqui hoje". Sem progresso detalhado dos outros aqui (é secundário).
+## Fotos (bloco próprio)
+Uma foto opcional por registro, comprimida no envio, exibida pequena no feed. Armazenamento no Supabase.
 
-**Última atividade:** atualizada em toda visita reconhecida à sala (abrir a página ou focar a aba), ao registrar e ao reagir. Quem só entrou pra acompanhar os amigos também conta como "ativo hoje".
+## Modelo de dados (linguagem simples)
+- **desafios:** código do link, nome, duração em dias, data de início marcada, estado (lobby/ativo/encerrado), data de início real (quando largou), criador, criado em.
+- **participantes:** sala, nome, emoji, token secreto, meta semanal, foco (opcional), pronto, última atividade, criado em (= quando entrou).
+- **realizacoes:** participante, frase, se foi no foco, dia (data), criado em. (Colunas antigas de tipo/assunto ficam com valor padrão.)
+- **reacoes:** realização, participante, criado em.
+- **eventos** (medição): sala, participante, tipo do evento, criado em.
 
-**4. Feed (o resto da tela, conteúdo principal):**
-- corrente de realizações de todos, **mais recente no topo**
-- cada item: autor + emoji do assunto + texto + horário + reação (mascote) com contagem
-- **sem foto**
-- **sem filtro**: sempre mostra tudo, mais recente no topo. Item de hoje mostra só a hora; item de outro dia (fuso de Brasília) mostra data + hora ("22/09 · 15:31")
-- o foguinho do autor aparece só na realização mais recente de hoje dele, pra não repetir em toda linha
-- reação: o botão é o mascote (os olhinhos do logo, parados); acende e soma +1 no toque, e depois do toque fica travado (não acumula)
+## Fora, por enquanto
+Combinado social, dinheiro em jogo, "fazendo agora", comentários, reação com qualquer emoji, IA no bot, backfill, notificação pelo navegador, múltiplos compromissos por pessoa, ranking, realtime.
 
-**Sem % de aderência, sem ranking, sem "atrasado".** O resumo é sempre contagem/progresso que só sobe.
-
-**Atualização:** busca dados ao abrir o app e ao focar a aba. Sem realtime nesta versão.
-
-## Check / registrar / backfill
-- Registrar realização = tocar numa missão (1 toque; assunto e texto vêm da missão). Algo novo = criar missão nova e marcar.
-- Marcar um inegociável de novo enche a próxima bolinha; além do alvo vira extra.
-- **Backfill** é opção do **desafio**, decidida pelo criador na criação ("Vale registrar em dias anteriores? Sim/Não"). Sim = qualquer dia até hoje; Não = só hoje. **Nunca** dia futuro.
-- **Desfazer (janela curta):** depois de tocar num inegociável, aparece por ~5s "Feito. Toque de novo para desfazer.". Tocar de novo no mesmo inegociável dentro dessa janela apaga o registro do banco (a contagem do dia, o selo e o foguinho voltam junto). Passou a janela, qualquer toque **sempre soma** um registro novo; nunca desfaz nada depois (o servidor recusa desfazer registro com mais de 10s). Pra ninguém ver um registro desfeito a tempo, a marcação de inegociável de outra pessoa só aparece pros outros depois de ~7s.
-
-## Tela de encerramento
-Na sala encerrada, no lugar de "Suas Missões": janela **"Resultado final"** (sem repetir o nome da sala, que já está no cabeçalho, junto com período, duração e pessoas) com uma linha de **resumo do grupo** (total de realizações de todos + total de reações trocadas, ex: "12 realizações · 8 reações trocadas"; estatística coletiva, nunca por pessoa), o mascote e a lista "Todo mundo": uma linha por pessoa (ordem de entrada, você primeiro com "(você)" e realce leve): emoji + nome, o selo binário numa linha própria, e os números em chips (missões cumpridas, dias em chamas, bônus, reações recebidas); os de insígnia (dias em chamas, bônus) são tocáveis e mostram a legenda. Mesmo layout do exemplo da Home. Embaixo, o feed como histórico, só leitura, num bloco expansível **"Ver tudo que rolou ↓"** fechado por padrão. Tom celebra **todos que se dedicaram**.
-- **Missão cumprida:** sem alvo = marcou pelo menos 1 vez; com alvo = chegou no alvo. Missões criadas no meio do desafio contam igual.
-- **Fechou tudo:** cumpriu todas as missões que tinha (e tinha pelo menos uma).
-- **Bônus:** marcações além do alvo + registros antigos de "vitória extra".
-- **Dias em chamas:** quantos dias diferentes a pessoa teve 2 ou mais realizações (os dias em que o foguinho acendeu). Conta dias, não toques: um dia com 4 realizações é 1 dia.
-
-
-## Resultado final - princípio de apresentação
-Participantes nunca são ordenados nem destacados por quantidade de missões cumpridas. A ordem de exibição é neutra (ordem de entrada na sala), com uma exceção de conveniência: a própria pessoa vem primeiro, com um realce leve, só pra achar a própria linha rápido (não é ranking). Só na linha dela aparece "X de Y missões" (definiu vs. cumpriu: compara consigo mesma); as outras linhas mostram só chips (missões cumpridas, bônus, reações), cada um só se for maior que zero. O status de cada pessoa reflete se ela completou tudo que se propôs para si mesma (binário), não a contagem absoluta - isso vale tanto para o card de exemplo quanto para a futura tela de encerramento real.
-- Completou tudo que se propôs: selo âmbar **"FECHOU TUDO QUE SE PROPÔS."**
-- Não completou tudo: selo neutro e gentil **"SEGUIU NO PRÓPRIO RITMO."** (sem cor de alerta).
-- Números (missões cumpridas, bônus, reações) aparecem só como detalhe, sem definir ordem nem destaque. Quem se propôs 1 missão e cumpriu fez 100% do que prometeu, igual a quem se propôs 7 e cumpriu 7.
-## Modelo de dados (linguagem simples, ~5 tabelas)
-- **desafios:** id, código do link, nome, duração em dias, permite_backfill (sim/não), estado (lobby/ativo/encerrado), data de início (quando largou), criado em.
-- **participantes:** id, desafio_id, nome, emoji, token do dispositivo (secreto), pronto (sim/não), última_atividade, criado em.
-- **inegociaveis:** id, participante_id, título, assunto, alvo (número ou nulo), criado em.
-- **realizacoes:** id, participante_id, tipo (inegociavel/extra), inegociavel_id (nulo se extra), assunto, texto, dia (data), criado em.
-- **reacoes:** id, realizacao_id, participante_id, criado em.
-
-## Fora de escopo (de propósito - NÃO construir na v1)
-- Login / senha / email.
-- Fotos / upload / storage (prova social via WhatsApp por enquanto). **Revisitado ao adicionar reações, mantido fora do v1.**
-- Notificações / push / mensagem automática no WhatsApp. **Revisitado ao adicionar reações, mantido fora do v1.** *(Um botão "compartilhar meu feito" via link `wa.me` com texto pronto é fácil e fica pra v1.1.)*
-- Realtime (v1.1).
-- Comentários no feed (v1.1). *(Reação de um toque com o mascote agora é v1, ver seção "Reações". Isso não inclui comentário nem paleta de emoji.)*
-- Ranking, % de aderência, "atrasado/adiantado".
-- Tela "meus desafios" completa (histórico, busca etc.). A v1 tem só a lista local dos 3 mais recentes na Home (ver "Identidade").
-- Editar ou apagar missões depois do LARGAR (criar novas pode).
-- IA de texto livre · streaks / badges **entre dias** (a contagem de realizações **dentro do mesmo dia**, usada pro selo/copy, não é streak, ver seção "Realizações").
-
-## Escopo v1 (o mínimo pra rodar com os amigos)
-Home (lista local dos 3 desafios mais recentes + criar/entrar com código) · sair de um desafio (só da lista local) · criar desafio (nome + duração em dias, presets 3/7/14/21 + toggle backfill) · link único · claim de identidade por dispositivo · lobby: definir ≥1 inegociável (título + assunto + alvo opcional) + PRONTO + LARGAR (criador) · missões existentes não mudam ao largar, mas dá pra criar novas · registrar realizações (tocar numa missão), backfill se permitido, com desfazer · reação de um toque (mascote) por realização, com contagem · dash: cartões por pessoa (inegociáveis + bolinhas/alvo + extras + visto há X) + feed cronológico (sempre tudo, data nos itens de outros dias) + selo/copy por contagem do dia · celebração (mascote + copy) · tela de encerramento · busca ao abrir/focar · copy e visual do `STYLE.md`.
+## Futuro
+O caminho mais realista é servir quem já organiza desafios pagos (nutricionistas, personal trainers, coaches, cursinhos). Manter a figura do **criador da sala** bem definida no modelo de dados facilita isso depois. Nada disso entra agora.
