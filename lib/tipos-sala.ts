@@ -19,7 +19,9 @@ export type ParticipanteSala = {
   id: string;
   nome: string;
   emoji: string;
-  pronto: boolean;
+  /** o compromisso (público: é o que a pessoa se propôs) */
+  metaSemanal: number | null;
+  foco: string | null;
   /** missões da pessoa, incluindo os extras antigos (legado) */
   inegociaveis: InegociavelResumo[];
   /** marcações além do alvo (bônus): celebração pessoal, fora do número do grupo */
@@ -56,9 +58,11 @@ export type DadosSala = {
   hoje: string;
   /** momento da busca (ISO), pra hora no cabeçalho; atualiza a cada busca */
   agora: string;
-  meuId: string;
+  /** nulo = quem não participa vendo a sala encerrada (só leitura) */
+  meuId: string | null;
   souCriador: boolean;
-  meuPronto: boolean;
+  /** meu compromisso; nulo pra quem não participa */
+  meuCompromisso: { meta: number; foco: string | null } | null;
   /** minhas missões; as `legado` (extras antigos) vêm por último */
   meusInegociaveis: InegociavelResumo[];
   /** número do grupo, 0 a 1 (lib/progresso.ts); nulo = sala sem missão.

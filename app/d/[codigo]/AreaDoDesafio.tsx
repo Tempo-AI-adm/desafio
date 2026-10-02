@@ -3,13 +3,14 @@
 import { useActionState, useEffect, useState } from "react";
 import { AcoesDoDesafio } from "@/components/AcoesDoDesafio";
 import { CabecalhoSala } from "@/components/CabecalhoSala";
+import { CamposCompromisso } from "@/components/CamposCompromisso";
 import { Expansivel } from "@/components/Expansivel";
 import { FeedDaSala } from "@/components/FeedDaSala";
 import { FormMissao } from "@/components/FormMissao";
 import { Janela } from "@/components/Janela";
 import { ProgressoInegociavel } from "@/components/ProgressoInegociavel";
 import { ResultadoFinal } from "@/components/ResultadoFinal";
-import { ASSUNTOS, emojiDoAssunto } from "@/lib/assuntos-constants";
+import { emojiDoAssunto } from "@/lib/assuntos-constants";
 import { resultadoDaSala, resumoDoGrupo } from "@/lib/resultado";
 import {
   TITULO_RESULTADO_FINAL,
@@ -19,29 +20,36 @@ import {
   LABEL_REGISTRO_FEITO,
   BOTAO_ADICIONAR_NOVA_MISSAO,
   BOTAO_LARGAR_AGORA,
+  LABEL_VOCE,
+  LOBBY_AJUSTAR,
+  LOBBY_EXPLICA_COMPROMISSO,
+  LOBBY_FECHAR_AJUSTE,
+  LOBBY_JANELA_COMPROMISSO,
+  LOBBY_QUEM_CHEGOU,
+  LOBBY_SALVAR_AJUSTE,
+  LOBBY_SEM_FOCO,
+  labelFoco,
+  labelMetaCurta,
+  labelMetaSemanal,
   textoLobbyCriador,
   BOTAO_ASSUMIR_MISSAO,
   ROTULO_TITULO_NOVA_MISSAO,
-  TEXTO_LOBBY_ANTES_DO_PRONTO,
-  TEXTO_LOBBY_NORTE,
   TEXTO_NOVA_MISSAO,
   TEXTO_PRIMEIRA_MISSAO_RODANDO,
   TEXTO_SUAS_MISSOES,
-  TITULO_LOBBY_MISSOES,
   rotuloTituloMissaoLobby,
   labelComemoracaoPorContagemDoDia,
-  labelPronto,
 } from "@/lib/copy";
 import { JANELA_DESFAZER_MS } from "@/lib/tempo";
 import {
   adicionarInegociavelAction,
-  alternarProntoAction,
+  ajustarCompromissoAction,
   desfazerRegistroAction,
   largarAction,
   reagirAction,
   registrarInegociavelAction,
   type AdicionarInegociavelState,
-  type AlternarProntoState,
+  type AjustarCompromissoState,
   type DesfazerState,
   type LargarState,
   type ReagirState,
@@ -52,7 +60,7 @@ import type { DadosSala } from "@/lib/tipos-sala";
 
 
 const ESTADO_INICIAL_INEGOCIAVEL: AdicionarInegociavelState = {};
-const ESTADO_INICIAL_PRONTO: AlternarProntoState = {};
+const ESTADO_INICIAL_AJUSTE: AjustarCompromissoState = {};
 const ESTADO_INICIAL_LARGAR: LargarState = {};
 const ESTADO_INICIAL_REGISTRAR_INEGOCIAVEL: RegistrarInegociavelState = {};
 const ESTADO_INICIAL_REAGIR: ReagirState = {};
@@ -87,7 +95,8 @@ export function AreaDoDesafio({
   nomeDesafio,
 }: {
   codigo: string;
-  token: string;
+  /** nulo = quem não participa vendo a sala encerrada (só leitura) */
+  token: string | null;
   nomeDesafio: string;
 }) {
   const [dados, setDados] = useState<DadosSala | null>(null);
@@ -99,10 +108,14 @@ export function AreaDoDesafio({
     adicionarInegociavelAction,
     ESTADO_INICIAL_INEGOCIAVEL,
   );
-  const [prontoState, prontoAction, prontoPending] = useActionState(
-    alternarProntoAction,
-    ESTADO_INICIAL_PRONTO,
+  const [ajusteState, ajusteActionFn, ajustePending] = useActionState(
+    ajustarCompromissoAction,
+    ESTADO_INICIAL_AJUSTE,
   );
+  // "Ajustar" do lobby: fecha sozinho depois de salvar (o carimbo muda).
+  const [mostrarAjuste, setMostrarAjuste] = useState(false);
+  const [carimboAoAbrirAjuste, setCarimboAoAbrirAjuste] = useState(0);
+  const ajusteAberto = mostrarAjuste && (ajusteState.carimbo ?? 0) === carimboAoAbrirAjuste;
   const [largarState, largarActionFn, largarPending] = useActionState(
     largarAction,
     ESTADO_INICIAL_LARGAR,
@@ -167,7 +180,7 @@ export function AreaDoDesafio({
     async function buscar() {
       try {
         const res = await fetch(`/api/lobby?codigo=${encodeURIComponent(codigo)}`, {
-          headers: { [CABECALHO_TOKEN]: token },
+          headers: token ? { [CABECALHO_TOKEN]: token } : {},
         });
         if (res.ok) {
           const data = await res.json();
@@ -207,7 +220,7 @@ export function AreaDoDesafio({
     codigo,
     token,
     inegociavelState,
-    prontoState,
+    ajusteState,
     largarState,
     registrarInegociavelState,
     reagirState,
@@ -251,7 +264,7 @@ export function AreaDoDesafio({
           mascote
           grupo={resumoDoGrupo(dados)}
           pessoas={resultadoDaSala(dados)}
-          meuId={dados.meuId}
+          meuId={dados.meuId ?? undefined}
         />
         {/* Feed escondido por padrão: a tela de resultado fica enxuta,
             o histórico continua a um toque. */}
@@ -261,7 +274,7 @@ export function AreaDoDesafio({
             participantes={dados.participantes}
             hoje={dados.hoje}
             codigo={codigo}
-            token={token}
+            token={token ?? ""}
             somenteLeitura
           />
         </Expansivel>
@@ -325,7 +338,7 @@ export function AreaDoDesafio({
                     <li key={i.id}>
                       <form action={naJanela ? desfazerActionFn : registrarInegociavelActionFn}>
                         <input type="hidden" name="codigo" value={codigo} />
-                        <input type="hidden" name="token" value={token} />
+                        <input type="hidden" name="token" value={token ?? ""} />
                         <input type="hidden" name="inegociavelId" value={i.id} />
                         {naJanela ? (
                           <input type="hidden" name="realizacaoId" value={janelaDesfazer.realizacaoId} />
@@ -391,7 +404,7 @@ export function AreaDoDesafio({
               {formMissaoAberto ? (
                 <FormMissao
                   codigo={codigo}
-                  token={token}
+                  token={token ?? ""}
                   action={inegociavelAction}
                   pending={inegociavelPending}
                   error={inegociavelState.error}
@@ -422,7 +435,7 @@ export function AreaDoDesafio({
           participantes={dados.participantes}
           hoje={dados.hoje}
           codigo={codigo}
-          token={token}
+          token={token ?? ""}
           reagirAction={reagirActionFn}
           reagirErro={reagirState.error}
         />
@@ -441,8 +454,10 @@ export function AreaDoDesafio({
     );
   }
 
-  // dados.estado === "lobby"
-  const temInegociavel = dados.meusInegociaveis.length > 0;
+  // dados.estado === "lobby": cada um vê o próprio compromisso (dá pra
+  // ajustar até a largada) e quem já chegou, com meta e foco (públicos:
+  // são o que cada um se propôs).
+  const meu = dados.meuCompromisso;
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-sm flex-col gap-5 px-4 py-8">
@@ -454,90 +469,70 @@ export function AreaDoDesafio({
         agora={dados.agora}
       />
 
-      <Janela titulo={TITULO_LOBBY_MISSOES}>
-        <div className="flex flex-col gap-4">
-          <p className="font-mono text-sm text-ink/70">{TEXTO_LOBBY_NORTE}</p>
-
-          {temInegociavel ? (
-            <ul className="flex flex-col gap-2">
-              {dados.meusInegociaveis.map((i) => {
-                const assunto = ASSUNTOS.find((a) => a.valor === i.assunto);
-                return (
-                  <li
-                    key={i.id}
-                    className="flex items-center justify-between border-2 border-ink bg-cream px-3 py-2 font-mono text-sm"
-                  >
-                    <span>
-                      {assunto?.emoji ?? "✨"} {i.titulo}
-                    </span>
-                    {i.alvo ? (
-                      <span className="text-ink/60">alvo: {i.alvo}x</span>
-                    ) : null}
-                  </li>
-                );
-              })}
-            </ul>
-          ) : null}
-
-          {!dados.meuPronto ? (
-            <FormMissao
-              key={dados.meusInegociaveis.length}
-              codigo={codigo}
-              token={token}
-              action={inegociavelAction}
-              pending={inegociavelPending}
-              error={inegociavelState.error}
-              rotuloTitulo={rotuloTituloMissaoLobby(dados.meusInegociaveis.length)}
-              rotuloBotao={BOTAO_ASSUMIR_MISSAO}
-              className="border-t-2 border-empty pt-4"
-            />
-          ) : null}
-
-          {temInegociavel && !dados.meuPronto ? (
-            <p className="border-2 border-ink bg-empty/40 px-3 py-2 font-mono text-xs text-ink/70">
-              {TEXTO_LOBBY_ANTES_DO_PRONTO}
-            </p>
-          ) : null}
-
-          <form action={prontoAction}>
-            <input type="hidden" name="codigo" value={codigo} />
-            <input type="hidden" name="token" value={token} />
-            {prontoState.error ? (
-              <p className="mb-3 border-2 border-coral bg-cream px-3 py-2 font-mono text-sm text-coral">
-                {prontoState.error}
-              </p>
-            ) : null}
+      <Janela
+        painel
+        titulo={
+          <>
+            <span>{LOBBY_JANELA_COMPROMISSO}</span>
             <button
-              type="submit"
-              disabled={prontoPending || (!dados.meuPronto && !temInegociavel)}
-              className={`w-full border-2 border-ink px-4 py-3 font-mono text-sm font-bold uppercase tracking-widest shadow-hard transition-transform active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:opacity-60 ${
-                dados.meuPronto ? "bg-green" : "bg-amber"
-              }`}
+              type="button"
+              onClick={() => {
+                if (ajusteAberto) {
+                  setMostrarAjuste(false);
+                } else {
+                  setCarimboAoAbrirAjuste(ajusteState.carimbo ?? 0);
+                  setMostrarAjuste(true);
+                }
+              }}
+              className="shrink-0 bg-cyan px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-ink transition-transform active:translate-x-[1px] active:translate-y-[1px]"
             >
-              {prontoPending
-                ? "..."
-                : dados.meuPronto
-                  ? "PRONTO ✓ (toque pra desmarcar)"
-                  : "PRONTO"}
+              {ajusteAberto ? LOBBY_FECHAR_AJUSTE : LOBBY_AJUSTAR}
             </button>
-          </form>
+          </>
+        }
+      >
+        <div className="flex flex-col gap-3 font-mono">
+          {meu ? (
+            <>
+              <p className="text-sm font-bold">{labelMetaSemanal(meu.meta)}</p>
+              <p className="text-xs text-ink/70">{meu.foco ? labelFoco(meu.foco) : LOBBY_SEM_FOCO}</p>
+            </>
+          ) : null}
+          <p className="text-[11px] text-ink/60">{LOBBY_EXPLICA_COMPROMISSO}</p>
+          {ajusteAberto ? (
+            <form action={ajusteActionFn} className="flex flex-col gap-4 border-t-2 border-ink/15 pt-3">
+              <input type="hidden" name="codigo" value={codigo} />
+              <input type="hidden" name="token" value={token ?? ""} />
+              <CamposCompromisso metaInicial={meu?.meta} focoInicial={meu?.foco} />
+              {ajusteState.error ? (
+                <p className="border-2 border-coral bg-cream px-3 py-2 text-sm text-coral">{ajusteState.error}</p>
+              ) : null}
+              <button
+                type="submit"
+                disabled={ajustePending}
+                className="border-2 border-ink bg-cyan px-4 py-3 text-sm font-bold uppercase tracking-widest shadow-hard transition-transform active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:opacity-60"
+              >
+                {ajustePending ? "..." : LOBBY_SALVAR_AJUSTE}
+              </button>
+            </form>
+          ) : null}
         </div>
       </Janela>
 
-      <Janela titulo="Quem já chegou">
+      <Janela titulo={LOBBY_QUEM_CHEGOU}>
         <ul className="flex flex-col gap-2">
           {dados.participantes.map((p) => (
-            <li
-              key={p.id}
-              className="flex items-center justify-between border-2 border-ink bg-cream px-3 py-2 font-mono text-sm"
-            >
-              <span>
-                {p.emoji} {p.nome}
-                {p.id === dados.meuId ? " (você)" : ""}
-              </span>
-              <span className={p.pronto ? "font-bold text-green" : "text-ink/50"}>
-                {labelPronto(p.pronto)}
-              </span>
+            <li key={p.id} className="border-2 border-ink bg-cream px-3 py-2 font-mono text-sm">
+              <div className="flex items-center justify-between gap-2">
+                <span className="min-w-0 truncate">
+                  {p.emoji} {p.nome}
+                  {p.id === dados.meuId ? <span className="text-ink/60"> {LABEL_VOCE}</span> : null}
+                </span>
+                {p.metaSemanal ? (
+                  <span className="shrink-0 text-xs font-bold">{labelMetaCurta(p.metaSemanal)}</span>
+                ) : null}
+              </div>
+              {p.foco ? <p className="mt-0.5 break-words text-xs text-ink/60">{labelFoco(p.foco)}</p> : null}
             </li>
           ))}
         </ul>
@@ -547,7 +542,7 @@ export function AreaDoDesafio({
         <Janela titulo="Você criou essa sala">
           <form action={largarActionFn} className="flex flex-col gap-3">
             <input type="hidden" name="codigo" value={codigo} />
-            <input type="hidden" name="token" value={token} />
+            <input type="hidden" name="token" value={token ?? ""} />
             <p className="font-mono text-xs text-ink/60">{textoLobbyCriador(dados.inicioMarcado, dados.hoje)}</p>
             {largarState.error ? (
               <p className="border-2 border-coral bg-cream px-3 py-2 font-mono text-sm text-coral">

@@ -13,7 +13,7 @@ export default async function DesafioPage({ params }: PageProps<"/d/[codigo]">) 
 
   return (
     <>
-      <DesafioClient desafio={{ codigo: desafio.codigo, nome: desafio.nome }} />
+      <DesafioClient desafio={{ codigo: desafio.codigo, nome: desafio.nome, estado: desafio.estado }} />
       <div className="mx-auto max-w-sm px-4 pb-8">
         <Link
           href="/"

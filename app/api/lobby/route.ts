@@ -23,7 +23,7 @@ export async function GET(request: Request) {
   // Token no cabeçalho, nunca na URL (URLs ficam nos registros de acesso).
   const token = request.headers.get(CABECALHO_TOKEN);
 
-  if (!codigo || !token) {
+  if (!codigo) {
     return NextResponse.json({ lobby: null }, { status: 400 });
   }
 
@@ -32,12 +32,15 @@ export async function GET(request: Request) {
     return NextResponse.json({ lobby: null }, { status: 404 });
   }
 
-  const eu = await buscarParticipantePorToken(desafio.id, token);
-  if (!eu) {
-    return NextResponse.json({ lobby: null }, { status: 404 });
+  // Sem identidade só dá pra ver a sala ENCERRADA (o resultado, só
+  // leitura, pra quem abre o link sem ser participante). Lobby e sala
+  // rolando exigem ser participante.
+  const eu = token ? await buscarParticipantePorToken(desafio.id, token) : undefined;
+  if (!eu && desafio.estado !== "encerrado") {
+    return NextResponse.json({ lobby: null }, { status: token ? 404 : 400 });
   }
 
-  await tocarUltimaAtividade(eu.id);
+  if (eu) await tocarUltimaAtividade(eu.id);
 
   const listaParticipantes = await listarParticipantesPorDesafio(desafio.id);
   const ids = listaParticipantes.map((p) => p.id);
@@ -52,7 +55,7 @@ export async function GET(request: Request) {
   // aparecer pra ninguém um registro que foi desfeito a tempo.
   const realizacoes = todasRealizacoes.filter(
     (r) =>
-      r.participanteId === eu.id ||
+      r.participanteId === eu?.id ||
       r.tipo !== "inegociavel" ||
       agora - Date.parse(r.criadoEm) > ESCONDER_DOS_OUTROS_MS,
   );
@@ -89,7 +92,8 @@ export async function GET(request: Request) {
       id: p.id,
       nome: p.nome,
       emoji: p.emoji,
-      pronto: p.pronto,
+      metaSemanal: p.metaSemanal,
+      foco: p.foco,
       inegociaveis: inegociaveisDele,
       bonus: estouros,
       contagemHoje: dele.filter((r) => r.dia === hoje).length,
@@ -98,7 +102,7 @@ export async function GET(request: Request) {
     };
   });
 
-  const euNaSala = participantes.find((p) => p.id === eu.id);
+  const euNaSala = eu ? participantes.find((p) => p.id === eu.id) : undefined;
 
   // Feed: realizações + novidade "criou a missão" pra missões criadas
   // com a sala já rolando (as do lobby não viram novidade).
@@ -113,7 +117,7 @@ export async function GET(request: Request) {
       dia: r.dia,
       criadoEm: r.criadoEm,
       reacoes: r.reagiram.length,
-      euReagi: r.reagiram.includes(eu.id),
+      euReagi: eu ? r.reagiram.includes(eu.id) : false,
     })),
     ...inegociaveis
       .filter((i) => inicio !== null && Date.parse(i.criadoEm) > inicio)
@@ -139,9 +143,9 @@ export async function GET(request: Request) {
     periodo: desafio.dataInicio ? periodoDoDesafio(desafio.dataInicio, desafio.duracaoDias) : null,
     hoje,
     agora: new Date(agora).toISOString(),
-    meuId: eu.id,
-    souCriador: desafio.criadorParticipanteId === eu.id,
-    meuPronto: eu.pronto,
+    meuId: eu?.id ?? null,
+    souCriador: eu ? desafio.criadorParticipanteId === eu.id : false,
+    meuCompromisso: eu?.metaSemanal ? { meta: eu.metaSemanal, foco: eu.foco } : null,
     meusInegociaveis: euNaSala?.inegociaveis ?? [],
     // Os extras antigos já estão nas missões (legado), então aqui não
     // entram de novo.

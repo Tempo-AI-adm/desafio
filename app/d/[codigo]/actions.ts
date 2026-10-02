@@ -2,13 +2,13 @@
 
 import { cookies } from "next/headers";
 import { confereProvaDeCriador, nomeCookieCriador } from "@/lib/criador";
-import { LIMITES } from "@/lib/validacao";
+import { validarCompromisso, validarEntrada } from "@/lib/compromisso";
 
 import { buscarDesafioPorCodigo, definirCriadorSeVazio, largarDesafio } from "@/lib/desafios";
 import {
   buscarParticipantePorToken,
+  atualizarCompromisso,
   criarParticipante,
-  marcarPronto,
   listarParticipantesPorDesafio,
   tocarUltimaAtividade,
 } from "@/lib/participantes";
@@ -27,13 +27,14 @@ import {
 } from "@/lib/realizacoes";
 import { criarReacao } from "@/lib/reacoes";
 import { LIMITE_DESFAZER_SERVIDOR_MS } from "@/lib/tempo";
-import { EMOJIS_IDENTIDADE } from "@/lib/identidade-constants";
 import { ASSUNTOS } from "@/lib/assuntos-constants";
 import {
   ERRO_JA_FEITOS,
   ERRO_MISSAO_DE_OUTRA_PESSOA,
   ERRO_MISSAO_SEM_TITULO,
-  ERRO_PRONTO_SEM_MISSAO,
+  ERRO_COMPROMISSO,
+  ERRO_COMPROMISSO_CONGELADO,
+  ERRO_ENTRAR_SALA_ENCERRADA,
 } from "@/lib/copy";
 
 const VALORES_ASSUNTO: readonly string[] = ASSUNTOS.map((a) => a.valor);
@@ -53,25 +54,36 @@ export async function reivindicarIdentidadeAction(
   formData: FormData,
 ): Promise<ReivindicarIdentidadeState> {
   const codigo = String(formData.get("codigo") ?? "");
-  const nome = String(formData.get("nome") ?? "").trim();
-  const emoji = String(formData.get("emoji") ?? "");
 
   const desafio = await buscarDesafioPorCodigo(codigo);
   if (!desafio) {
     return { error: "Essa sala não existe mais." };
   }
 
-  if (!nome) {
-    return { error: "Escolhe um nome." };
-  }
-  if (nome.length > LIMITES.nomePessoa) {
-    return { error: `Nome muito grande, até ${LIMITES.nomePessoa} letras.` };
-  }
-  if (!(EMOJIS_IDENTIDADE as readonly string[]).includes(emoji)) {
-    return { error: "Escolhe um emoji da lista." };
+  // Sala encerrada: ninguém novo vira participante (quem não participa
+  // vê o resultado só em leitura).
+  if (desafio.estado === "encerrado") {
+    return { error: ERRO_ENTRAR_SALA_ENCERRADA };
   }
 
-  const participante = await criarParticipante({ desafioId: desafio.id, nome, emoji });
+  // Entrar = se propor, num passo só: nome, emoji e o compromisso.
+  const entrada = validarEntrada({
+    nome: String(formData.get("nome") ?? ""),
+    emoji: String(formData.get("emoji") ?? ""),
+    meta: String(formData.get("meta") ?? ""),
+    foco: String(formData.get("foco") ?? ""),
+  });
+  if ("erro" in entrada) {
+    return { error: ERRO_COMPROMISSO[entrada.erro] };
+  }
+
+  const participante = await criarParticipante({
+    desafioId: desafio.id,
+    nome: entrada.nome,
+    emoji: entrada.emoji,
+    metaSemanal: entrada.meta,
+    foco: entrada.foco,
+  });
 
   // Criador: só quem tem a prova que o servidor deu ao criar a sala
   // (cookie httpOnly), nunca um valor mandado pelo formulário.
@@ -179,15 +191,17 @@ export async function adicionarInegociavelAction(
   return { ok: true, carimbo: Date.now(), contagemHoje };
 }
 
-export type AlternarProntoState = {
+export type AjustarCompromissoState = {
   error?: string;
   ok?: boolean;
+  carimbo?: number;
 };
 
-export async function alternarProntoAction(
-  _prevState: AlternarProntoState,
+// Ajustar meta e foco: só no lobby. Na largada o compromisso congela.
+export async function ajustarCompromissoAction(
+  _prevState: AjustarCompromissoState,
   formData: FormData,
-): Promise<AlternarProntoState> {
+): Promise<AjustarCompromissoState> {
   const codigo = String(formData.get("codigo") ?? "");
   const token = String(formData.get("token") ?? "");
 
@@ -202,17 +216,21 @@ export async function alternarProntoAction(
   }
 
   if (desafio.estado !== "lobby") {
-    return { error: "O desafio já começou." };
+    return { error: ERRO_COMPROMISSO_CONGELADO };
   }
 
-  const querFicarPronto = !participante.pronto;
-  if (querFicarPronto && (await contarInegociaveisPorParticipante(participante.id)) === 0) {
-    return { error: ERRO_PRONTO_SEM_MISSAO };
+  const compromisso = validarCompromisso({
+    meta: String(formData.get("meta") ?? ""),
+    foco: String(formData.get("foco") ?? ""),
+  });
+  if ("erro" in compromisso) {
+    return { error: ERRO_COMPROMISSO[compromisso.erro] };
   }
 
-  await marcarPronto(participante.id, querFicarPronto);
+  await atualizarCompromisso(participante.id, { metaSemanal: compromisso.meta, foco: compromisso.foco });
+  await tocarUltimaAtividade(participante.id);
 
-  return { ok: true };
+  return { ok: true, carimbo: Date.now() };
 }
 
 export type LargarState = {

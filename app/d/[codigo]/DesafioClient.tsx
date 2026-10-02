@@ -1,7 +1,24 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
+import { CamposCompromisso } from "@/components/CamposCompromisso";
 import { Janela } from "@/components/Janela";
+import {
+  ENTRAR_BOTAO,
+  ENTRAR_ENCERRADA,
+  ENTRAR_JANELA_COMPROMISSO,
+  ENTRAR_JANELA_QUEM,
+  ENTRAR_PLACEHOLDER_NOME,
+  ENTRAR_RODANDO,
+  ENTRAR_ROTULO_EMOJI,
+  ENTRAR_ROTULO_NOME,
+  ENTRAR_TITULO,
+  EXEMPLOS_REALIZACAO,
+  EXEMPLOS_TITULO,
+  RITUAL,
+} from "@/lib/copy";
+import type { EstadoDesafio } from "@/lib/desafios";
+import { LIMITES } from "@/lib/validacao";
 import { EMOJIS_IDENTIDADE } from "@/lib/identidade-constants";
 import {
   CABECALHO_TOKEN,
@@ -17,6 +34,7 @@ import { AreaDoDesafio } from "./AreaDoDesafio";
 type DesafioResumo = {
   codigo: string;
   nome: string;
+  estado: EstadoDesafio;
 };
 
 type Fase = "carregando" | "identidade" | "reconhecido";
@@ -133,37 +151,53 @@ export function DesafioClient({ desafio }: { desafio: DesafioResumo }) {
     );
   }
 
+  // Sala encerrada e sem identidade aqui: ninguém novo entra (o servidor
+  // também recusa); quem não participa vê o resultado só em leitura.
+  if (!reconhecido && desafio.estado === "encerrado") {
+    return (
+      <>
+        <p className="mx-auto max-w-sm px-4 pt-4 text-center font-mono text-xs text-ink/70">{ENTRAR_ENCERRADA}</p>
+        <AreaDoDesafio codigo={desafio.codigo} token={null} nomeDesafio={desafio.nome} />
+      </>
+    );
+  }
+
   if (!reconhecido) {
     return (
       <main className="mx-auto flex min-h-dvh max-w-sm flex-col justify-center gap-5 px-4 py-8">
-        <header className="space-y-1 text-center">
-          <p className="font-press text-lg leading-relaxed">CHEGOU.</p>
-          <p className="font-mono text-sm text-ink/70">{desafio.nome}</p>
+        <header className="space-y-2 text-center">
+          <p className="font-press text-lg leading-relaxed">{ENTRAR_TITULO}</p>
+          <p className="font-mono text-sm font-bold">{desafio.nome}</p>
+          <p className="font-mono text-xs text-ink/70">{RITUAL}</p>
+          {desafio.estado === "ativo" ? (
+            <p className="border-2 border-ink bg-empty/40 px-3 py-2 font-mono text-xs text-ink/70">{ENTRAR_RODANDO}</p>
+          ) : null}
         </header>
 
-        <Janela titulo="Quem é você?">
-          <form action={formAction} className="flex flex-col gap-6">
-            <input type="hidden" name="codigo" value={desafio.codigo} />
-            <input type="hidden" name="emoji" value={emojiSelecionado} />
+        <form action={formAction} className="flex flex-col gap-5">
+          <input type="hidden" name="codigo" value={desafio.codigo} />
+          <input type="hidden" name="emoji" value={emojiSelecionado} />
 
+          <Janela titulo={ENTRAR_JANELA_QUEM}>
+          <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-2">
               <label htmlFor="nome" className="font-mono text-xs font-bold uppercase tracking-widest">
-                Seu nome
+                {ENTRAR_ROTULO_NOME}
               </label>
               <input
                 id="nome"
                 name="nome"
                 type="text"
                 required
-                maxLength={30}
-                placeholder="Como te chamam?"
+                maxLength={LIMITES.nomePessoa}
+                placeholder={ENTRAR_PLACEHOLDER_NOME}
                 className="w-full border-2 border-ink bg-cream px-3 py-2 font-mono text-sm text-ink placeholder:text-ink/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
               />
             </div>
 
             <div className="flex flex-col gap-2">
               <span className="font-mono text-xs font-bold uppercase tracking-widest">
-                Seu emoji
+                {ENTRAR_ROTULO_EMOJI}
               </span>
               <div className="flex flex-wrap gap-2">
                 {EMOJIS_IDENTIDADE.map((emoji) => (
@@ -180,21 +214,31 @@ export function DesafioClient({ desafio }: { desafio: DesafioResumo }) {
               </div>
             </div>
 
-            {state.error ? (
-              <p className="border-2 border-coral bg-cream px-3 py-2 font-mono text-sm text-coral">
-                {state.error}
-              </p>
-            ) : null}
+          </div>
+          </Janela>
 
-            <button
-              type="submit"
-              disabled={pending || !emojiSelecionado}
-              className="border-2 border-ink bg-amber px-4 py-3 font-mono text-sm font-bold uppercase tracking-widest shadow-hard transition-transform active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:opacity-60"
-            >
-              {pending ? "Entrando..." : "Entrar na sala"}
-            </button>
-          </form>
-        </Janela>
+          <Janela titulo={ENTRAR_JANELA_COMPROMISSO}>
+            <div className="flex flex-col gap-5">
+              <CamposCompromisso />
+              <div className="border-t-2 border-ink/15 pt-3 font-mono text-[11px] text-ink/70">
+                <p className="font-bold text-ink">{EXEMPLOS_TITULO}</p>
+                <p className="mt-1">{EXEMPLOS_REALIZACAO.join(" · ")}</p>
+              </div>
+            </div>
+          </Janela>
+
+          {state.error ? (
+            <p className="border-2 border-coral bg-cream px-3 py-2 font-mono text-sm text-coral">{state.error}</p>
+          ) : null}
+
+          <button
+            type="submit"
+            disabled={pending || !emojiSelecionado}
+            className="border-2 border-ink bg-amber px-4 py-3 font-mono text-sm font-bold uppercase tracking-widest shadow-hard transition-transform active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:opacity-60"
+          >
+            {pending ? "Entrando..." : ENTRAR_BOTAO}
+          </button>
+        </form>
       </main>
     );
   }

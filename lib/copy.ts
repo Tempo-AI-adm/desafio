@@ -88,6 +88,80 @@ export function textoLobbyCriador(inicioMarcado: string | null, hoje: string): s
 
 export const BOTAO_LARGAR_AGORA = "LARGAR AGORA";
 
+// ---- Entrar na sala e se propor (o compromisso) ----
+
+/** O ritual em uma frase (CONCEITO.md): base da Home, do onboarding e da entrada. */
+export const RITUAL =
+  "Você combina com amigos quantas coisas boas quer realizar por semana. Quando fizer uma, registra com um toque, e o grupo comemora junto.";
+
+export const ENTRAR_TITULO = "CHEGOU. BORA.";
+export const ENTRAR_JANELA_QUEM = "Quem é você?";
+export const ENTRAR_ROTULO_NOME = "Seu nome";
+export const ENTRAR_PLACEHOLDER_NOME = "Como te chamam?";
+export const ENTRAR_ROTULO_EMOJI = "Seu emoji";
+export const ENTRAR_JANELA_COMPROMISSO = "A que você se propõe";
+export const ROTULO_META = "Quantas coisas boas você quer realizar por semana?";
+export const EXPLICA_META =
+  "Pense no seu ritmo de verdade, não no ideal. Esse é o número que você está se propondo a bater em cada semana do desafio, e qualquer coisa que te faça bem conta.";
+export const META_OUTRO = "Outro número";
+export const PLACEHOLDER_META_OUTRO = "De 1 a 30";
+export const ROTULO_FOCO = "Tem algum foco nesse período? (se quiser)";
+export const PLACEHOLDER_FOCO = "Ex: voltar a treinar, estudar pro concurso";
+export const EXPLICA_FOCO =
+  "Se tem uma área que você quer priorizar, escreva aqui. O grupo vê o seu foco e comemora quando você avança nele. Quanto do que você fez foi no foco, só você vê.";
+export const EXEMPLOS_TITULO = "Vale como coisa boa, por exemplo:";
+export const EXEMPLOS_REALIZACAO = [
+  "malhar",
+  "ler 20 páginas",
+  "tomar uma decisão que vinha adiando",
+  "resolver uma pendência",
+  "ligar pra família",
+  "cozinhar pra semana",
+  "organizar algo da casa",
+  "estudar",
+];
+export const ENTRAR_BOTAO = "Entrar e me propor";
+export const ENTRAR_RODANDO =
+  "O desafio já está rolando. Você começa a contar a partir de hoje, e as semanas que já passaram não pesam pra você.";
+export const ENTRAR_ENCERRADA =
+  "Esse desafio já terminou, então não dá mais pra entrar nele. Aqui embaixo dá pra ver como foi pro grupo.";
+
+export const ERRO_ENTRAR_SALA_ENCERRADA =
+  "Esse desafio já terminou, então não dá mais pra entrar nele. Dá pra ver como foi pro grupo nessa mesma página.";
+export const ERRO_COMPROMISSO_CONGELADO =
+  "O desafio já começou, então o seu compromisso fica valendo do jeito que você se propôs, até o fim.";
+export const ERRO_COMPROMISSO: Record<"meta" | "focoGrande" | "nome" | "nomeGrande" | "emoji", string> = {
+  meta: "Escolhe quantas coisas boas por semana você quer realizar, de 1 a 30.",
+  focoGrande: "O foco ficou grande, tenta resumir em até 60 letras.",
+  nome: "Escolhe um nome, é assim que o grupo vai te ver.",
+  nomeGrande: "Nome muito grande, até 30 letras.",
+  emoji: "Escolhe um emoji da lista.",
+};
+
+/** "5 coisas boas por semana" (o compromisso). */
+export function labelMetaSemanal(meta: number): string {
+  return meta === 1 ? "1 coisa boa por semana" : `${meta} coisas boas por semana`;
+}
+
+/** "5 por semana" (lista curta de quem chegou). */
+export function labelMetaCurta(meta: number): string {
+  return `${meta} por semana`;
+}
+
+/** "foco: voltar a treinar" (público, é parte do que a pessoa se propôs). */
+export function labelFoco(foco: string): string {
+  return `foco: ${foco}`;
+}
+
+export const LOBBY_JANELA_COMPROMISSO = "Seu compromisso";
+export const LOBBY_SEM_FOCO = "Sem foco definido, tudo que te fizer bem conta igual.";
+export const LOBBY_EXPLICA_COMPROMISSO =
+  "Até a largada dá pra ajustar. Quando o desafio começar, esse compromisso fica valendo até o fim, do jeito que você se propôs.";
+export const LOBBY_AJUSTAR = "Ajustar";
+export const LOBBY_FECHAR_AJUSTE = "Fechar";
+export const LOBBY_SALVAR_AJUSTE = "Salvar compromisso";
+export const LOBBY_QUEM_CHEGOU = "Quem já chegou";
+
 // ---- Sala criada ----
 
 export const SUCESSO_TITULO = "SALA CRIADA.";
@@ -99,9 +173,6 @@ export function labelComecaEm(dia: string, hoje: string): string {
   return dia === hoje ? "Hoje" : labelDiaPorExtenso(dia);
 }
 
-export function labelPronto(pronto: boolean): string {
-  return pronto ? "Pronto" : "Esperando";
-}
 
 /** Selo de comemoração ao registrar uma realização, em camadas pela
  * contagem do dia (STYLE.md "Strings-base"). Não é streak entre dias,
@@ -200,13 +271,7 @@ export const LABEL_QUANTAS_VEZES = "Repetir quantas vezes?";
 // rótulo curto e vago. Sem infantilizar; quem nunca usou nada parecido
 // tem que entender só lendo.
 
-/** Janela do lobby onde a pessoa escolhe as missões dela. */
-export const TITULO_LOBBY_MISSOES = "Suas missões";
 
-/** Texto do lobby, na janela "Suas missões": a primeira missão é o
- * compromisso da pessoa pra frente, por isso nasce sem nada marcado. */
-export const TEXTO_LOBBY_NORTE =
-  "Antes da largada, escolha pelo menos uma missão: algo que você vai fazer nesses dias porque decidiu ser a sua melhor versão durante o desafio. É um compromisso seu com você mesmo, então ela começa sem nada marcado e vai se enchendo conforme você cumpre. Depois da largada, dá pra somar missões novas sempre que quiser.";
 
 /** Rótulo do campo de título no lobby: a 1ª missão e as seguintes. */
 export function rotuloTituloMissaoLobby(quantasJaTem: number): string {
@@ -215,9 +280,6 @@ export function rotuloTituloMissaoLobby(quantasJaTem: number): string {
 
 export const BOTAO_ASSUMIR_MISSAO = "Assumir esta missão";
 
-/** Apoio no lobby, depois da 1ª missão, antes do PRONTO. */
-export const TEXTO_LOBBY_ANTES_DO_PRONTO =
-  "Se quiser se propor a mais alguma coisa, é só preencher de novo aqui em cima. Quando sentir que a sua lista está do jeito que você quer, aperte PRONTO pra avisar o grupo que você está dentro.";
 
 export const PLACEHOLDER_TITULO_MISSAO = "Ex: malhar, ler 20 páginas, ligar pra minha avó";
 
@@ -261,8 +323,6 @@ export const EXPLICA_JA_FEITOS =
 // ---- Erros das missões ----
 export const ERRO_MISSAO_SEM_TITULO =
   "Escreva qual é a missão, pra você e o grupo saberem a que você está se propondo.";
-export const ERRO_PRONTO_SEM_MISSAO =
-  "Pra ficar pronto, primeiro se proponha a pelo menos uma missão: é ela que marca a sua entrada no desafio.";
 export const ERRO_MISSAO_DE_OUTRA_PESSOA =
   "Essa missão é de outra pessoa. Cada um marca só as próprias missões.";
 export const ERRO_JA_FEITOS =

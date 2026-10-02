@@ -13,6 +13,10 @@ export type Participante = {
   emoji: string;
   token: string;
   pronto: boolean;
+  /** o compromisso: coisas boas por semana (nulo só em sala antiga) */
+  metaSemanal: number | null;
+  /** foco opcional do período */
+  foco: string | null;
   ultimaAtividade: string;
   criadoEm: string;
 };
@@ -24,6 +28,8 @@ type LinhaParticipante = {
   emoji: string;
   token: string;
   pronto: boolean;
+  meta_semanal: number | null;
+  foco: string | null;
   ultima_atividade: string;
   criado_em: string;
 };
@@ -36,6 +42,8 @@ function paraParticipante(linha: LinhaParticipante): Participante {
     emoji: linha.emoji,
     token: linha.token,
     pronto: linha.pronto,
+    metaSemanal: linha.meta_semanal,
+    foco: linha.foco,
     ultimaAtividade: linha.ultima_atividade,
     criadoEm: linha.criado_em,
   };
@@ -45,6 +53,9 @@ export async function criarParticipante(dados: {
   desafioId: string;
   nome: string;
   emoji: string;
+  /** o compromisso já entra junto (entrar = se propor, num passo só) */
+  metaSemanal?: number;
+  foco?: string | null;
 }): Promise<Participante> {
   const { data, error } = await supabase
     .from("participantes")
@@ -53,6 +64,10 @@ export async function criarParticipante(dados: {
       nome: dados.nome,
       emoji: dados.emoji,
       token: crypto.randomUUID(),
+      meta_semanal: dados.metaSemanal ?? null,
+      foco: dados.foco ?? null,
+      // Quem se propôs está pronto (o botão PRONTO saiu no modelo v2).
+      pronto: dados.metaSemanal !== undefined,
     })
     .select()
     .single();
@@ -89,10 +104,18 @@ export async function listarParticipantesPorDesafio(desafioId: string): Promise<
   return (data as LinhaParticipante[]).map(paraParticipante);
 }
 
-export async function marcarPronto(participanteId: string, pronto: boolean): Promise<void> {
-  const { error } = await supabase.from("participantes").update({ pronto }).eq("id", participanteId);
+/** Ajusta o compromisso (meta + foco). Quem chama garante que a sala
+ * ainda está no lobby: o compromisso congela na largada. */
+export async function atualizarCompromisso(
+  participanteId: string,
+  compromisso: { metaSemanal: number; foco: string | null },
+): Promise<void> {
+  const { error } = await supabase
+    .from("participantes")
+    .update({ meta_semanal: compromisso.metaSemanal, foco: compromisso.foco, pronto: true })
+    .eq("id", participanteId);
 
-  if (error) throw new Error(`Erro ao marcar pronto: ${error.message}`);
+  if (error) throw new Error(`Erro ao ajustar o compromisso: ${error.message}`);
 }
 
 /** Marca "vi a pessoa agora": chamado em toda visita reconhecida à
