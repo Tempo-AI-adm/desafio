@@ -4,7 +4,7 @@ import { useActionState, useEffect, useState } from "react";
 import { Janela } from "@/components/Janela";
 import { EMOJIS_IDENTIDADE } from "@/lib/identidade-constants";
 import {
-  chaveCriadorLocalStorage,
+  CABECALHO_TOKEN,
   chaveTokenLocalStorage,
   registrarDesafioLocal,
 } from "@/lib/identidade-local";
@@ -36,7 +36,6 @@ export function DesafioClient({ desafio }: { desafio: DesafioResumo }) {
   // (adicionar inegociável, PRONTO, LARGAR). Os dados do participante
   // em si a AreaDoDesafio busca sozinha via /api/lobby.
   const [tokenCarregado, setTokenCarregado] = useState<string | null>(null);
-  const [souCriador, setSouCriador] = useState(false);
   const [emojiSelecionado, setEmojiSelecionado] = useState("");
 
   const [state, formAction, pending] = useActionState(
@@ -57,14 +56,11 @@ export function DesafioClient({ desafio }: { desafio: DesafioResumo }) {
 
     async function verificar() {
       let token: string | null = null;
-      let flagCriador = false;
       try {
         token = localStorage.getItem(chaveTokenLocalStorage(desafio.codigo));
-        flagCriador = localStorage.getItem(chaveCriadorLocalStorage(desafio.codigo)) === "1";
       } catch {
         token = null;
       }
-      if (!cancelado) setSouCriador(flagCriador);
 
       if (!token) {
         if (!cancelado) setFase("identidade");
@@ -72,9 +68,9 @@ export function DesafioClient({ desafio }: { desafio: DesafioResumo }) {
       }
 
       try {
-        const res = await fetch(
-          `/api/participante?codigo=${encodeURIComponent(desafio.codigo)}&token=${encodeURIComponent(token)}`,
-        );
+        const res = await fetch(`/api/participante?codigo=${encodeURIComponent(desafio.codigo)}`, {
+          headers: { [CABECALHO_TOKEN]: token },
+        });
         if (res.ok) {
           const data = await res.json();
           if (data.participante) {
@@ -149,7 +145,6 @@ export function DesafioClient({ desafio }: { desafio: DesafioResumo }) {
           <form action={formAction} className="flex flex-col gap-6">
             <input type="hidden" name="codigo" value={desafio.codigo} />
             <input type="hidden" name="emoji" value={emojiSelecionado} />
-            <input type="hidden" name="souCriador" value={souCriador ? "1" : "0"} />
 
             <div className="flex flex-col gap-2">
               <label htmlFor="nome" className="font-mono text-xs font-bold uppercase tracking-widest">

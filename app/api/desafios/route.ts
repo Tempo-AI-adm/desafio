@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import { buscarDesafioPorCodigo } from "@/lib/desafios";
 
 // Leitura pública pros cartões da Home: pra cada código da lista local
-// (no máximo 3), devolve nome + estado atual. Código que não existe
-// mais no banco simplesmente não volta.
+// (no máximo 3), devolve só o estado atual (o nome a Home já tem na
+// lista local). Código que não existe mais no banco simplesmente não volta.
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const codigos = (searchParams.get("codigos") ?? "")
@@ -17,6 +17,6 @@ export async function GET(request: Request) {
   return NextResponse.json({
     desafios: encontrados
       .filter((d) => d !== undefined)
-      .map((d) => ({ codigo: d.codigo, nome: d.nome, estado: d.estado })),
+      .map((d) => ({ codigo: d.codigo, estado: d.estado })),
   });
 }

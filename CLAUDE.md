@@ -24,6 +24,16 @@ Você é o executor técnico. O dono decide produto e testa; você escreve o có
 - Sem gradiente, canto arredondado ou sombra difusa (ver `STYLE.md`).
 - **Nunca exibir na UI o valor cru de um campo do banco (estado, permiteBackfill, tipo, etc.).** Toda tradução valor-interno → texto-humano passa por `lib/copy.ts`. Se um valor novo não tiver tradução lá, adicione antes de usar.
 
+## Segurança (permanente)
+O app não tem login: o token do dispositivo É a identidade. Proteger o banco é proteger as pessoas.
+- **Banco só pelo servidor.** O cliente do Supabase (`lib/supabase.ts`, marcado `server-only`) usa a chave de serviço e só roda em Server Actions, Route Handlers e Server Components. Nenhum componente do navegador acessa o banco. A chave anon não lê nem escreve nada (RLS sem política pra anon).
+- **Nunca montar SQL por concatenação de texto.** Só o cliente do banco com parâmetros (`.eq`, `.insert`, etc.).
+- **Segredos só em variáveis de ambiente**, nunca no código versionado, e **nunca com o prefixo `NEXT_PUBLIC_`** (esse prefixo manda o valor pro navegador).
+- **Nunca logar tokens nem chaves** (nem em `console.log`, nem em mensagens de erro). Token nunca vai na URL (vai no cabeçalho `x-desafio-token`), porque URLs ficam nos registros de acesso.
+- **Toda resposta ao navegador com o mínimo necessário:** nunca o token de outra pessoa, nunca o placar privado do foco de outra pessoa, nunca campo que a tela não usa.
+- **Toda entrada validada no servidor** (textos, números, códigos, ids) com os limites de `lib/validacao.ts`, sem confiar no formulário. Código, id ou token fora do formato nem chega ao banco.
+- **Papéis decididos pelo servidor:** quem é criador vem da prova em cookie httpOnly dada na criação da sala (`lib/criador.ts`), nunca de um valor mandado pelo navegador.
+
 ## Como construir
 - **Em fatias verticais:** cada fatia funciona ponta a ponta e dá pra testar. Não construir "o banco todo" antes de ter tela.
 - **Uma fatia por vez.** Ao terminar, pare e diga exatamente o que dá pra testar.

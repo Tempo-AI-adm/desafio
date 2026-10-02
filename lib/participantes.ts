@@ -4,6 +4,7 @@
 // Handlers e Server Components, nunca vai pro bundle do navegador.
 
 import { supabase } from "./supabase";
+import { ehUuid } from "./validacao";
 
 export type Participante = {
   id: string;
@@ -64,6 +65,8 @@ export async function buscarParticipantePorToken(
   desafioId: string,
   token: string,
 ): Promise<Participante | undefined> {
+  // Token é UUID: qualquer outra coisa nem consulta o banco.
+  if (!ehUuid(token)) return undefined;
   const { data, error } = await supabase
     .from("participantes")
     .select()

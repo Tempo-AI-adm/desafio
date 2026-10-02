@@ -45,6 +45,7 @@ import {
   type ReagirState,
   type RegistrarInegociavelState,
 } from "./actions";
+import { CABECALHO_TOKEN } from "@/lib/identidade-local";
 import type { DadosSala } from "@/lib/tipos-sala";
 
 
@@ -163,9 +164,9 @@ export function AreaDoDesafio({
 
     async function buscar() {
       try {
-        const res = await fetch(
-          `/api/lobby?codigo=${encodeURIComponent(codigo)}&token=${encodeURIComponent(token)}`,
-        );
+        const res = await fetch(`/api/lobby?codigo=${encodeURIComponent(codigo)}`, {
+          headers: { [CABECALHO_TOKEN]: token },
+        });
         if (res.ok) {
           const data = await res.json();
           if (data.lobby) {

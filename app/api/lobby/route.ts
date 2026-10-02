@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { CABECALHO_TOKEN } from "@/lib/identidade-local";
 import { buscarDesafioPorCodigo } from "@/lib/desafios";
 import {
   buscarParticipantePorToken,
@@ -19,7 +20,8 @@ import type { DadosSala, InegociavelResumo, ItemFeed, ParticipanteSala } from "@
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const codigo = searchParams.get("codigo");
-  const token = searchParams.get("token");
+  // Token no cabeçalho, nunca na URL (URLs ficam nos registros de acesso).
+  const token = request.headers.get(CABECALHO_TOKEN);
 
   if (!codigo || !token) {
     return NextResponse.json({ lobby: null }, { status: 400 });
@@ -88,7 +90,6 @@ export async function GET(request: Request) {
       nome: p.nome,
       emoji: p.emoji,
       pronto: p.pronto,
-      quantidadeInegociaveis: inegociaveisDele.length,
       inegociaveis: inegociaveisDele,
       bonus: estouros,
       contagemHoje: dele.filter((r) => r.dia === hoje).length,
@@ -138,11 +139,8 @@ export async function GET(request: Request) {
     hoje,
     agora: new Date(agora).toISOString(),
     meuId: eu.id,
-    meuNome: eu.nome,
-    meuEmoji: eu.emoji,
     souCriador: desafio.criadorParticipanteId === eu.id,
     meuPronto: eu.pronto,
-    minhaContagemHoje: euNaSala?.contagemHoje ?? 0,
     meusInegociaveis: euNaSala?.inegociaveis ?? [],
     // Os extras antigos já estão nas missões (legado), então aqui não
     // entram de novo.

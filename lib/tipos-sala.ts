@@ -20,7 +20,6 @@ export type ParticipanteSala = {
   nome: string;
   emoji: string;
   pronto: boolean;
-  quantidadeInegociaveis: number;
   /** missões da pessoa, incluindo os extras antigos (legado) */
   inegociaveis: InegociavelResumo[];
   /** marcações além do alvo (bônus): celebração pessoal, fora do número do grupo */
@@ -56,11 +55,8 @@ export type DadosSala = {
   /** momento da busca (ISO), pra hora no cabeçalho; atualiza a cada busca */
   agora: string;
   meuId: string;
-  meuNome: string;
-  meuEmoji: string;
   souCriador: boolean;
   meuPronto: boolean;
-  minhaContagemHoje: number;
   /** minhas missões; as `legado` (extras antigos) vêm por último */
   meusInegociaveis: InegociavelResumo[];
   /** número do grupo, 0 a 1 (lib/progresso.ts); nulo = sala sem missão.

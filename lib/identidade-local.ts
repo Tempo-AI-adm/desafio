@@ -6,9 +6,9 @@ export function chaveTokenLocalStorage(codigo: string): string {
   return `desafio-token:${codigo}`;
 }
 
-export function chaveCriadorLocalStorage(codigo: string): string {
-  return `desafio-criador:${codigo}`;
-}
+/** Cabeçalho em que o navegador manda o token pras rotas de leitura.
+ * Nunca na URL: URLs ficam nos registros de acesso do servidor. */
+export const CABECALHO_TOKEN = "x-desafio-token";
 
 // Lista local dos desafios em que a pessoa entrou (PRD "Identidade",
 // "Lista local de desafios"): só os 3 mais recentes, o mais novo no

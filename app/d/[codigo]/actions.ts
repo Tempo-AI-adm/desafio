@@ -1,5 +1,9 @@
 "use server";
 
+import { cookies } from "next/headers";
+import { confereProvaDeCriador, nomeCookieCriador } from "@/lib/criador";
+import { LIMITES } from "@/lib/validacao";
+
 import { buscarDesafioPorCodigo, definirCriadorSeVazio, largarDesafio } from "@/lib/desafios";
 import {
   buscarParticipantePorToken,
@@ -34,11 +38,11 @@ import {
 
 const VALORES_ASSUNTO: readonly string[] = ASSUNTOS.map((a) => a.valor);
 
+// Só o que o navegador usa: o emoji (lista local da Home) e o token
+// (a identidade do dispositivo, só pra própria pessoa).
 export type ReivindicarIdentidadeState = {
   error?: string;
   participante?: {
-    id: string;
-    nome: string;
     emoji: string;
     token: string;
   };
@@ -51,7 +55,6 @@ export async function reivindicarIdentidadeAction(
   const codigo = String(formData.get("codigo") ?? "");
   const nome = String(formData.get("nome") ?? "").trim();
   const emoji = String(formData.get("emoji") ?? "");
-  const souCriador = formData.get("souCriador") === "1";
 
   const desafio = await buscarDesafioPorCodigo(codigo);
   if (!desafio) {
@@ -61,8 +64,8 @@ export async function reivindicarIdentidadeAction(
   if (!nome) {
     return { error: "Escolhe um nome." };
   }
-  if (nome.length > 30) {
-    return { error: "Nome muito grande, até 30 letras." };
+  if (nome.length > LIMITES.nomePessoa) {
+    return { error: `Nome muito grande, até ${LIMITES.nomePessoa} letras.` };
   }
   if (!(EMOJIS_IDENTIDADE as readonly string[]).includes(emoji)) {
     return { error: "Escolhe um emoji da lista." };
@@ -70,14 +73,15 @@ export async function reivindicarIdentidadeAction(
 
   const participante = await criarParticipante({ desafioId: desafio.id, nome, emoji });
 
-  if (souCriador) {
+  // Criador: só quem tem a prova que o servidor deu ao criar a sala
+  // (cookie httpOnly), nunca um valor mandado pelo formulário.
+  const prova = (await cookies()).get(nomeCookieCriador(desafio.codigo))?.value;
+  if (confereProvaDeCriador(desafio.id, prova)) {
     await definirCriadorSeVazio(desafio.id, participante.id);
   }
 
   return {
     participante: {
-      id: participante.id,
-      nome: participante.nome,
       emoji: participante.emoji,
       token: participante.token,
     },

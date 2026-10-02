@@ -4,6 +4,7 @@
 // Server Actions e Route Handlers, nunca vai pro bundle do navegador.
 
 import { supabase } from "./supabase";
+import { ehUuid } from "./validacao";
 
 export { FUSO_DO_APP, hojeISO } from "./tempo";
 
@@ -135,6 +136,7 @@ export async function listarRealizacoesDaSala(
 }
 
 export async function buscarRealizacaoPorId(id: string): Promise<Realizacao | undefined> {
+  if (!ehUuid(id)) return undefined;
   const { data, error } = await supabase.from("realizacoes").select().eq("id", id).maybeSingle();
 
   if (error) throw new Error(`Erro ao buscar realização por id: ${error.message}`);
@@ -150,6 +152,7 @@ export async function apagarMarcacaoRecente(dados: {
   participanteId: string;
   criadaDepoisDe: string;
 }): Promise<boolean> {
+  if (!ehUuid(dados.realizacaoId)) return false;
   const { data, error } = await supabase
     .from("realizacoes")
     .delete()

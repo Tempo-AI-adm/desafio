@@ -6,6 +6,7 @@
 // navegador.
 
 import { supabase } from "./supabase";
+import { codigoValido, ehUuid } from "./validacao";
 import { desafioVenceu } from "./tempo";
 
 export type EstadoDesafio = "lobby" | "ativo" | "encerrado";
@@ -94,7 +95,9 @@ export async function criarDesafio(dados: {
  * app passa por aqui (páginas, APIs e ações), então ninguém vê nem
  * registra numa sala vencida como se ainda estivesse rolando. */
 export async function buscarDesafioPorCodigo(codigo: string): Promise<Desafio | undefined> {
-  const alvo = codigo.trim().toUpperCase();
+  // Fora do formato (6 letras do alfabeto) nem consulta o banco.
+  const alvo = codigoValido(codigo);
+  if (!alvo) return undefined;
   const { data, error } = await supabase.from("desafios").select().eq("codigo", alvo).maybeSingle();
 
   if (error) throw new Error(`Erro ao buscar desafio por código: ${error.message}`);
@@ -120,6 +123,7 @@ async function encerrarSeVenceu(desafio: Desafio): Promise<Desafio> {
 }
 
 export async function buscarDesafioPorId(id: string): Promise<Desafio | undefined> {
+  if (!ehUuid(id)) return undefined;
   const { data, error } = await supabase.from("desafios").select().eq("id", id).maybeSingle();
 
   if (error) throw new Error(`Erro ao buscar desafio por id: ${error.message}`);

@@ -4,6 +4,7 @@
 // Handlers, nunca vai pro bundle do navegador.
 
 import { supabase } from "./supabase";
+import { ehUuid } from "./validacao";
 
 export type Inegociavel = {
   id: string;
@@ -56,6 +57,7 @@ export async function criarInegociavel(dados: {
 }
 
 export async function buscarInegociavelPorId(id: string): Promise<Inegociavel | undefined> {
+  if (!ehUuid(id)) return undefined;
   const { data, error } = await supabase.from("inegociaveis").select().eq("id", id).maybeSingle();
 
   if (error) throw new Error(`Erro ao buscar inegociável por id: ${error.message}`);
