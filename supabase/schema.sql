@@ -102,13 +102,11 @@ create index if not exists idx_reacoes_realizacao_id
   on public.reacoes(realizacao_id);
 
 -- Row Level Security ---------------------------------------------------
--- O app não usa Supabase Auth (identidade é por token de dispositivo,
--- verificado no código do servidor, não pelo Postgres). Habilito RLS
--- em todas as tabelas (boa prática / o "Security Advisor" do Supabase
--- pede) com políticas permissivas pra anon key, a mesma coisa que já
--- temos hoje, onde qualquer verificação de "quem pode fazer o quê"
--- acontece nas Server Actions, não no banco. Dá pra apertar isso
--- depois, se um dia entrar login de verdade.
+-- O app não usa Supabase Auth nem acessa o banco pelo navegador: tudo
+-- passa pelo servidor com a chave secreta (SUPABASE_SECRET_KEY), que
+-- ignora o RLS. Pra chave pública (anon) o banco fica FECHADO: RLS
+-- ligado em todas as tabelas, nenhuma política, e nenhuma permissão
+-- (ver supabase/fechar-anon.sql, que aplica isso num banco existente).
 
 alter table public.desafios       enable row level security;
 alter table public.participantes  enable row level security;
@@ -116,13 +114,7 @@ alter table public.inegociaveis   enable row level security;
 alter table public.realizacoes    enable row level security;
 alter table public.reacoes        enable row level security;
 
-create policy "anon acesso total" on public.desafios
-  for all using (true) with check (true);
-create policy "anon acesso total" on public.participantes
-  for all using (true) with check (true);
-create policy "anon acesso total" on public.inegociaveis
-  for all using (true) with check (true);
-create policy "anon acesso total" on public.realizacoes
-  for all using (true) with check (true);
-create policy "anon acesso total" on public.reacoes
-  for all using (true) with check (true);
+revoke all on all tables in schema public from anon, authenticated;
+revoke all on all sequences in schema public from anon, authenticated;
+alter default privileges in schema public revoke all on tables from anon, authenticated;
+alter default privileges in schema public revoke all on sequences from anon, authenticated;
