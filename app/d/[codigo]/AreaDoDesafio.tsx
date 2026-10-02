@@ -18,6 +18,8 @@ import {
   LABEL_DESFEITO,
   LABEL_REGISTRO_FEITO,
   BOTAO_ADICIONAR_NOVA_MISSAO,
+  BOTAO_LARGAR_AGORA,
+  textoLobbyCriador,
   BOTAO_ASSUMIR_MISSAO,
   ROTULO_TITULO_NOVA_MISSAO,
   TEXTO_LOBBY_ANTES_DO_PRONTO,
@@ -546,10 +548,7 @@ export function AreaDoDesafio({
           <form action={largarActionFn} className="flex flex-col gap-3">
             <input type="hidden" name="codigo" value={codigo} />
             <input type="hidden" name="token" value={token} />
-            <p className="font-mono text-xs text-ink/60">
-              Você pode largar mesmo que nem todo mundo esteja pronto, a
-              decisão é sua.
-            </p>
+            <p className="font-mono text-xs text-ink/60">{textoLobbyCriador(dados.inicioMarcado, dados.hoje)}</p>
             {largarState.error ? (
               <p className="border-2 border-coral bg-cream px-3 py-2 font-mono text-sm text-coral">
                 {largarState.error}
@@ -560,7 +559,7 @@ export function AreaDoDesafio({
               disabled={largarPending}
               className="border-2 border-ink bg-amber px-4 py-3 font-mono text-sm font-bold uppercase tracking-widest shadow-hard transition-transform active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:opacity-60"
             >
-              {largarPending ? "..." : "LARGAR"}
+              {largarPending ? "..." : BOTAO_LARGAR_AGORA}
             </button>
           </form>
         </Janela>

@@ -3,7 +3,8 @@
 // enum, sempre passa por aqui. Ver STYLE.md pro tom.
 
 import type { EstadoDesafio } from "./desafios";
-import { diaCurto } from "./tempo";
+import type { TipoPeriodo } from "./periodo";
+import { diaCurto, diaDaSemana } from "./tempo";
 
 export const ESTADO_LABEL: Record<EstadoDesafio, string> = {
   lobby: "Esperando todo mundo entrar",
@@ -18,10 +19,84 @@ export const ESTADO_CURTO: Record<EstadoDesafio, string> = {
   encerrado: "encerrado",
 };
 
-export function labelBackfill(permiteBackfill: boolean): string {
-  return permiteBackfill
-    ? "Dá pra completar dias atrasados"
-    : "Só vale o dia de hoje";
+// ---- Datas por extenso curto ("seg, 5 out") ----
+
+const DIAS_SEMANA = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
+const MESES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+
+/** "seg, 5 out" a partir de YYYY-MM-DD. */
+export function labelDiaPorExtenso(dia: string): string {
+  const [, m, d] = dia.split("-").map(Number);
+  return `${DIAS_SEMANA[diaDaSemana(dia)]}, ${d} ${MESES[m - 1]}`;
+}
+
+/** "5 out" a partir de YYYY-MM-DD. */
+export function labelDiaMes(dia: string): string {
+  const [, m, d] = dia.split("-").map(Number);
+  return `${d} ${MESES[m - 1]}`;
+}
+
+// ---- Criar sala ----
+
+export const PERIODO_LABEL: Record<TipoPeriodo, string> = {
+  "1semana": "1 semana",
+  "2semanas": "2 semanas",
+  "1mes": "1 mês",
+  ateData: "Até uma data",
+};
+
+export const CRIAR_ROTULO_NOME = "Nome da sala";
+export const CRIAR_PLACEHOLDER_NOME = "Ex: Bora outubro";
+export const CRIAR_ROTULO_PERIODO = "Por quanto tempo?";
+export const CRIAR_EXPLICA_PERIODO =
+  "É o tempo que o grupo vai passar junto nessa. Durante ele, cada pessoa se propõe a realizar um número de coisas boas por semana, no ritmo dela.";
+export const CRIAR_ROTULO_FIM = "Até quando? (esse dia conta)";
+export const CRIAR_ROTULO_INICIO = "Quando começa?";
+export const CRIAR_EXPLICA_INICIO =
+  "Recomeçar num marco, como uma segunda-feira ou o começo do mês, dá mais gás pra todo mundo. A sala começa sozinha nesse dia, e até lá o grupo vai entrando e se propondo. Se todo mundo já estiver pronto antes, você pode largar na hora.";
+export const CRIAR_OUTRA_DATA = "Outra data";
+export const CRIAR_BOTAO = "Criar sala";
+
+/** Atalho de início: "Segunda, 5 out" / "Dia 1, 1 nov" (hoje, se for o dia). */
+export function labelSugestaoInicio(tipo: "segunda" | "dia1", dia: string, hoje: string): string {
+  if (dia === hoje) return tipo === "segunda" ? `Hoje, segunda (${labelDiaMes(dia)})` : `Hoje, dia 1 (${labelDiaMes(dia)})`;
+  return tipo === "segunda" ? `Segunda, ${labelDiaMes(dia)}` : `Dia 1, ${labelDiaMes(dia)}`;
+}
+
+export const ERRO_NOVA_SALA: Record<"nome" | "nomeGrande" | "periodo" | "inicio" | "fim" | "longo", string> = {
+  nome: "Dá um nome pra sala, é ele que o grupo vai ver no convite.",
+  nomeGrande: "Esse nome ficou grande demais, tenta um de até 40 letras.",
+  periodo: "Escolhe por quanto tempo o desafio vai durar.",
+  inicio: "Escolhe uma data de início a partir de hoje (até um ano pra frente).",
+  fim: "Escolhe até quando vai o desafio, num dia igual ou depois do início.",
+  longo: "Esse período ficou longo demais. Que tal até um ano?",
+};
+
+/** "1 mês, de 5 out a 4 nov" na tela de sala criada. */
+export function labelPeriodoCompleto(tipo: TipoPeriodo, inicio: string, fim: string): string {
+  const base = tipo === "ateData" ? "Até uma data" : PERIODO_LABEL[tipo];
+  return `${base}, de ${labelDiaMes(inicio)} a ${labelDiaMes(fim)}`;
+}
+
+/** Lobby, pro criador: a sala começa sozinha no dia marcado. */
+export function textoLobbyCriador(inicioMarcado: string | null, hoje: string): string {
+  const quando = inicioMarcado ? (inicioMarcado === hoje ? "hoje" : labelDiaPorExtenso(inicioMarcado)) : null;
+  return quando
+    ? `A sala começa sozinha ${quando === "hoje" ? "hoje" : `em ${quando}`}, e até lá o grupo vai chegando e se propondo. Se todo mundo já estiver aqui e com vontade de começar, você pode largar agora.`
+    : "Quando o grupo estiver aqui e com vontade de começar, é só largar.";
+}
+
+export const BOTAO_LARGAR_AGORA = "LARGAR AGORA";
+
+// ---- Sala criada ----
+
+export const SUCESSO_TITULO = "SALA CRIADA.";
+export const SUCESSO_TEXTO =
+  "Agora é só mandar o link no grupo. Quem abrir entra na sala e se propõe também, e no dia marcado o desafio começa sozinho.";
+
+/** "Começa sozinha seg, 5 out" (ou "hoje"). */
+export function labelComecaEm(dia: string, hoje: string): string {
+  return dia === hoje ? "Hoje" : labelDiaPorExtenso(dia);
 }
 
 export function labelPronto(pronto: boolean): string {
@@ -87,10 +162,10 @@ export function labelDiaDoDesafio(dia: number, duracaoDias: number): string {
  * é status, não conquista. */
 export const LABEL_SELO_ENCERRADO = "Encerrado";
 
-/** "16/09 — 22/09": período real do desafio, no cabeçalho da sala
- * encerrada (datas YYYY-MM-DD, fuso de Brasília). */
+/** "16/09 a 22/09": período real do desafio, no cabeçalho da sala
+ * encerrada (datas YYYY-MM-DD, fuso de Brasília). Sem travessão (MOOD). */
 export function labelPeriodo(inicio: string, fim: string): string {
-  return `${diaCurto(inicio)} — ${diaCurto(fim)}`;
+  return `${diaCurto(inicio)} a ${diaCurto(fim)}`;
 }
 
 /** Mensagem pronta do botão "Compartilhar sala" (abre o WhatsApp). */

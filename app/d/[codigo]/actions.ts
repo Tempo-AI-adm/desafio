@@ -248,7 +248,7 @@ export async function largarAction(
     return { error: "O desafio já começou." };
   }
 
-  await largarDesafio(desafio.id);
+  await largarDesafio(desafio);
 
   return { ok: true };
 }

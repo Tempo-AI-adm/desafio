@@ -135,6 +135,7 @@ export async function GET(request: Request) {
     salaNome: desafio.nome,
     duracaoDias: desafio.duracaoDias,
     diaAtual: desafio.dataInicio ? diaDoDesafio(desafio.dataInicio, desafio.duracaoDias) : null,
+    inicioMarcado: desafio.dataInicioMarcada,
     periodo: desafio.dataInicio ? periodoDoDesafio(desafio.dataInicio, desafio.duracaoDias) : null,
     hoje,
     agora: new Date(agora).toISOString(),

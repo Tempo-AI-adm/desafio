@@ -48,6 +48,8 @@ export type DadosSala = {
   duracaoDias: number;
   /** dia atual do desafio (1..duração); nulo antes de largar */
   diaAtual: number | null;
+  /** dia em que a sala larga sozinha (YYYY-MM-DD); nulo em sala antiga */
+  inicioMarcado: string | null;
   /** primeiro e último dia (YYYY-MM-DD, Brasília); nulo antes de largar */
   periodo: { inicio: string; fim: string } | null;
   /** "hoje" (YYYY-MM-DD, fuso de Brasília) segundo o servidor */

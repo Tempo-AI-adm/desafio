@@ -7,7 +7,8 @@
 
 import { supabase } from "./supabase";
 import { codigoValido, ehUuid } from "./validacao";
-import { desafioVenceu } from "./tempo";
+import { duracaoNaLargadaAntecipada } from "./periodo";
+import { desafioVenceu, hojeISO, meiaNoiteDeBrasilia } from "./tempo";
 
 export type EstadoDesafio = "lobby" | "ativo" | "encerrado";
 
@@ -16,7 +17,8 @@ export type Desafio = {
   codigo: string;
   nome: string;
   duracaoDias: number;
-  permiteBackfill: boolean;
+  /** dia em que a sala larga sozinha (YYYY-MM-DD); nulo em sala antiga */
+  dataInicioMarcada: string | null;
   estado: EstadoDesafio;
   criadorParticipanteId: string | null;
   dataInicio: string | null;
@@ -28,7 +30,7 @@ type LinhaDesafio = {
   codigo: string;
   nome: string;
   duracao_dias: number;
-  permite_backfill: boolean;
+  data_inicio_marcada: string | null;
   estado: EstadoDesafio;
   criador_participante_id: string | null;
   data_inicio: string | null;
@@ -41,7 +43,7 @@ function paraDesafio(linha: LinhaDesafio): Desafio {
     codigo: linha.codigo,
     nome: linha.nome,
     duracaoDias: linha.duracao_dias,
-    permiteBackfill: linha.permite_backfill,
+    dataInicioMarcada: linha.data_inicio_marcada,
     estado: linha.estado,
     criadorParticipanteId: linha.criador_participante_id,
     dataInicio: linha.data_inicio,
@@ -62,7 +64,8 @@ function gerarCodigoAleatorio(): string {
 export async function criarDesafio(dados: {
   nome: string;
   duracaoDias: number;
-  permiteBackfill: boolean;
+  /** dia em que a sala larga sozinha */
+  dataInicioMarcada: string;
 }): Promise<Desafio> {
   // O código tem que ser único (constraint no banco). Em vez de
   // checar antes (o que ainda deixaria uma corrida possível), tenta
@@ -75,7 +78,7 @@ export async function criarDesafio(dados: {
         codigo: gerarCodigoAleatorio(),
         nome: dados.nome,
         duracao_dias: dados.duracaoDias,
-        permite_backfill: dados.permiteBackfill,
+        data_inicio_marcada: dados.dataInicioMarcada,
       })
       .select()
       .single();
@@ -102,7 +105,30 @@ export async function buscarDesafioPorCodigo(codigo: string): Promise<Desafio | 
 
   if (error) throw new Error(`Erro ao buscar desafio por código: ${error.message}`);
   if (!data) return undefined;
-  return encerrarSeVenceu(paraDesafio(data as LinhaDesafio));
+  return encerrarSeVenceu(await largarSeChegouODia(paraDesafio(data as LinhaDesafio)));
+}
+
+/** lobby -> ativo quando chega a data de início marcada (sem job
+ * agendado, igual ao encerramento: na primeira busca a partir desse
+ * dia). O início conta da meia-noite de Brasília do dia marcado, pras
+ * semanas começarem nele. Idempotente pelo `.eq("estado", "lobby")`. */
+async function largarSeChegouODia(desafio: Desafio): Promise<Desafio> {
+  if (desafio.estado !== "lobby" || !desafio.dataInicioMarcada) return desafio;
+  if (hojeISO() < desafio.dataInicioMarcada) return desafio;
+
+  const dataInicio = meiaNoiteDeBrasilia(desafio.dataInicioMarcada);
+  const { data, error } = await supabase
+    .from("desafios")
+    .update({ estado: "ativo", data_inicio: dataInicio })
+    .eq("id", desafio.id)
+    .eq("estado", "lobby")
+    .select()
+    .maybeSingle();
+
+  if (error) throw new Error(`Erro ao largar na data marcada: ${error.message}`);
+  // Outra busca ao mesmo tempo já largou: relê como está.
+  if (!data) return (await buscarDesafioPorId(desafio.id)) ?? desafio;
+  return paraDesafio(data as LinhaDesafio);
 }
 
 /** ativo -> encerrado quando a data passou. O `.eq("estado", "ativo")`
@@ -150,10 +176,20 @@ export async function definirCriadorSeVazio(
 /** LARGAR: lobby -> ativo, registra data de início. Idempotente, se
  * já não estiver em lobby (ex: dois cliques em corrida), o UPDATE não
  * casa linha nenhuma e só devolvemos o desafio como já está. */
-export async function largarDesafio(desafioId: string): Promise<Desafio | undefined> {
+export async function largarDesafio(desafio: Desafio): Promise<Desafio | undefined> {
+  // Largada antes da data marcada: "até uma data" mantém o fim na data
+  // escolhida (a duração cresce); os atalhos mantêm a duração.
+  const duracaoDias = desafio.dataInicioMarcada
+    ? duracaoNaLargadaAntecipada({
+        inicioMarcado: desafio.dataInicioMarcada,
+        duracaoDias: desafio.duracaoDias,
+        hojeDaLargada: hojeISO(),
+      })
+    : desafio.duracaoDias;
+  const desafioId = desafio.id;
   const { data, error } = await supabase
     .from("desafios")
-    .update({ estado: "ativo", data_inicio: new Date().toISOString() })
+    .update({ estado: "ativo", data_inicio: new Date().toISOString(), duracao_dias: duracaoDias })
     .eq("id", desafioId)
     .eq("estado", "lobby")
     .select()

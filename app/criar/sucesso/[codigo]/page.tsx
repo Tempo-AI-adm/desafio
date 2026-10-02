@@ -4,7 +4,15 @@ import { Janela } from "@/components/Janela";
 import { CopiarLinkBotao } from "@/components/CopiarLinkBotao";
 import { MarcarCriadorDoDesafio } from "@/components/MarcarCriadorDoDesafio";
 import { buscarDesafioPorCodigo } from "@/lib/desafios";
-import { ESTADO_LABEL, labelBackfill } from "@/lib/copy";
+import {
+  ESTADO_LABEL,
+  SUCESSO_TEXTO,
+  SUCESSO_TITULO,
+  labelComecaEm,
+  labelPeriodoCompleto,
+} from "@/lib/copy";
+import { inferirPeriodo, ultimoDia } from "@/lib/periodo";
+import { hojeISO } from "@/lib/tempo";
 
 export default async function DesafioCriadoPage({
   params,
@@ -17,22 +25,34 @@ export default async function DesafioCriadoPage({
   }
 
   const link = `/d/${desafio.codigo}`;
+  const inicio = desafio.dataInicioMarcada;
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-sm flex-col justify-center gap-6 px-4 py-8">
       <MarcarCriadorDoDesafio codigo={desafio.codigo} nome={desafio.nome} />
       <header className="space-y-1 text-center">
-        <p className="font-press text-lg leading-relaxed text-ink">VALENDO.</p>
-        <p className="font-mono text-sm text-ink/70">Sala criada. Manda esse link no grupo.</p>
+        {/* "VALENDO." é da largada, não da criação (STYLE.md). */}
+        <p className="font-press text-lg leading-relaxed text-ink">{SUCESSO_TITULO}</p>
+        <p className="font-mono text-sm text-ink/70">{SUCESSO_TEXTO}</p>
       </header>
 
       <Janela titulo={desafio.nome}>
         <div className="flex flex-col gap-5">
           <dl className="grid grid-cols-2 gap-y-2 font-mono text-sm">
-            <dt className="text-ink/60">Duração</dt>
-            <dd className="text-right font-bold">{desafio.duracaoDias} dias</dd>
-            <dt className="text-ink/60">Dias anteriores</dt>
-            <dd className="text-right font-bold">{labelBackfill(desafio.permiteBackfill)}</dd>
+            {inicio ? (
+              <>
+                <dt className="text-ink/60">Período</dt>
+                <dd className="text-right font-bold">
+                  {labelPeriodoCompleto(
+                    inferirPeriodo(inicio, desafio.duracaoDias),
+                    inicio,
+                    ultimoDia(inicio, desafio.duracaoDias),
+                  )}
+                </dd>
+                <dt className="text-ink/60">Começa</dt>
+                <dd className="text-right font-bold">{labelComecaEm(inicio, hojeISO())}</dd>
+              </>
+            ) : null}
             <dt className="text-ink/60">Situação</dt>
             <dd className="text-right font-bold">{ESTADO_LABEL[desafio.estado]}</dd>
           </dl>
