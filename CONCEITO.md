@@ -56,6 +56,12 @@ O compromisso congela no LARGAR, como hoje. Cada pessoa tem **um** compromisso p
 - Número final do grupo.
 - **Renovação:** botão "Bora mais uma rodada?" cria uma sala nova com o mesmo nome (com "#2") e o mesmo período, e oferece compartilhar o link no grupo.
 
+## Retenção: por que a pessoa volta
+- **A obrigação é semanal** (uma cota de coisas boas por semana), **sem sequência de dias**. Sequência pune quem quebra e contraria o MOOD. O contador "dias em chamas" e o "FECHOU A SEMANA." continuam, e **nenhum contador zera**.
+- **A puxada diária vem do grupo, não da obrigação.** O resumo do dia ("hoje 2 de 4 já registraram", reações novas nos seus registros, o foguinho de alguém) é o motivo pra abrir o app.
+- Quando o WhatsApp existir, a **primeira função do bot** é entregar esse resumo do dia, dentro da janela de 24h aberta pela própria pessoa, sem mensagens pagas e sem lembrete pra quem sumiu.
+- O desenho assume **grupos de 3 ou mais pessoas ativas**.
+
 ## Home e onboarding
 - Ordem: logo desafioo (olhinhos piscando), "Um incentivo pra sua melhor versão.", data e hora ("qui, 1 out · 15:39"), Suas salas, Criar sala, Entrar numa sala.
 - Onboarding: modal na primeira visita, 3 telas curtas com "pular", reabrível em "Como funciona". O sentido de cada tela (o texto final segue o MOOD):
@@ -67,6 +73,7 @@ O compromisso congela no LARGAR, como hoje. Cada pessoa tem **um** compromisso p
 ## WhatsApp (bloco próprio, depois do app web pronto)
 - Canal opcional de registro. O app web continua sendo onde se vê o feed, reage e vê o resultado.
 - Ativação: na sala, botão "Registrar pelo WhatsApp" abre a conversa com o número do desafioo e uma mensagem pronta com o código da sala. Ao enviar, o número fica ligado à pessoa. Ninguém digita telefone.
+- **Primeira função do bot:** entregar o resumo do dia do grupo ("hoje 2 de 4 já registraram", reações novas), só dentro da janela de 24h aberta pela própria pessoa. Sem mensagens pagas, sem lembrete pra quem sumiu.
 - Cada mensagem enviada é uma realização (texto, e foto quando existir). O bot responde celebrando, mostra "3 de 5 essa semana" e o andamento do grupo (sem nomes de quem não registrou), e pergunta com botões "foi no seu foco?" quando a pessoa tem foco.
 - Sem IA na primeira versão.
 - Custos: só mensagens dentro da janela de 24h aberta pela própria pessoa. Nenhum lembrete pago, ninguém é perseguido.
@@ -77,6 +84,7 @@ O compromisso congela no LARGAR, como hoje. Cada pessoa tem **um** compromisso p
 
 ## Medição
 - Registrar eventos básicos (entrou na sala, se propôs, registrou, voltou num dia diferente), pra saber depois se o app funciona.
+- Por pessoa: **se voltou no dia 3 e no dia 5 depois de entrar** (o termômetro de retenção).
 
 ## Fora, por enquanto
 Combinado social, dinheiro em jogo, "fazendo agora", comentários, reação com qualquer emoji, IA no bot, backfill, notificação pelo navegador, múltiplos compromissos por pessoa.

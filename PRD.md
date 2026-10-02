@@ -84,6 +84,11 @@ Cada pessoa tem **um** compromisso por sala. Dá pra ajustar no lobby; **congela
 - **Comemoração por contagem do dia** (zera à meia-noite de Brasília, não é streak): 1º do dia "SHOW.", 2º "TÁ ON FIRE.", 3º ou mais "AURA MÁXIMA.".
 - (Foto opcional: bloco próprio, depois. WhatsApp: bloco próprio, depois.)
 
+## Retenção: por que a pessoa volta
+- **A obrigação é semanal** (cota de coisas boas por semana), **sem sequência de dias**: sequência pune quem quebra e contraria o MOOD. "Dias em chamas" e "FECHOU A SEMANA." continuam; **nenhum contador zera**.
+- **A puxada diária vem do grupo.** O **resumo do dia** é o motivo pra abrir o app: quantas pessoas já registraram hoje ("hoje 2 de 4 já registraram", sem nomes de quem não registrou), reações novas nos seus registros desde a última vez que você abriu, e o foguinho de quem está em chamas hoje. Fica no cabeçalho da sala rolando, junto de "Ativos hoje".
+- O desenho assume **grupos de 3 ou mais pessoas ativas**.
+
 ## Os números
 - **Da pessoa, na semana:** "3 de 5 essa semana", com bolinhas. Passar da meta vira **bônus** (estrela e bolinhas coral), celebrado, mas não conta a mais em nenhum número.
 - **Da pessoa, no desafio (só pro cálculo, ninguém vê):** soma, semana a semana, de `min(realizações da semana, meta da semana)`, dividida pela soma das metas de **todas as semanas do desafio** que contam pra ela.
@@ -94,7 +99,7 @@ Cada pessoa tem **um** compromisso por sala. Dá pra ajustar no lobby; **congela
 
 ## A sala rolando (tela)
 De cima pra baixo:
-1. **Cabeçalho:** janela cuja **barra de título é o nome da sala** (sai o título grande em fonte pixel). No corpo, compacto: "Dia X/Y", data e hora da última busca. **Ativos hoje**: quem teve atividade hoje (a própria pessoa primeiro), com o foguinho de quem tiver; "Só você por aqui hoje" se for só ela.
+1. **Cabeçalho:** janela cuja **barra de título é o nome da sala** (sai o título grande em fonte pixel). No corpo, compacto: "Dia X/Y", data e hora da última busca, e o **resumo do dia** ("hoje 2 de 4 já registraram", reações novas nos seus registros). **Ativos hoje**: quem teve atividade hoje (a própria pessoa primeiro), com o foguinho de quem tiver; "Só você por aqui hoje" se for só ela.
 2. **Seu desafio:** sua meta da semana em bolinhas ("3 de 5 essa semana"), seu foco, "N no seu foco" (privado) e o botão **"+ Registrar"**.
 3. **Número do grupo** (com a linha de contexto ligada ao tempo).
 4. **Feed de todos:** frase (ou "[nome] registrou"), marquinha de foco (quando no foco), autor, horário (com data quando não for hoje: "22/09 · 15:31"), reação com os olhinhos e contagem, foguinho do autor na realização mais recente de hoje dele. Sempre tudo, mais recente no topo, sem filtro.
@@ -115,11 +120,12 @@ Um toque, sempre o mesmo símbolo (**os olhinhos**), sem paleta de emoji. Qualqu
 - **Renovação:** botão **"Bora mais uma rodada?"** cria uma sala nova com o mesmo nome + "#2" (ou o próximo número) e o mesmo tipo de período, e oferece compartilhar o link no grupo.
 
 ## Medição
-Registrar eventos básicos pra saber depois se o app funciona: **entrou na sala**, **se propôs**, **registrou**, **voltou num dia diferente**. Sem dado pessoal além do que o app já guarda.
+Registrar eventos básicos pra saber depois se o app funciona: **entrou na sala**, **se propôs**, **registrou**, **voltou num dia diferente**. Por pessoa, dá pra responder **"voltou no dia 3 e no dia 5 depois de entrar?"** (dias contados da entrada, fuso de Brasília). Sem dado pessoal além do que o app já guarda.
 
 ## WhatsApp (bloco próprio, depois do app web pronto)
 - Canal **opcional** de registro. O app web continua sendo onde se vê o feed, reage e vê o resultado.
 - Ativação: botão "Registrar pelo WhatsApp" abre a conversa com o número do desafioo e uma mensagem pronta com o código da sala. Ao enviar, o número fica ligado à pessoa. Ninguém digita telefone.
+- **Primeira função do bot:** entregar o resumo do dia do grupo ("hoje 2 de 4 já registraram", reações novas), só dentro da janela de 24h aberta pela própria pessoa. Sem mensagens pagas, sem lembrete pra quem sumiu.
 - Cada mensagem é uma realização. O bot responde celebrando, mostra "3 de 5 essa semana" e o andamento do grupo (sem nomes de quem não registrou), e pergunta com botões "foi no seu foco?" quando a pessoa tem foco.
 - Sem IA. Só mensagens dentro da janela de 24h aberta pela própria pessoa; nenhum lembrete pago, ninguém é perseguido. **Só a plataforma oficial da Meta**, nunca bibliotecas não oficiais.
 
