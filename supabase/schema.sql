@@ -1,4 +1,6 @@
 -- Schema do "desafio", ~5 tabelas do PRD.md ("Modelo de dados").
+-- Já inclui a migração v2 (supabase/migracao-v2.sql): pra um banco novo,
+-- rode só este arquivo; pra um banco que já existe, rode a migração.
 -- Cole isso inteiro no SQL Editor do painel do Supabase e rode.
 -- Não é rodado automaticamente por nada no app, é só pra referência
 -- e pra colar manualmente.
@@ -19,6 +21,8 @@ create table if not exists public.desafios (
   -- arquivo com ALTER TABLE, depois que as duas tabelas existirem.
   criador_participante_id uuid,
   data_inicio             timestamptz,
+  -- v2: dia em que a sala larga sozinha (o criador pode largar antes).
+  data_inicio_marcada     date,
   criado_em               timestamptz not null default now()
 );
 
@@ -30,6 +34,10 @@ create table if not exists public.participantes (
   emoji             text not null,
   token             text not null unique,
   pronto            boolean not null default false,
+  -- v2: o compromisso da pessoa nessa sala (meta de coisas boas por
+  -- semana + foco opcional).
+  meta_semanal      integer check (meta_semanal is null or meta_semanal between 1 and 30),
+  foco              text check (foco is null or char_length(foco) <= 60),
   ultima_atividade  timestamptz not null default now(),
   criado_em         timestamptz not null default now()
 );
@@ -62,12 +70,15 @@ create index if not exists idx_inegociaveis_participante_id
 create table if not exists public.realizacoes (
   id              uuid primary key default gen_random_uuid(),
   participante_id uuid not null references public.participantes(id) on delete cascade,
-  tipo            text not null check (tipo in ('inegociavel', 'extra')),
+  -- v2: todo registro novo é 'registro'; os outros valores são do modelo antigo.
+  tipo            text not null default 'registro' check (tipo in ('inegociavel', 'extra', 'registro')),
   -- nulo se tipo = 'extra'
   inegociavel_id  uuid references public.inegociaveis(id) on delete set null,
-  assunto         text not null
+  assunto         text not null default 'outro'
                     check (assunto in ('treino', 'estudo', 'trabalho', 'comida', 'tarefa', 'outro')),
-  texto           text not null,
+  texto           text not null check (char_length(texto) <= 200),
+  -- v2: "isso foi no seu foco?"
+  no_foco         boolean not null default false,
   dia             date not null,
   criado_em       timestamptz not null default now()
 );
