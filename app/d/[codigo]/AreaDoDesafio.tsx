@@ -2,6 +2,8 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { AcoesDoDesafio } from "@/components/AcoesDoDesafio";
+import { BolinhasSemana } from "@/components/BolinhasSemana";
+import { NumeroDoGrupo } from "@/components/NumeroDoGrupo";
 import { CabecalhoSala } from "@/components/CabecalhoSala";
 import { CamposCompromisso } from "@/components/CamposCompromisso";
 import { Expansivel } from "@/components/Expansivel";
@@ -11,6 +13,10 @@ import { ResultadoFinal } from "@/components/ResultadoFinal";
 import { SeuDesafio } from "@/components/SeuDesafio";
 import {
   BOTAO_LARGAR_AGORA,
+  DIAS_PRA_RETOMADA,
+  EXPLICA_NO_SEU_FOCO,
+  TEXTO_RETOMADA,
+  labelNoSeuFoco,
   LABEL_DESFEITO,
   LABEL_VER_TUDO_QUE_ROLOU,
   LABEL_VOCE,
@@ -85,6 +91,10 @@ export function AreaDoDesafio({
   const [dados, setDados] = useState<DadosSala | null>(null);
   const [carregando, setCarregando] = useState(true);
   const [erroCarregar, setErroCarregar] = useState(false);
+  // Reações novas desde a última vez que a pessoa abriu: cada busca traz
+  // as que chegaram desde a busca anterior, então soma enquanto a página
+  // está aberta (senão o número sumiria na primeira atualização).
+  const [reacoesNovasSessao, setReacoesNovasSessao] = useState(0);
 
   const [ajusteState, ajusteActionFn, ajustePending] = useActionState(
     ajustarCompromissoAction,
@@ -143,6 +153,7 @@ export function AreaDoDesafio({
           if (data.lobby) {
             if (!cancelado) {
               setDados(data.lobby);
+              setReacoesNovasSessao((n) => n + (data.lobby.resumoDoDia?.reacoesNovas ?? 0));
               setErroCarregar(false);
               setCarregando(false);
             }
@@ -246,7 +257,14 @@ export function AreaDoDesafio({
           hoje={dados.hoje}
           agora={dados.agora}
           ativosHoje={ativosHoje}
+          resumoDoDia={dados.resumoDoDia ? { ...dados.resumoDoDia, reacoesNovas: reacoesNovasSessao } : null}
         />
+
+        {/* Retomada: quem volta depois de dias sem registrar recebe uma
+            frase acolhedora no lugar do silêncio. Só pra ela. */}
+        {dados.diasSemRegistrar !== null && dados.diasSemRegistrar >= DIAS_PRA_RETOMADA ? (
+          <p className="border-2 border-ink bg-cream px-3 py-2 font-mono text-xs text-ink/80">{TEXTO_RETOMADA}</p>
+        ) : null}
 
         {/* Seu desafio: fixo no topo ao rolar, ação rápida sempre à mão;
             o feed embaixo é o conteúdo principal. */}
@@ -263,8 +281,21 @@ export function AreaDoDesafio({
             desfazerAction={desfazerActionFn}
             desfazerPending={desfazerPending}
             desfazerErro={desfazerState.error}
-          />
+          >
+            {dados.minhaSemana ? (
+              <BolinhasSemana feitos={dados.minhaSemana.feitos} meta={dados.minhaSemana.meta} />
+            ) : null}
+            {dados.meuNoFoco !== null ? (
+              <p className="text-[11px] text-ink/70">
+                <span className="font-bold text-ink">{labelNoSeuFoco(dados.meuNoFoco)}</span> · {EXPLICA_NO_SEU_FOCO}
+              </p>
+            ) : null}
+          </SeuDesafio>
         </div>
+
+        {dados.progressoGrupo !== null ? (
+          <NumeroDoGrupo progresso={dados.progressoGrupo} diaAtual={dados.diaAtual} duracaoDias={dados.duracaoDias} />
+        ) : null}
 
         <FeedDaSala
           feed={dados.feed}

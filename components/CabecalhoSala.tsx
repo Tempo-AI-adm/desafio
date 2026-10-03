@@ -6,21 +6,23 @@ import {
   LABEL_SO_VOCE_HOJE,
   labelDiaDoDesafio,
   labelDuracao,
+  labelReacoesNovas,
+  labelResumoDoDia,
   labelVistoHa,
 } from "@/lib/copy";
 import { diaCurto, horaCurta } from "@/lib/tempo";
 import type { ParticipanteSala } from "@/lib/tipos-sala";
 
 /**
- * Cabeçalho da sala (lobby e rolando), na mesma linguagem de janela do
- * resto da tela (STYLE.md "janela"): fundo creme, barra de título
- * escura fininha. Dentro, o nome da sala em destaque (fonte pixel) e
- * "DIA X/Y" (ou só a duração antes de largar) + data e hora de hoje
- * (fuso de Brasília, hora da última busca; sem relógio rodando).
- * Encerrada: selo neutro "ENCERRADO" + "16/09 — 22/09 · 7 dias · 2 amigos".
- * Com a sala rolando, também "Ativos hoje": quem teve atividade hoje
- * (a própria pessoa primeiro), cada um com a insígnia do dia se tiver
- * (o foguinho). Uma bolinha verde só, ao lado do rótulo.
+ * Cabeçalho da sala (lobby, rolando e encerrada), na mesma linguagem de
+ * janela do resto da tela (STYLE.md "janela"). O NOME DA SALA é a barra
+ * de título (sem título grande em fonte pixel dentro do balão). No
+ * corpo, compacto: "DIA X/Y" (ou só a duração antes de largar) + data e
+ * hora da última busca (fuso de Brasília; sem relógio rodando).
+ * Encerrada: selo neutro "ENCERRADO" + "16/09 a 22/09 · 7 dias · 2 amigos".
+ * Com a sala rolando, o resumo do dia (o motivo pra abrir o app: quantos
+ * já registraram hoje, reações novas nos seus registros) junto de
+ * "Ativos hoje" (a própria pessoa primeiro, com o foguinho de quem tiver).
  */
 export function CabecalhoSala({
   salaNome,
@@ -31,6 +33,7 @@ export function CabecalhoSala({
   ativosHoje,
   periodoEncerrado,
   quantidadePessoas,
+  resumoDoDia,
 }: {
   salaNome: string;
   duracaoDias: number;
@@ -45,15 +48,12 @@ export function CabecalhoSala({
   periodoEncerrado?: { inicio: string; fim: string } | null;
   /** só na sala encerrada, pro "· 2 amigos" */
   quantidadePessoas?: number;
+  /** só na sala rolando: "hoje 2 de 4 já registraram" + reações novas */
+  resumoDoDia?: { registraram: number; total: number; reacoesNovas: number } | null;
 }) {
   return (
-    <Janela titulo="Sala" painel compacto>
-      {/* Compacto: nome + status numa linha só (quebra se não couber),
-          pra sobrar destaque pro que vem embaixo. */}
+    <Janela titulo={<h1 className="min-w-0 break-words">{salaNome}</h1>} painel compacto>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-        {/* Em maiúsculas (só no CSS; o nome salvo não muda): as minúsculas
-            da Press Start 2P são baixinhas e o nome parecia "espremido". */}
-        <h1 className="break-words font-press text-xs uppercase leading-[1.6]">{salaNome}</h1>
         {periodoEncerrado ? (
           // Encerrada: selo neutro (status, não conquista) + período real
           // do desafio; a hora de agora não importa mais.
@@ -73,6 +73,15 @@ export function CabecalhoSala({
           </div>
         )}
       </div>
+
+      {resumoDoDia ? (
+        <div className="mt-2 flex flex-col gap-0.5 border-t-2 border-ink/15 pt-1.5 font-mono text-xs">
+          <p className="font-bold">{labelResumoDoDia(resumoDoDia.registraram, resumoDoDia.total)}</p>
+          {resumoDoDia.reacoesNovas > 0 ? (
+            <p className="text-ink/70">{labelReacoesNovas(resumoDoDia.reacoesNovas)}</p>
+          ) : null}
+        </div>
+      ) : null}
 
       {ativosHoje ? (
         <div className="mt-2 flex flex-col gap-1 border-t-2 border-ink/15 pt-1.5">

@@ -15,7 +15,9 @@ export function ExemploResultado() {
     <ResultadoFinal
       titulo={
         <>
-          <span>{HOME_EXEMPLO.titulo}</span>
+          {/* Como na sala real: o nome da sala na barra de título, sem
+              título grande em fonte pixel dentro do balão. */}
+          <span>{HOME_EXEMPLO.sala}</span>
           <span className="border border-cream/60 px-1.5 text-[10px] normal-case tracking-normal text-cream/80">
             {HOME_EXEMPLO.rotulo}
           </span>
@@ -23,7 +25,6 @@ export function ExemploResultado() {
       }
       cabecalho={
         <div className="flex flex-col gap-2 border-b-2 border-empty pb-3">
-          <p className="font-press text-xs uppercase leading-[1.6]">{HOME_EXEMPLO.sala}</p>
           <LinhaEncerrado
             periodo={HOME_EXEMPLO.periodo}
             duracaoDias={HOME_EXEMPLO.duracaoDias}
